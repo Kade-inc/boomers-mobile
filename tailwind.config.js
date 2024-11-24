@@ -45,6 +45,8 @@ module.exports = {
             mboldItalic: ["Montserrat-Bold", "sans-serif"],
             mextraboldItalic: ["Montserrat-ExtraBoldItalic", "sans-serif"],
             mblackItalic: ["Montserrat-BlackItalic", "sans-serif"],
+            cregular: ["ChangaOne-Regular", "sans-serif"],
+            citalic: ["ChangaOne-Italic", "sans-serif"]
           },
         },
       },

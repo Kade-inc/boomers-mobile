@@ -32,6 +32,8 @@ export default function RootLayout() {
     "Montserrat-SemiBoldItalic": require("../assets/fonts/Montserrat-SemiBoldItalic.ttf"),
     "Montserrat-Thin": require("../assets/fonts/Montserrat-Thin.ttf"),
     "Montserrat-ThinItalic": require("../assets/fonts/Montserrat-ThinItalic.ttf"),
+    "ChangaOne-Regular": require("../assets/fonts/ChangaOne-Regular.ttf"),
+    "ChangaOne-Italic": require("../assets/fonts/ChangaOne-Italic.ttf")
   });
 
   useEffect(() => {
