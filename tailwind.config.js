@@ -8,7 +8,7 @@ module.exports = {
           colors: {
             primary: "#F8B500",
             secondary: {
-              DEFAULT: "#FF9C01",
+              DEFAULT: "#393E46",
               100: "#FF9001",
               200: "#FF8E01",
             },
@@ -21,6 +21,10 @@ module.exports = {
               100: "#CDCDE0",
               200: "#393E46"
             },
+            white: {
+                DEFAULT: "#FFFFFF",
+                100: "#F7F7F7"
+            }
           },
           fontFamily: {
             mthin: ["Montserrat-Thin", "sans-serif"],

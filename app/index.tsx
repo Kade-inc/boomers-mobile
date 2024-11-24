@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <View className="h-screen justify-center items-center">
       <Link href="/sign-in">
-        <Text className="font-mmedium">Boomers Mobile</Text>
+        <Text className="font-mmedium text-secondary">Boomers Mobile</Text>
       </Link>
     </View>
   )
