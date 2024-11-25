@@ -24,7 +24,8 @@ module.exports = {
             white: {
                 DEFAULT: "#FFFFFF",
                 100: "#F7F7F7"
-            }
+            },
+            error: "#C01212"
           },
           fontFamily: {
             mthin: ["Montserrat-Thin", "sans-serif"],

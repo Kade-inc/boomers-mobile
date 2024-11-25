@@ -5,7 +5,7 @@ import { Link } from 'expo-router'
 const Home = () => {
   return (
     <View className="h-screen justify-center items-center">
-      <Link href="/sign-in">
+      <Link href="/sign-up">
         <Text className="font-mmedium text-secondary">Boomers Mobile</Text>
       </Link>
     </View>
