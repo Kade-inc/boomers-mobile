@@ -38,16 +38,17 @@ const FormInputController: FC<FormInputControllerProps> = ({
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State to toggle visibility
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
   return (
-    <View className="gap-2 mt-4">
+    <View className="gap-2 mt-4" style={{marginTop: 16}}>
       <Text className="font-msemibold text-secondary text-lg">{title}</Text>
-      <View className="border border-secondary w-full h-16 px-4 rounded-lg justify-center flex-row items-center">
+      <View className="border border-secondary w-full h-16 px-4 rounded-lg flex-row items-center" style={{ height: 56, borderColor: '#000000', borderWidth: 1, borderRadius: 5}}>
         <Controller
           name={name}
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
             <TextInput
-              className="flex-1 text-secondary font-mregular text-lg"
+              className="text-secondary font-mregular text-lg"
+              style={{ flex: 1 }}
               placeholder={placeholder}
               placeholderTextColor="#7b7b8b"
               value={value}
@@ -73,7 +74,7 @@ const FormInputController: FC<FormInputControllerProps> = ({
       </View>
 
       {errors && errors[name] && (
-        <View className="bg-error justify-center rounded" style={{ paddingTop: 8, paddingBottom: 8, paddingLeft: 8 }}>
+        <View className="justify-center rounded" style={{ paddingTop: 8, paddingBottom: 8, paddingLeft: 8, backgroundColor: '#C01212' }}>
           <Text
             className="text-white text-md font-mregular"
             style={{ lineHeight: 20, color: '#FFFFFF' }}
