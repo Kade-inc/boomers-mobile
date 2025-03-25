@@ -5,33 +5,21 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import '../global.css'
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+SplashScreen.setOptions({
+  duration: 400,
+  fade: true
+})
+
 export default function RootLayout() {
-  // const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    "Montserrat-Black": require("../assets/fonts/Montserrat-Black.ttf"),
-    "Montserrat-BlackItalic": require("../assets/fonts/Montserrat-BlackItalic.ttf"),
-    "Montserrat-Bold": require("../assets/fonts/Montserrat-Bold.ttf"),
-    "Montserrat-BoldItalic": require("../assets/fonts/Montserrat-BoldItalic.ttf"),
-    "Montserrat-ExtraBold": require("../assets/fonts/Montserrat-ExtraBold.ttf"),
-    "Montserrat-ExtraBoldItalic": require("../assets/fonts/Montserrat-ExtraBoldItalic.ttf"),
-    "Montserrat-ExtraLight": require("../assets/fonts/Montserrat-ExtraLight.ttf"),
-    "Montserrat-ExtraLightItalic": require("../assets/fonts/Montserrat-ExtraLightItalic.ttf"),
-    "Montserrat-Italic": require("../assets/fonts/Montserrat-Italic.ttf"),
-    "Montserrat-LightItalic": require("../assets/fonts/Montserrat-LightItalic.ttf"),
-    "Montserrat-Medium": require("../assets/fonts/Montserrat-Medium.ttf"),
-    "Montserrat-MediumItalic": require("../assets/fonts/Montserrat-MediumItalic.ttf"),
-    "Montserrat-Regular": require("../assets/fonts/Montserrat-Regular.ttf"),
-    "Montserrat-SemiBold": require("../assets/fonts/Montserrat-SemiBold.ttf"),
-    "Montserrat-SemiBoldItalic": require("../assets/fonts/Montserrat-SemiBoldItalic.ttf"),
-    "Montserrat-Thin": require("../assets/fonts/Montserrat-Thin.ttf"),
-    "Montserrat-ThinItalic": require("../assets/fonts/Montserrat-ThinItalic.ttf"),
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   useEffect(() => {
@@ -45,14 +33,12 @@ export default function RootLayout() {
   }
 
   return (
-    // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-    <>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false}} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
-    </>
-    // </ThemeProvider>
+    </ThemeProvider>
   );
 }
