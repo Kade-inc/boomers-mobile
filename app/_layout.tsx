@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { StyleSheet } from 'react-native';
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -20,6 +22,13 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    ChangaOneItalic: require('../assets/fonts/ChangaOne-Italic.ttf'),
+    ChangaOne: require('../assets/fonts/ChangaOne-Regular.ttf'),
+    MontserratRegular: require('../assets/fonts/MontserratRegular.ttf'),
+    MontserratMedium: require('../assets/fonts/MontserratMedium.ttf'),
+    MontserratSemiBold: require('../assets/fonts/MontserratSemiBold.ttf'),
+    MontserratBold: require('../assets/fonts/MontserratBold.ttf'),
+    MontserratExtraBold: require('../assets/fonts/MontserratExtraBold.ttf')
   });
 
   useEffect(() => {
@@ -42,3 +51,4 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+

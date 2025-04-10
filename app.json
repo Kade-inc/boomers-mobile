@@ -47,7 +47,29 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font",
+      {
+        "fonts": [
+          "./assets/fonts/ChangaOne-Italic.ttf",
+           "./assets/fonts/ChangaOne-Regular.ttf",
+            "./assets/fonts/MontserratBlack.ttf",
+              "./assets/fonts/MontserratBlackItalic.ttf",
+                "./assets/fonts/MontserratBold.ttf",
+                  "./assets/fonts/MontserratBoldItalic.ttf",
+                    "./assets/fonts/MontserratExtraBold.ttf",
+              "./assets/fonts/MontserratExtraBoldItalic.ttf",
+                "./assets/fonts/MontserratExtrLight.ttf",
+                  "./assets/fonts/MontserratExtraLightItalic.ttf",
+                "./assets/fonts/MontserratMedium.ttf",
+              "./assets/fonts/MontserratMediumItalic.ttf",
+                "./assets/fonts/MontserratRegular.ttf",
+                  "./assets/fonts/MontserratRegularItalic.ttf",
+                "./assets/fonts/MontserratSemiBold.ttf",
+              "./assets/fonts/MontserratSemiBoldItalic.ttf",
+                "./assets/fonts/MontserratThin.ttf",
+                  "./assets/fonts/MontserratThinItalic.ttf"]
+      }
     ],
     "experiments": {
       "typedRoutes": true

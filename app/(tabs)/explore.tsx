@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Platform } from 'react-native';
+import { StyleSheet, Image, Platform, View, Text } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -19,6 +19,9 @@ export default function TabTwoScreen() {
           style={styles.headerImage}
         />
       }>
+        <View>
+          <Text style={styles.mainContainter}>This is a test</Text>
+        </View>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Explore</ThemedText>
       </ThemedView>
@@ -106,4 +109,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
+  mainContainter: {
+    fontFamily: "MontserratSemiBold",
+    color: 'white',
+  }
 });
+
+
