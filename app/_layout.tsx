@@ -49,7 +49,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         {/* <Stack.Screen name="+not-found" /> */}
       
-      <StatusBar style="auto" />
+      <StatusBar style="light"/>
       </Stack>
     // </ThemeProvider>
   );
