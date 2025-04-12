@@ -22,7 +22,7 @@ export default function HomeScreen() {
 
   const dynamicTextStyles = {
     color: '#393E46',
-    fontSize: 18
+    fontSize: 16
   }
 
   const scrollViewRef = useRef<ScrollView>(null);

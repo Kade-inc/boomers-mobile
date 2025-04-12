@@ -22,8 +22,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ChangaOneItalic: require('../assets/fonts/ChangaOne-Italic.ttf'),
-    ChangaOne: require('../assets/fonts/ChangaOne-Regular.ttf'),
+    ChangaOne: require('../assets/fonts/ChangaOneRegular.ttf'),
     MontserratRegular: require('../assets/fonts/MontserratRegular.ttf'),
     MontserratMedium: require('../assets/fonts/MontserratMedium.ttf'),
     MontserratSemiBold: require('../assets/fonts/MontserratSemiBold.ttf'),
