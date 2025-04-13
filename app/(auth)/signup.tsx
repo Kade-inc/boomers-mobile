@@ -2,16 +2,21 @@ import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useForm, Controller} from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
+import FormInputController from "@/components/controllers/FormInputController";
+import { yupResolver } from '@hookform/resolvers/yup'
+import { signUpFormSchema } from "@/constants/schemas/authSchemas";
+import { Link } from "expo-router";
 
 export default function SignupScreen() {
-
     const {
       control,
       handleSubmit,
       formState: {
         errors
       }
-    } = useForm()
+    } = useForm({
+      resolver: yupResolver(signUpFormSchema)
+    })
 
     const submit = (data) => {
       console.log(data)
@@ -36,50 +41,53 @@ export default function SignupScreen() {
               <Text style={styles.headerSubText}>Create an account to begin your journey.</Text>
           </View>
           <View style={styles.formInputs}>
-            <View style={styles.inputSection}>
-              <Text style={styles.inputTitle}>Email</Text>
-              <Controller 
-                name='email'
-                control={control} 
-                render={({field: {onChange, onBlur, value} }) => (
-                    <TextInput 
-                    placeholder="Enter your email"
-                    style={styles.input}
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    autoCapitalize={'none'}
-                    />
-                )}
-                rules={{required: true, pattern: /^\S+@\S+\.\S+$/}}
-              />
-              {errors.email && <Text style={styles.textError}>Enter a valid email</Text>}
-            </View>
-            <View style={styles.inputSection}>
-            <Text style={styles.inputTitle}>Username</Text>
-            <Controller 
-              name='username'
+            <FormInputController 
               control={control} 
-              render={({field: {onChange, onBlur, value} }) => (
-                  <TextInput 
-                  placeholder="Create a username"
-                  style={styles.input}
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  autoCapitalize={'none'}
-                  />
-              )}
-              rules={{required: true, minLength: 5}}
-            />
-            {errors.username && <Text style={styles.textError}>Username is required</Text>}
-            </View>
-            
+              name={'email'} 
+              placeholder={'Enter your email'} 
+              title={'Email'} 
+              errors={errors}
+              />
+            <FormInputController 
+              control={control} 
+              name={'username'} 
+              placeholder={'Enter your username'} 
+              title={'Username'}
+              errors={errors}
+              />
+            <FormInputController 
+              control={control} 
+              name={'password'} 
+              placeholder={'Enter a password'} 
+              title={'Password'}
+              props={{
+                secureTextEntry: true
+              }}
+              errors={errors}
+              />
+            <FormInputController 
+              control={control} 
+              name={'confirmPassword'} 
+              placeholder={'Confirm your password'} 
+              title={'Confirm Password'}
+              props={{
+                secureTextEntry: true
+              }}
+              errors={errors}
+              />
           </View>
           <CustomButton title="Sign Up"
             handlePress={handleSubmit(submit)}
             textStyles={dynamicTextStyles}
             containerStyles={dynamicContainerStyles}/>
+           <View style={styles.additionalLinks}>
+            <Text style={styles.additionalText}>
+              Already Have an account?{" "}
+            </Text>
+            <Link href="/signin" style={styles.signInLink}>
+              Sign In
+            </Link>
+          </View>
         </ScrollView>
       </SafeAreaView>
     )
@@ -126,29 +134,18 @@ const styles = StyleSheet.create({
     formInputs: {
       marginTop: 20
     },
-    inputTitle: {
-      fontFamily: 'MontserratMedium'
+    additionalLinks: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop:20
     },
-    inputSection: {
-      marginBottom: 20
-    },
-    input: {
-      borderWidth: 1,
-      borderRadius: 4,
-      padding: 10,
-      marginTop: 10,
-      borderColor: '#393E46',
-      fontFamily: 'MontserratRegular'
-    },
-    textError: {
-      backgroundColor: '#EB4335',
-      paddingLeft: 5,
-      paddingVertical: 8,
-      borderRadius: 3,
-      color: 'white',
+    additionalText: {
       fontFamily: 'MontserratMedium',
-      fontSize: 12,
-      marginTop: 8
+       color: '#393E46'
+    },
+    signInLink: {
+      fontFamily: 'MontserratBold',
+       color: '#393E46'
     }
   });
   
