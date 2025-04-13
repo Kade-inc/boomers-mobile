@@ -26,10 +26,26 @@ export default function HomeScreen() {
   }
 
   const scrollViewRef = useRef<ScrollView>(null);
-  const carouselItems = [1, 2, 3]; // You can replace these with your actual carousel data
+  const carouselItems = [
+    {
+      id: 1,
+      titleItems: ["Learn", "Grow", "Create"],
+      body: "Connect with experienced developers"
+    },
+    {
+      id: 2,
+      titleItems: ["Create", "Recruit", "Challenge"],
+      body: "Create a team and mentor others"
+    },
+    {
+      id: 1,
+      titleItems: ["Challenge", "Submit", "Repeat"],
+      body: "Grow by challenging yourself"
+    }
+  ]
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Auto-scroll effect every 5 seconds
+  // Auto-scroll effect every 10 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => {
@@ -37,7 +53,7 @@ export default function HomeScreen() {
         scrollViewRef.current?.scrollTo({ x: nextIndex * ITEM_WIDTH, animated: true });
         return nextIndex;
       });
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(timer);
   }, []);
@@ -65,23 +81,35 @@ export default function HomeScreen() {
               pagingEnabled 
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.carouselContent}
+              onMomentumScrollEnd={(event) => {
+                const offsetX = event.nativeEvent.contentOffset.x;
+                const index = Math.round(offsetX / ITEM_WIDTH);
+                setCurrentIndex(index);
+              }}
             >
-              {/* Carousel Item 1 */}
-              {/* <View style={[styles.carouselItem, { backgroundColor: 'rgba(255,0,0,0.5)' }]}>
-                <Text style={styles.carouselText}>Carousel Item 1</Text>
-              </View> */}
-              {/* Carousel Item 2 */}
-              {/* <View style={[styles.carouselItem, { backgroundColor: 'rgba(0,255,0,0.5)' }]}>
-                <Text style={styles.carouselText}>Carousel Item 2</Text>
-              </View> */}
-              {/* Carousel Item 3 */}
-              {/* <View style={[styles.carouselItem, { backgroundColor: 'rgba(0,0,255,0.5)' }]}>
-                <Text style={styles.carouselText}>Carousel Item 3</Text>
-              </View> */}
-
               {carouselItems.map((item, index) => (
-                <View key={index} style={styles.carouselItem}>
-                  <Text style={styles.carouselText}>Carousel Item {item}</Text>
+                <View key={`${item.id}-${index}`} style={styles.carouselItem}>
+                  <View style={styles.carouselTitle}>
+                    {item.titleItems.map((title, titleIndex) => (
+                      <View key={titleIndex} style={styles.flexRow}>
+                        <Text style={styles.carouselText}>{title}</Text>
+                        {titleIndex !== 2 &&<View
+                          style={
+                            [
+                              styles.separatorDot,
+                              styles.activeDot,
+                              styles.dotMargin
+                            ]
+                          }
+                        />}
+                      </View>
+                    ))}
+                  </View>
+                  <View style={styles.flexRow}>
+                    <Text style={styles.carouselBody}>{item.body}
+                      <Text style={styles.dotSpecial}>.</Text>
+                    </Text>
+                  </View>
                 </View>
               ))}
             </ScrollView>
@@ -149,24 +177,33 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   carouselContainer: {
-    // minHeight: 400, // Adjust the height to fit your design
+    // minHeight: 400,
     flex: 2
   },
   carouselContent: {
     // This makes sure the items are centered vertically if needed
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   carouselItem: {
-    width: width - 40, // Adjust for horizontal padding (20 on each side)
-    marginRight: 10,
+    width: ITEM_WIDTH,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     borderRadius: 10,
   },
   carouselText: {
     fontSize: 18,
     color: '#fff',
-    fontFamily: 'MontserratSemiBold',
+    fontFamily: 'MontserratBold',
+  },
+  carouselBody: {
+    fontSize: 23,
+    color: '#fff',
+    marginTop: 30,
+    textAlign: 'left',
+    fontFamily: 'MontserratExtraBold',
+  },
+  carouselTitle: {
+    flexDirection: 'row'
   },
   dotsContainer: {
     position: 'absolute',
@@ -186,4 +223,21 @@ const styles = StyleSheet.create({
   inactiveDot: {
     backgroundColor: '#fff',
   },
+  separatorDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  flexRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dotSpecial: {
+    color: '#F8B500',
+    fontSize: 30,
+  },
+  dotMargin: {
+    marginTop: 4
+  }
 });
