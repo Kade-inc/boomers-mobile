@@ -9,6 +9,7 @@ import { Link } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
+import { AuthService } from "../services/authService";
 
 export default function SignupScreen() {
     const {
@@ -23,9 +24,28 @@ export default function SignupScreen() {
 
     const  [signupSuccess, setSignupSuccess] = useState(false)
 
-    const submit = (data) => {
-      // setSignupSuccess(true)
-      showToast()
+
+    const submit = async (data) => {
+      const authService = new AuthService()
+
+      const {email, username, password, confirmPassword} = data
+
+      const updatedData = {
+        accountId: email,
+        password
+      }
+
+      const response = await authService.register(updatedData)
+
+      if (response.success) {
+         // setSignupSuccess(true)
+        console.log("SUCCESS")
+      } else {
+        console.log("RESPONSE: ", response)
+        console.log("RRS: ", typeof response.error)
+        showToast(response.error)
+      }
+      
       console.log(data)
     }
 
@@ -38,11 +58,13 @@ export default function SignupScreen() {
       marginTop: 10
     }
 
-    const showToast = () => {
+    // 'A user with that email/username exists 🫤'
+
+    const showToast = (message: string) => {
       Toast.show({
         type: 'error',
         text1: 'User exists',
-        text2: 'A user with that email/username exists 🫤',
+        text2: message,
         autoHide: false,
         visibilityTime: 10000,
         position: 'bottom',
