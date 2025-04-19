@@ -5,7 +5,7 @@ import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
 import { signUpFormSchema } from "@/constants/schemas/authSchemas";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
@@ -35,16 +35,16 @@ export default function SignupScreen() {
         password
       }
 
-      const response = await authService.register(updatedData)
-
-      if (response.success) {
-         // setSignupSuccess(true)
-        console.log("SUCCESS")
-      } else {
-        console.log("RESPONSE: ", response)
-        console.log("RRS: ", typeof response.error)
-        showToast(response.error)
-      }
+      // const response = await authService.register(updatedData)
+      setSignupSuccess(true)
+      // if (response.success) {
+      //    // setSignupSuccess(true)
+      //   console.log("SUCCESS")
+      // } else {
+      //   console.log("RESPONSE: ", response)
+      //   console.log("RRS: ", typeof response.error)
+      //   showToast(response.error)
+      // }
       
       console.log(data)
     }
@@ -55,9 +55,16 @@ export default function SignupScreen() {
     }
 
     const dynamicContainerStyles = {
-      marginTop: 10
+      marginTop: 20
     }
 
+    const inputContainerStyles = {
+      marginBottom: 20
+    }
+
+    const inputStyle = {
+      marginTop: 10
+    }
     // 'A user with that email/username exists 🫤'
 
     const showToast = (message: string) => {
@@ -91,6 +98,8 @@ export default function SignupScreen() {
                   placeholder={'Enter your email'} 
                   title={'Email'} 
                   errors={errors}
+                  inputContainerStyles={inputContainerStyles}
+                  inputStyle={inputStyle}
                   />
                 <FormInputController 
                   control={control} 
@@ -98,6 +107,8 @@ export default function SignupScreen() {
                   placeholder={'Enter your username'} 
                   title={'Username'}
                   errors={errors}
+                  inputContainerStyles={inputContainerStyles}
+                  inputStyle={inputStyle}
                   />
                 <FormInputController 
                   control={control} 
@@ -108,6 +119,8 @@ export default function SignupScreen() {
                     secureTextEntry: true
                   }}
                   errors={errors}
+                  inputContainerStyles={inputContainerStyles}
+                  inputStyle={inputStyle}
                   />
                 <FormInputController 
                   control={control} 
@@ -118,12 +131,14 @@ export default function SignupScreen() {
                     secureTextEntry: true
                   }}
                   errors={errors}
+                  inputStyle={inputStyle}
                   />
               </View>
               <CustomButton title="Sign Up"
                 handlePress={handleSubmit(submit)}
                 textStyles={dynamicTextStyles}
-                containerStyles={dynamicContainerStyles}/>
+                containerStyles={dynamicContainerStyles}
+                />
               <View style={styles.additionalLinks}>
                 <Text style={styles.additionalText}>
                   Already Have an account?{" "}
@@ -150,7 +165,7 @@ export default function SignupScreen() {
                 
               </View>
               <CustomButton title="Go to Sign In"
-                handlePress={handleSubmit(submit)}
+                handlePress={() => router.push('/signin')}
                 textStyles={dynamicTextStyles}
                 containerStyles={dynamicContainerStyles}/>
             </>

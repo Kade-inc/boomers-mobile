@@ -10,9 +10,9 @@ import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { AuthService } from "../services/authService";
-import { loginFormSchema } from "@/constants/schemas/loginSchemas";
+import { resetPasswordFormSchema } from "@/constants/schemas/resetPasswordSchema";
 
-export default function SigninScreen() {
+export default function ResetPasswordScreen() {
 
     const {
         control,
@@ -21,7 +21,7 @@ export default function SigninScreen() {
           errors
         }
       } = useForm({
-        resolver: yupResolver(loginFormSchema)
+        resolver: yupResolver(resetPasswordFormSchema)
       })
   
       const  [signupSuccess, setSignupSuccess] = useState(false)
@@ -59,6 +59,14 @@ export default function SigninScreen() {
       const dynamicContainerStyles = {
         marginTop: 20
       }
+
+      const inputContainerStyles = {
+        // marginBottom: 20
+      }
+
+      const inputStyle = {
+        // marginBottom: 20
+      }
   
       // 'A user with that email/username exists 🫤'
   
@@ -74,65 +82,62 @@ export default function SigninScreen() {
         });
       }
 
-      const inputContainerStyles = {
-        marginBottom: 20,
-      }
-
-      const inputStyle = {
-        marginTop: 10
-      }
-
     return (
          <SafeAreaView style={styles.mainContainer}>
         <ScrollView style={styles.container}>
           <View style={styles.headerView}>
             <Text style={styles.logo}>LOGO</Text>
           </View>
-              <View style={styles.subHeaderView}>
-              <Text style={styles.header}>SIGN IN</Text>
-              <Text style={styles.headerSubText}>Enter your credentials to sign in.</Text>
+          {!signupSuccess ? 
+                <>
+                       <View style={styles.subHeaderView}>
+                <Text style={styles.headerSubText}>Reset Password</Text>
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
                   control={control} 
-                  name={'username'} 
-                  placeholder={'Enter your email or username'} 
-                  title={'Email/Username'} 
+                  name={'password'} 
+                  placeholder={'Password'} 
                   errors={errors}
                   inputContainerStyles={inputContainerStyles}
-                  inputStyle={inputStyle}
-                  />
-                <FormInputController 
-                  control={control} 
-                  name={'password'} 
-                  placeholder={'Enter password'} 
-                  title={'Password'}
                   props={{
                     secureTextEntry: true
                   }}
+                  />
+                <FormInputController 
+                  control={control} 
+                  name={'confirmPassword'} 
+                  placeholder={'Confirm Password'} 
                   errors={errors}
-                  inputStyle={inputStyle}
+                  props={{
+                    secureTextEntry: true
+                  }}
                   />
               </View>
-              <CustomButton title="Sign In"
+              <CustomButton title="Reset Password"
                 handlePress={handleSubmit(submit)}
                 textStyles={dynamicTextStyles}
                 containerStyles={dynamicContainerStyles}/>
               <View style={styles.additionalLinks}>
-                <Text style={styles.additionalText}>
-                    Don't have an account?{" "}
-                </Text>
-                <Link href="/signup" style={styles.signInLink}>
-                  Sign Up
+                <Link href="/signin" style={styles.signInLink}>
+                  Sign In
                 </Link>
               </View>
-              <View style={styles.additionalLinks}>
-                <Link href="/forgotPassword" style={styles.signInLink}>
-                  <Text style={styles.forgotPassword}>
-                    Forgot your password?{" "}
-                </Text>
-                </Link>
-              </View>
+                </>: 
+
+                <View style={styles.successContainer}>
+                <View style={styles.successMiddle}>
+                  <Image source={images.signupSuccess4x} style={styles.successIcon}/>
+                  <Text style={styles.mailText}>You're password was successfully reset.</Text>
+                </View>
+            
+              <CustomButton title="Go to Sign In"
+                handlePress={() => router.push('/signin')}
+                textStyles={dynamicTextStyles}
+                containerStyles={dynamicContainerStyles}/>
+             
+                </View>}
+           
         </ScrollView>
       </SafeAreaView>
     )
@@ -173,12 +178,20 @@ const styles = StyleSheet.create({
         color: '#393E46'
       },
       headerSubText: {
-        fontFamily: 'MontserratMedium',
+        fontFamily: 'MontserratBold',
         marginTop: 10,
+        fontSize: 18
       },
-      formInputs: {
-        marginTop: 20
+      subText: {
+        fontFamily: 'MontserratSemiBold',
+        marginTop: 10,
+        fontSize: 14,
+        textAlign: 'center'
       },
+
+    //   formInputs: {
+    //     marginTop: 20
+    //   },
       additionalLinks: {
         flexDirection: 'row',
         justifyContent: 'center',
@@ -206,19 +219,23 @@ const styles = StyleSheet.create({
         fontSize: 18
       },
       successIcon: {
-        width: 150,
-        height: 150,
+        width: 100,
+        height: 100,
       },
       mailText: {
         fontFamily: 'MontserratSemiBold',
         color: '#393E46',
         fontSize: 17,
-        marginTop: 20
+        marginTop: 20,
+        textAlign: 'center'
       },
       successContainer: {
-        alignItems: 'center',
-        minHeight: 400,
-        marginBottom: 20
+        justifyContent: 'center',
+        // alignItems: 'center',
+        minHeight: 500,
+        // marginBottom: 20,
+        // backgroundColor: 'red',
+        // flex: 1
       },
       checkEmail: {
         fontFamily: 'MontserratMedium',
@@ -228,7 +245,7 @@ const styles = StyleSheet.create({
       },
       successMiddle: {
         alignItems: 'center',
-        flex: 1
+        // flex: 1
       }
     });
     

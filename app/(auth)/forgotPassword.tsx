@@ -10,9 +10,9 @@ import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { AuthService } from "../services/authService";
-import { loginFormSchema } from "@/constants/schemas/loginSchemas";
+import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
 
-export default function SigninScreen() {
+export default function ForgotPasswordScreen() {
 
     const {
         control,
@@ -21,7 +21,7 @@ export default function SigninScreen() {
           errors
         }
       } = useForm({
-        resolver: yupResolver(loginFormSchema)
+        resolver: yupResolver(forgotPasswordFormSchema)
       })
   
       const  [signupSuccess, setSignupSuccess] = useState(false)
@@ -49,6 +49,8 @@ export default function SigninScreen() {
         // }
         
         console.log(data)
+
+        router.navigate('/resetPassword')
       }
   
       const dynamicTextStyles = {
@@ -58,6 +60,10 @@ export default function SigninScreen() {
   
       const dynamicContainerStyles = {
         marginTop: 20
+      }
+
+      const inputStyle = {
+        marginTop: 10
       }
   
       // 'A user with that email/username exists 🫤'
@@ -74,14 +80,6 @@ export default function SigninScreen() {
         });
       }
 
-      const inputContainerStyles = {
-        marginBottom: 20,
-      }
-
-      const inputStyle = {
-        marginTop: 10
-      }
-
     return (
          <SafeAreaView style={styles.mainContainer}>
         <ScrollView style={styles.container}>
@@ -89,48 +87,30 @@ export default function SigninScreen() {
             <Text style={styles.logo}>LOGO</Text>
           </View>
               <View style={styles.subHeaderView}>
-              <Text style={styles.header}>SIGN IN</Text>
-              <Text style={styles.headerSubText}>Enter your credentials to sign in.</Text>
+              <Image source={images.forgotPassword} style={styles.successIcon}/>
+                <Text style={styles.headerSubText}>Forgot Password?</Text>
+                <Text style={styles.subText}>Enter your email to receive a password reset link</Text>
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
                   control={control} 
-                  name={'username'} 
-                  placeholder={'Enter your email or username'} 
-                  title={'Email/Username'} 
-                  errors={errors}
-                  inputContainerStyles={inputContainerStyles}
-                  inputStyle={inputStyle}
-                  />
-                <FormInputController 
-                  control={control} 
-                  name={'password'} 
-                  placeholder={'Enter password'} 
-                  title={'Password'}
-                  props={{
-                    secureTextEntry: true
-                  }}
+                  name={'email'} 
+                  placeholder={'Enter your email'} 
+                  title={'Email'} 
                   errors={errors}
                   inputStyle={inputStyle}
                   />
               </View>
-              <CustomButton title="Sign In"
+              <CustomButton title="Reset Password"
                 handlePress={handleSubmit(submit)}
                 textStyles={dynamicTextStyles}
                 containerStyles={dynamicContainerStyles}/>
               <View style={styles.additionalLinks}>
                 <Text style={styles.additionalText}>
-                    Don't have an account?{" "}
+                    Remember Password?{" "}
                 </Text>
-                <Link href="/signup" style={styles.signInLink}>
-                  Sign Up
-                </Link>
-              </View>
-              <View style={styles.additionalLinks}>
-                <Link href="/forgotPassword" style={styles.signInLink}>
-                  <Text style={styles.forgotPassword}>
-                    Forgot your password?{" "}
-                </Text>
+                <Link href="/signin" style={styles.signInLink}>
+                  Sign In
                 </Link>
               </View>
         </ScrollView>
@@ -164,7 +144,7 @@ const styles = StyleSheet.create({
         color: '#393E46',
       },
       subHeaderView: {
-        alignItems: 'flex-start',
+        alignItems: 'center',
         marginTop: 20
       },
       header: {
@@ -173,9 +153,17 @@ const styles = StyleSheet.create({
         color: '#393E46'
       },
       headerSubText: {
-        fontFamily: 'MontserratMedium',
+        fontFamily: 'MontserratBold',
         marginTop: 10,
+        fontSize: 18
       },
+      subText: {
+        fontFamily: 'MontserratSemiBold',
+        marginTop: 10,
+        fontSize: 14,
+        textAlign: 'center'
+      },
+
       formInputs: {
         marginTop: 20
       },
@@ -206,8 +194,8 @@ const styles = StyleSheet.create({
         fontSize: 18
       },
       successIcon: {
-        width: 150,
-        height: 150,
+        width: 100,
+        height: 100,
       },
       mailText: {
         fontFamily: 'MontserratSemiBold',

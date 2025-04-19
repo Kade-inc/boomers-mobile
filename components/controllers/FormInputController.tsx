@@ -1,26 +1,28 @@
-import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native'
+import { View, Text, TextInput, StyleSheet, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native'
 import React, { FC } from 'react'
 import { Control, Controller, FieldErrors, FieldValues } from 'react-hook-form'
 
 interface FormInputControllerProps {
-    control: Control<FieldValues>,
-    errors?: FieldErrors<FieldValues>,
-    name: string,
-    placeholder: string,
-    props?: TextInputProps,
-    title: string,
+    control: Control<FieldValues>;
+    errors?: FieldErrors<FieldValues>;
+    name: string;
+    placeholder: string;
+    props?: TextInputProps;
+    title: string;
+    inputContainerStyles?: StyleProp<ViewStyle>;
+    inputStyle?: StyleProp<TextStyle>;
 }
-const FormInputController : FC<FormInputControllerProps> = ({control, errors, name, placeholder, title, props}) => {
+const FormInputController : FC<FormInputControllerProps> = ({control, errors, name, placeholder, title, inputContainerStyles, inputStyle, props}) => {
   return (
-    <View style={styles.inputSection}>
-        <Text style={styles.inputTitle}>{title}</Text>
+    <View style={[styles.inputSection, inputContainerStyles]}>
+        <Text style={[styles.inputTitle]}>{title}</Text>
         <Controller
             name={name}
             control={control} 
             render={({field: {onChange, onBlur, value} }) => (
             <TextInput 
                 placeholder={placeholder}
-                style={styles.input}
+                style={[styles.input, inputStyle]}
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
@@ -38,13 +40,13 @@ const styles = StyleSheet.create({
         fontFamily: 'MontserratMedium'
       },
       inputSection: {
-        marginBottom: 20
+        // marginBottom: 20 ///REPLACE DYNAMICALLY WITH inputContainerStyle
       },
       input: {
         borderWidth: 1,
         borderRadius: 4,
         padding: 10,
-        marginTop: 10,
+        // marginTop: 10, ///REPLACE DYNAMICALLY
         borderColor: '#393E46',
         fontFamily: 'MontserratRegular'
       },
