@@ -1,5 +1,6 @@
+import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { useForm, Controller} from "react-hook-form"
+import { useForm, Controller, Control, FieldErrors } from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
@@ -9,7 +10,14 @@ import { Link, router } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
-import { AuthService } from "@/src/services/authService";
+import { useAuth } from "@/src/hooks/queries/useAuth";
+
+interface SignUpFormData {
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export default function SignupScreen() {
     const {
@@ -18,35 +26,28 @@ export default function SignupScreen() {
       formState: {
         errors
       }
-    } = useForm({
+    } = useForm<SignUpFormData>({
       resolver: yupResolver(signUpFormSchema)
     })
 
-    const  [signupSuccess, setSignupSuccess] = useState(false)
+    const [signupSuccess, setSignupSuccess] = useState(false)
+    const { register } = useAuth()
 
-
-    const submit = async (data) => {
-      const authService = new AuthService()
-
-      const {email, username, password, confirmPassword} = data
-
-      const updatedData = {
-        accountId: email,
-        password
+    const submit = async (data: SignUpFormData) => {
+      try {
+        const { email, username, password } = data
+        
+        await register.mutateAsync({
+          email,
+          username,
+          password
+        })
+        
+        setSignupSuccess(true)
+      } catch (error) {
+        console.error("Registration error:", error)
+        showToast(error instanceof Error ? error.message : 'Registration failed')
       }
-
-      const response = await authService.register(updatedData)
-      // setSignupSuccess(true)
-      if (response.success) {
-         setSignupSuccess(true)
-        console.log("SUCCESS")
-      } else {
-        console.log("RESPONSE: ", response)
-        console.log("RRS: ", typeof response.error)
-        showToast(response.error)
-      }
-      
-      console.log(data)
     }
 
     const dynamicTextStyles = {
@@ -70,7 +71,7 @@ export default function SignupScreen() {
     const showToast = (message: string) => {
       Toast.show({
         type: 'error',
-        text1: 'User exists',
+        text1: 'Registration Failed',
         text2: message,
         autoHide: false,
         visibilityTime: 10000,
@@ -93,7 +94,7 @@ export default function SignupScreen() {
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
-                  control={control} 
+                  control={control as any} 
                   name={'email'} 
                   placeholder={'Enter your email'} 
                   title={'Email'} 
@@ -102,7 +103,7 @@ export default function SignupScreen() {
                   inputStyle={inputStyle}
                   />
                 <FormInputController 
-                  control={control} 
+                  control={control as any} 
                   name={'username'} 
                   placeholder={'Enter your username'} 
                   title={'Username'}
@@ -111,7 +112,7 @@ export default function SignupScreen() {
                   inputStyle={inputStyle}
                   />
                 <FormInputController 
-                  control={control} 
+                  control={control as any} 
                   name={'password'} 
                   placeholder={'Enter a password'} 
                   title={'Password'}
@@ -123,7 +124,7 @@ export default function SignupScreen() {
                   inputStyle={inputStyle}
                   />
                 <FormInputController 
-                  control={control} 
+                  control={control as any} 
                   name={'confirmPassword'} 
                   placeholder={'Confirm your password'} 
                   title={'Confirm Password'}
@@ -134,10 +135,12 @@ export default function SignupScreen() {
                   inputStyle={inputStyle}
                   />
               </View>
-              <CustomButton title="Sign Up"
+              <CustomButton 
+                title={register.isPending ? "Signing Up..." : "Sign Up"}
                 handlePress={handleSubmit(submit)}
                 textStyles={dynamicTextStyles}
                 containerStyles={dynamicContainerStyles}
+                isLoading={register.isPending}
                 />
               <View style={styles.additionalLinks}>
                 <Text style={styles.additionalText}>

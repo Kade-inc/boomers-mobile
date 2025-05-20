@@ -8,7 +8,6 @@ import { Link, router } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
-import { AuthService } from "@/src/services/authService";
 import { resetPasswordFormSchema } from "@/constants/schemas/resetPasswordSchema";
 
 export default function ResetPasswordScreen() {
@@ -25,31 +24,7 @@ export default function ResetPasswordScreen() {
   
       const  [signupSuccess, setSignupSuccess] = useState(false)
   
-  
-      const submit = async (data) => {
-        const authService = new AuthService()
-  
-        const {email, username, password, confirmPassword} = data
-  
-        const updatedData = {
-          accountId: email,
-          password
-        }
-  
-        // const response = await authService.register(updatedData)
-        setSignupSuccess(true)
-        // if (response.success) {
-        //    // setSignupSuccess(true)
-        //   console.log("SUCCESS")
-        // } else {
-        //   console.log("RESPONSE: ", response)
-        //   console.log("RRS: ", typeof response.error)
-        //   showToast(response.error)
-        // }
-        
-        console.log(data)
-      }
-  
+
       const dynamicTextStyles = {
         fontSize: 16,
         color: '#393E46'
