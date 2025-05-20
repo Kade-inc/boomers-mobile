@@ -4,12 +4,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
-// import { signUpFormSchema } from "@/constants/schemas/authSchemas";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
-import { AuthService } from "../services/authService";
+import { AuthService } from "@/src/services/authService";
 import { loginFormSchema } from "@/constants/schemas/loginSchemas";
 
 export default function SigninScreen() {

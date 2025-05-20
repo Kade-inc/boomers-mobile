@@ -9,8 +9,8 @@ import { Link, router } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
-import { AuthService } from "../services/authService";
 import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
+import { AuthService } from "@/src/services/authService";
 
 export default function ForgotPasswordScreen() {
 

@@ -5,7 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import Toast, { BaseToast, ErrorToast }  from 'react-native-toast-message';
+import Toast, { BaseToast, ErrorToast, ToastConfigParams }  from 'react-native-toast-message';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { StyleSheet, Text, View } from 'react-native';
@@ -43,11 +43,7 @@ export default function RootLayout() {
   }
 
   const toastConfig = {
-    /*
-      Overwrite 'success' type,
-      by modifying the existing `BaseToast` component
-    */
-    success: (props) => (
+    success: (props: ToastConfigParams<any>) => (
       <BaseToast
         {...props}
         style={{ borderLeftColor: 'pink' }}
@@ -58,11 +54,7 @@ export default function RootLayout() {
         }}
       />
     ),
-    /*
-      Overwrite 'error' type,
-      by modifying the existing `ErrorToast` component
-    */
-    error: (props) => (
+    error: (props: ToastConfigParams<any>) => (
       <ErrorToast
         style={{ borderLeftColor: '#C01212' }}
         {...props}
@@ -74,35 +66,28 @@ export default function RootLayout() {
         }}
       />
     ),
-    /*
-      Or create a completely new type - `tomatoToast`,
-      building the layout from scratch.
-  
-      I can consume any custom `props` I want.
-      They will be passed when calling the `show` method (see below)
-    */
-    tomatoToast: ({ text1, props }) => (
+    custom: (props: ToastConfigParams<any>) => (
       <View style={{ height: 60, width: '100%', backgroundColor: 'red' }}>
-        <Text>{text1}</Text>
-        <Text>{props.uuid}</Text>
+        <Text>{props.text1}</Text>
+        <Text>{props.props?.uuid}</Text>
       </View>
     )
   };
 
   return (
-    // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-    <>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="+not-found" /> */}
-      
-      <StatusBar style="light"/>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
       </Stack>
+      <StatusBar style="light" />
       <Toast config={toastConfig} />
-      </>
-    // </ThemeProvider>
+    </ThemeProvider>
   );
 }
 

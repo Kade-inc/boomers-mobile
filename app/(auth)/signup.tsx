@@ -9,7 +9,7 @@ import { Link, router } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
-import { AuthService } from "../services/authService";
+import { AuthService } from "@/src/services/authService";
 
 export default function SignupScreen() {
     const {
@@ -35,16 +35,16 @@ export default function SignupScreen() {
         password
       }
 
-      // const response = await authService.register(updatedData)
-      setSignupSuccess(true)
-      // if (response.success) {
-      //    // setSignupSuccess(true)
-      //   console.log("SUCCESS")
-      // } else {
-      //   console.log("RESPONSE: ", response)
-      //   console.log("RRS: ", typeof response.error)
-      //   showToast(response.error)
-      // }
+      const response = await authService.register(updatedData)
+      // setSignupSuccess(true)
+      if (response.success) {
+         setSignupSuccess(true)
+        console.log("SUCCESS")
+      } else {
+        console.log("RESPONSE: ", response)
+        console.log("RRS: ", typeof response.error)
+        showToast(response.error)
+      }
       
       console.log(data)
     }
