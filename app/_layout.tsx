@@ -45,6 +45,8 @@ export default function RootLayout() {
     MontserratBlack: require('../assets/fonts/MontserratBlack.ttf')
   });
 
+  useReactQueryDevTools(queryClient);
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -86,8 +88,6 @@ export default function RootLayout() {
       </View>
     )
   };
-
-  useReactQueryDevTools(queryClient);
 
   return (
     <QueryClientProvider client={queryClient}>
