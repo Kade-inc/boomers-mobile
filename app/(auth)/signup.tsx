@@ -17,6 +17,7 @@ interface SignUpFormData {
   username: string;
   password: string;
   confirmPassword: string;
+  source: 'web' | 'mobile';
 }
 
 export default function SignupScreen() {
@@ -27,7 +28,10 @@ export default function SignupScreen() {
         errors
       }
     } = useForm<SignUpFormData>({
-      resolver: yupResolver(signUpFormSchema)
+      resolver: yupResolver(signUpFormSchema),
+      defaultValues: {
+        source: 'mobile'
+      }
     })
 
     const [signupSuccess, setSignupSuccess] = useState(false)
@@ -35,12 +39,13 @@ export default function SignupScreen() {
 
     const submit = async (data: SignUpFormData) => {
       try {
-        const { email, username, password } = data
+        const { email, username, password, source } = data
         
         await register.mutateAsync({
           email,
           username,
-          password
+          password,
+          source
         })
         
         setSignupSuccess(true)

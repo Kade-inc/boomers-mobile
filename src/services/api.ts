@@ -77,6 +77,7 @@ export const endpoints = {
     login: '/users/login',
     forgotPassword: '/auth/forgot-password',
     resetPassword: '/auth/reset-password',
+    verify: '/users/verify'
   },
   // Add more endpoint categories as needed
 } as const;
@@ -99,6 +100,12 @@ export interface RegisterRequest {
   email: string;
   username: string;
   password: string;
+  source: 'web' | 'mobile';
+}
+
+export interface VerifyRequest {
+  accountId: string;
+  verificationCode: string;
 }
 
 export interface LoginRequest {
@@ -232,6 +239,27 @@ export const authService = {
         return {
           success: false,
           error: error.response?.data?.message || 'Failed to reset password',
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred',
+      };
+    }
+  },
+
+  verify: async (data: VerifyRequest): Promise<ApiResponse> => {
+    try {
+      const response = await api.post(endpoints.auth.verify, data);
+      return {
+        success: true,
+        data: response.data.data,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Verification failed',
         };
       }
       return {

@@ -22,4 +22,7 @@ export const signUpFormSchema = yup.object({
               .string().trim()
               .required("Confirm Password is required")
               .oneOf([yup.ref("password")], "Passwords must match"),
+    source: yup.string().trim()
+              .required("Source is required")
+              .oneOf(['web', 'mobile'], "Source must be either 'web' or 'mobile'")
   })
