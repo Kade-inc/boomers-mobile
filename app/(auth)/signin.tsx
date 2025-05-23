@@ -9,21 +9,38 @@ import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { loginFormSchema } from "@/constants/schemas/loginSchemas";
+import { useAuth } from "@/src/hooks/queries/useAuth";
+
+interface LoginFormData {
+  username: string;
+  password: string;
+}
 
 export default function SigninScreen() {
-
     const {
         control,
         handleSubmit,
         formState: {
           errors
         }
-      } = useForm({
+      } = useForm<LoginFormData>({
         resolver: yupResolver(loginFormSchema)
       })
   
-      const  [signupSuccess, setSignupSuccess] = useState(false)
+      const { login } = useAuth()
   
+      const submit = async (data: LoginFormData) => {
+        try {
+          await login.mutateAsync({
+            email: data.username,
+            password: data.password
+          });
+          router.replace('/');
+        } catch (error) {
+          console.error("Login error:", error);
+          showToast(error instanceof Error ? error.message : 'Login failed');
+        }
+      };
   
       const dynamicTextStyles = {
         fontSize: 16,
@@ -39,7 +56,7 @@ export default function SigninScreen() {
       const showToast = (message: string) => {
         Toast.show({
           type: 'error',
-          text1: 'User exists',
+          text1: 'Login Failed',
           text2: message,
           autoHide: false,
           visibilityTime: 10000,
@@ -68,7 +85,7 @@ export default function SigninScreen() {
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
-                  control={control} 
+                  control={control as any} 
                   name={'username'} 
                   placeholder={'Enter your email or username'} 
                   title={'Email/Username'} 
@@ -77,7 +94,7 @@ export default function SigninScreen() {
                   inputStyle={inputStyle}
                   />
                 <FormInputController 
-                  control={control} 
+                  control={control as any} 
                   name={'password'} 
                   placeholder={'Enter password'} 
                   title={'Password'}
@@ -88,10 +105,13 @@ export default function SigninScreen() {
                   inputStyle={inputStyle}
                   />
               </View>
-              <CustomButton title="Sign In"
+              <CustomButton 
+                title={login.isPending ? "Signing In..." : "Sign In"}
                 handlePress={handleSubmit(submit)}
                 textStyles={dynamicTextStyles}
-                containerStyles={dynamicContainerStyles}/>
+                containerStyles={dynamicContainerStyles}
+                isLoading={login.isPending}
+                />
               <View style={styles.additionalLinks}>
                 <Text style={styles.additionalText}>
                     Don't have an account?{" "}

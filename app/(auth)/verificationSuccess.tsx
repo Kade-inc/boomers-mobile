@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
 import CustomButton from '@/components/CustomButton';
 import { images } from '@/constants';
 import { authService } from '@/src/services/api';
@@ -30,20 +30,8 @@ export default function VerificationSuccessScreen() {
 
       if (response.success) {
         setIsVerified(true);
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Your account has been verified successfully!',
-          position: 'bottom',
-        });
       } else {
         setErrorMessage(response.error || 'Failed to verify your account');
-        Toast.show({
-          type: 'error',
-          text1: 'Verification Failed',
-          text2: response.error || 'Failed to verify your account',
-          position: 'bottom',
-        });
       }
     } catch (error: any) {
       const errorMsg = error.response?.data?.error || 'An unexpected error occurred';
@@ -66,7 +54,7 @@ export default function VerificationSuccessScreen() {
 
   const dynamicContainerStyles = {
     marginTop: 20,
-    width: '50%'
+    width: '50%' as const
   }
 
   return (

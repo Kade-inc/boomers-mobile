@@ -1,12 +1,12 @@
-import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { useForm, Controller, Control, FieldErrors } from "react-hook-form"
+import React, { useCallback } from 'react';
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useForm } from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
 import { signUpFormSchema } from "@/constants/schemas/authSchemas";
-import { Link, router } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
@@ -24,6 +24,7 @@ export default function SignupScreen() {
     const {
       control,
       handleSubmit,
+      reset,
       formState: {
         errors
       }
@@ -36,6 +37,20 @@ export default function SignupScreen() {
 
     const [signupSuccess, setSignupSuccess] = useState(false)
     const { register } = useAuth()
+
+    // Reset form and success state when the screen comes into focus
+    useFocusEffect(
+      useCallback(() => {
+        setSignupSuccess(false);
+        reset({
+          email: '',
+          username: '',
+          password: '',
+          confirmPassword: '',
+          source: 'mobile'
+        });
+      }, [reset])
+    );
 
     const submit = async (data: SignUpFormData) => {
       try {
