@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { StyleSheet, Text, View } from 'react-native';
+import { useReactQueryDevTools } from '@dev-plugins/react-query';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -85,6 +86,8 @@ export default function RootLayout() {
       </View>
     )
   };
+
+  useReactQueryDevTools(queryClient);
 
   return (
     <QueryClientProvider client={queryClient}>
