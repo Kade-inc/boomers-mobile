@@ -4,43 +4,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
+// import { signUpFormSchema } from "@/constants/schemas/authSchemas";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
-import { loginFormSchema } from "@/constants/schemas/loginSchemas";
-import { useAuth } from "@/src/hooks/queries/useAuth";
+import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
 
-interface LoginFormData {
-  username: string;
-  password: string;
-}
+export default function ForgotPasswordScreen() {
 
-export default function SigninScreen() {
     const {
         control,
         handleSubmit,
         formState: {
           errors
         }
-      } = useForm<LoginFormData>({
-        resolver: yupResolver(loginFormSchema)
+      } = useForm({
+        resolver: yupResolver(forgotPasswordFormSchema)
       })
   
-      const { login } = useAuth()
+      const  [signupSuccess, setSignupSuccess] = useState(false)
   
-      const submit = async (data: LoginFormData) => {
-        try {
-          await login.mutateAsync({
-            email: data.username,
-            password: data.password
-          });
-          router.replace('/');
-        } catch (error) {
-          console.error("Login error:", error);
-          showToast(error instanceof Error ? error.message : 'Login failed');
-        }
-      };
+
   
       const dynamicTextStyles = {
         fontSize: 16,
@@ -50,27 +35,23 @@ export default function SigninScreen() {
       const dynamicContainerStyles = {
         marginTop: 20
       }
+
+      const inputStyle = {
+        marginTop: 10
+      }
   
       // 'A user with that email/username exists 🫤'
   
       const showToast = (message: string) => {
         Toast.show({
           type: 'error',
-          text1: 'Login Failed',
+          text1: 'User exists',
           text2: message,
           autoHide: false,
           visibilityTime: 10000,
           position: 'bottom',
           swipeable: true
         });
-      }
-
-      const inputContainerStyles = {
-        marginBottom: 20,
-      }
-
-      const inputStyle = {
-        marginTop: 10
       }
 
     return (
@@ -80,51 +61,30 @@ export default function SigninScreen() {
             <Text style={styles.logo}>LOGO</Text>
           </View>
               <View style={styles.subHeaderView}>
-              <Text style={styles.header}>SIGN IN</Text>
-              <Text style={styles.headerSubText}>Enter your credentials to sign in.</Text>
+              <Image source={images.forgotPassword} style={styles.successIcon}/>
+                <Text style={styles.headerSubText}>Forgot Password?</Text>
+                <Text style={styles.subText}>Enter your email to receive a password reset link</Text>
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
-                  control={control as any} 
-                  name={'username'} 
-                  placeholder={'Enter your email or username'} 
-                  title={'Email/Username'} 
-                  errors={errors}
-                  inputContainerStyles={inputContainerStyles}
-                  inputStyle={inputStyle}
-                  />
-                <FormInputController 
-                  control={control as any} 
-                  name={'password'} 
-                  placeholder={'Enter password'} 
-                  title={'Password'}
-                  props={{
-                    secureTextEntry: true
-                  }}
+                  control={control} 
+                  name={'email'} 
+                  placeholder={'Enter your email'} 
+                  title={'Email'} 
                   errors={errors}
                   inputStyle={inputStyle}
                   />
               </View>
-              <CustomButton 
-                title={login.isPending ? "Signing In..." : "Sign In"}
+              <CustomButton title="Reset Password"
                 handlePress={handleSubmit(submit)}
                 textStyles={dynamicTextStyles}
-                containerStyles={dynamicContainerStyles}
-                isLoading={login.isPending}
-                />
+                containerStyles={dynamicContainerStyles}/>
               <View style={styles.additionalLinks}>
                 <Text style={styles.additionalText}>
-                    Don't have an account?{" "}
+                    Remember Password?{" "}
                 </Text>
-                <Link href="/signup" style={styles.signInLink}>
-                  Sign Up
-                </Link>
-              </View>
-              <View style={styles.additionalLinks}>
-                <Link href="/forgotPassword" style={styles.signInLink}>
-                  <Text style={styles.forgotPassword}>
-                    Forgot your password?{" "}
-                </Text>
+                <Link href="/signin" style={styles.signInLink}>
+                  Sign In
                 </Link>
               </View>
         </ScrollView>
@@ -158,7 +118,7 @@ const styles = StyleSheet.create({
         color: '#393E46',
       },
       subHeaderView: {
-        alignItems: 'flex-start',
+        alignItems: 'center',
         marginTop: 20
       },
       header: {
@@ -167,9 +127,17 @@ const styles = StyleSheet.create({
         color: '#393E46'
       },
       headerSubText: {
-        fontFamily: 'MontserratMedium',
+        fontFamily: 'MontserratBold',
         marginTop: 10,
+        fontSize: 18
       },
+      subText: {
+        fontFamily: 'MontserratSemiBold',
+        marginTop: 10,
+        fontSize: 14,
+        textAlign: 'center'
+      },
+
       formInputs: {
         marginTop: 20
       },
@@ -200,8 +168,8 @@ const styles = StyleSheet.create({
         fontSize: 18
       },
       successIcon: {
-        width: 150,
-        height: 150,
+        width: 100,
+        height: 100,
       },
       mailText: {
         fontFamily: 'MontserratSemiBold',
