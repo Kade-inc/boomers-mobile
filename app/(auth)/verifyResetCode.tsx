@@ -124,6 +124,10 @@ export default function VerifyResetCodeScreen() {
                             title={'Verification Code'}
                             errors={errors}
                             inputStyle={inputStyle}
+                            props={{
+                                keyboardType: 'numeric',
+                                maxLength: 6
+                            }}
                         />
                     </View>
                     <CustomButton 
