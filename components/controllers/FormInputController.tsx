@@ -11,8 +11,9 @@ interface FormInputControllerProps {
     title: string;
     inputContainerStyles?: StyleProp<ViewStyle>;
     inputStyle?: StyleProp<TextStyle>;
+    rightIcon?: React.ReactNode;
 }
-const FormInputController : FC<FormInputControllerProps> = ({control, errors, name, placeholder, title, inputContainerStyles, inputStyle, props}) => {
+const FormInputController : FC<FormInputControllerProps> = ({control, errors, name, placeholder, title, inputContainerStyles, inputStyle, props, rightIcon}) => {
   return (
     <View style={[styles.inputSection, inputContainerStyles]}>
         <Text style={[styles.inputTitle]}>{title}</Text>
@@ -20,18 +21,21 @@ const FormInputController : FC<FormInputControllerProps> = ({control, errors, na
             name={name}
             control={control} 
             render={({field: {onChange, onBlur, value} }) => (
-            <TextInput 
-                placeholder={placeholder}
-                style={[styles.input, inputStyle]}
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                autoCapitalize={'none'}
-                {...props}
-            />
+            <View style={styles.inputWrapper}>
+                <TextInput 
+                    placeholder={placeholder}
+                    style={[styles.input, inputStyle]}
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    autoCapitalize={'none'}
+                    {...props}
+                />
+                {rightIcon && <View style={styles.iconWrapper}>{rightIcon}</View>}
+            </View>
             )}
         />
-        {errors && errors[name] && <Text style={styles.textError}>{errors[name]?.message}</Text>}
+        {errors && errors[name] && <Text style={styles.textError}>{String(errors[name]?.message)}</Text>}
    </View>
   )
 }
@@ -42,13 +46,26 @@ const styles = StyleSheet.create({
       inputSection: {
         // marginBottom: 20 ///REPLACE DYNAMICALLY WITH inputContainerStyle
       },
+      inputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        position: 'relative',
+      },
       input: {
+        flex: 1,
         borderWidth: 1,
         borderRadius: 4,
         padding: 10,
         // marginTop: 10, ///REPLACE DYNAMICALLY
         borderColor: '#393E46',
         fontFamily: 'MontserratRegular'
+      },
+      iconWrapper: {
+        position: 'absolute',
+        right: 10,
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
       },
       textError: {
         backgroundColor: '#EB4335',

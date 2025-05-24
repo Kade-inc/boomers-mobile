@@ -31,6 +31,12 @@ const AuthLayout = () => {
           headerShown: false
         }}
       />
+       <Stack.Screen 
+        name="verifyResetCode"
+        options={{
+          headerShown: false
+        }}
+      />
       <Stack.Screen 
         name="verificationSuccess"
         options={{
