@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
@@ -26,6 +26,12 @@ export default function ResetPasswordScreen() {
     const [resetSuccess, setResetSuccess] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            setResetSuccess(false);
+        }, [])
+    );
 
     const {
         control,
@@ -90,12 +96,12 @@ export default function ResetPasswordScreen() {
 
     return (
         <SafeAreaView style={styles.mainContainer}>
-            <ScrollView style={styles.container}>
-                <View style={styles.headerView}>
-                    <Text style={styles.logo}>LOGO</Text>
-                </View>
-                {!resetSuccess ? (
-                    <>
+            {!resetSuccess ? (
+                <>
+                    <ScrollView style={styles.container}>
+                        <View style={styles.headerView}>
+                            <Text style={styles.logo}>LOGO</Text>
+                        </View>
                         <View style={styles.subHeaderView}>
                             <Text style={styles.headerSubText}>Reset Password</Text>
                         </View>
@@ -148,9 +154,16 @@ export default function ResetPasswordScreen() {
                             containerStyles={dynamicContainerStyles}
                             isLoading={isLoading}
                         />
-                    </>
-                ) : (
-                    <View style={styles.successContainer}>
+                    </ScrollView>
+                    <View style={styles.backLinkContainer}>
+                        <Link href="/forgotPassword" style={styles.backLink}>
+                            Back
+                        </Link>
+                    </View>
+                </>
+            ) : (
+                <View style={styles.successContainer}>
+                    <View style={styles.successContent}>
                         <View style={styles.successMiddle}>
                             <Image source={images.signupSuccess4x} style={styles.successIcon}/>
                             <Text style={styles.mailText}>Your password was successfully reset.</Text>
@@ -162,13 +175,6 @@ export default function ResetPasswordScreen() {
                             containerStyles={dynamicContainerStyles}
                         />
                     </View>
-                )}
-            </ScrollView>
-            {!resetSuccess && (    
-                <View style={styles.backLinkContainer}>
-                    <Link href="/forgotPassword" style={styles.backLink}>
-                        Back
-                    </Link>
                 </View>
             )}
         </SafeAreaView>
@@ -206,11 +212,17 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     successContainer: {
+        flex: 1,
         justifyContent: 'center',
-        minHeight: 500,
+        alignItems: 'center',
+    },
+    successContent: {
+        width: '100%',
+        paddingHorizontal: 20,
     },
     successMiddle: {
         alignItems: 'center',
+        marginBottom: 40,
     },
     successIcon: {
         width: 100,
