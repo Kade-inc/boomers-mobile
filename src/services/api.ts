@@ -110,18 +110,15 @@ export interface VerifyRequest {
 }
 
 export interface LoginRequest {
-  email: string;
+  accountId: string;
   password: string;
 }
 
 // Types for auth responses
 export interface AuthResponse {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
+  message: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface ForgotPasswordRequest {
@@ -200,14 +197,14 @@ export const authService = {
   login: async (data: LoginRequest): Promise<ApiResponse<AuthResponse>> => {
     try {
       const response = await api.post(endpoints.auth.login, data);
-      const { token, user } = response.data.data;
       
-      // Store token
-      await AsyncStorage.setItem('token', token);
+      // Store tokens
+      await AsyncStorage.setItem('token', response.data.accessToken);
+      await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
       
       return {
         success: true,
-        data: response.data.data,
+        data: response.data,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {

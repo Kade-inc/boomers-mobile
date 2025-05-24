@@ -32,12 +32,11 @@ export default function SigninScreen() {
       const submit = async (data: LoginFormData) => {
         try {
           await login.mutateAsync({
-            email: data.username,
+            accountId: data.username,
             password: data.password
           });
-          router.replace('/');
+          router.replace('/explore');
         } catch (error) {
-          console.error("Login error:", error);
           showToast(error instanceof Error ? error.message : 'Login failed');
         }
       };
