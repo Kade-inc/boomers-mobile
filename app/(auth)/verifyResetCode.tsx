@@ -10,6 +10,7 @@ import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { verifyResetCodeSchema } from "../../constants/schemas/verifyResetCodeSchema";
 import { useAuth } from "@/src/hooks/queries/useAuth";
+import VerificationCodeInput from '@/components/VerificationCodeInput';
 
 export default function VerifyResetCodeScreen() {
     const { email } = useLocalSearchParams<{ email: string }>();
@@ -117,17 +118,11 @@ export default function VerifyResetCodeScreen() {
                         <Text style={styles.subText}>Please enter the code sent to your email</Text>
                     </View>
                     <View style={styles.formInputs}>
-                        <FormInputController 
+                        <VerificationCodeInput 
                             control={control as any} 
                             name={'verificationCode'} 
-                            placeholder={'Enter verification code'} 
                             title={'Verification Code'}
                             errors={errors}
-                            inputStyle={inputStyle}
-                            props={{
-                                keyboardType: 'numeric',
-                                maxLength: 6
-                            }}
                         />
                     </View>
                     <CustomButton 
