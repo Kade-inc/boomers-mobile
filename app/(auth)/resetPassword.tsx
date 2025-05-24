@@ -164,11 +164,13 @@ export default function ResetPasswordScreen() {
                     </View>
                 )}
             </ScrollView>
-            <View style={styles.backLinkContainer}>
-                <Link href="/forgotPassword" style={styles.backLink}>
-                    Back
-                </Link>
-            </View>
+            {!resetSuccess && (    
+                <View style={styles.backLinkContainer}>
+                    <Link href="/forgotPassword" style={styles.backLink}>
+                        Back
+                    </Link>
+                </View>
+            )}
         </SafeAreaView>
     );
 }
