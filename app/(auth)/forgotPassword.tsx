@@ -4,13 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Link } from "expo-router";
-import { useState } from "react";
+import { Link, useRouter } from "expo-router";
+import { useState, useCallback } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
 import { useAuth } from "@/src/hooks/queries/useAuth";
-import { useRouter } from "expo-router";
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 
@@ -18,6 +17,7 @@ export default function ForgotPasswordScreen() {
     const { forgotPassword } = useAuth();
     const router = useRouter();
     const colorScheme = useColorScheme();
+    const [isNavigating, setIsNavigating] = useState(false);
 
     const {
         control,
@@ -30,7 +30,9 @@ export default function ForgotPasswordScreen() {
       })
   
       const submit = async (data: { email: string }) => {
+        if (isNavigating) return;
         try {
+          setIsNavigating(true);
           const response = await forgotPassword.mutateAsync({
             email: data.email,
             source: 'mobile'
@@ -48,8 +50,16 @@ export default function ForgotPasswordScreen() {
         } catch (error) {
           console.error("Forgot password error:", error);
           showToast(error instanceof Error ? error.message : 'Failed to process forgot password request');
+        } finally {
+          setIsNavigating(false);
         }
       };
+
+      const handleNavigation = useCallback((path: '/signin' | '/verifyResetCode') => {
+        if (isNavigating) return;
+        setIsNavigating(true);
+        router.push(path);
+      }, [isNavigating, router]);
   
       const dynamicTextStyles = {
         fontSize: 16,
@@ -109,7 +119,7 @@ export default function ForgotPasswordScreen() {
                     isLoading={forgotPassword.isPending}
                 />
                 <View style={styles.additionalLinks}>
-                    <Link href="/signin" style={[styles.signInLink, { color: Colors[colorScheme ?? 'light'].text }]}>
+                    <Link href="/signin" onPress={() => handleNavigation('/signin')} style={[styles.signInLink, { color: Colors[colorScheme ?? 'light'].text }]}>
                         <Text style={[styles.additionalText, { color: Colors[colorScheme ?? 'light'].text }]}>
                             Back to Sign In
                         </Text>

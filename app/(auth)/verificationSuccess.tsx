@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '@/components/CustomButton';
@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 
 export default function VerificationSuccessScreen() {
   const colorScheme = useColorScheme();
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const dynamicTextStyles = {
     fontSize: 16,
@@ -18,6 +19,12 @@ export default function VerificationSuccessScreen() {
   const dynamicContainerStyles = {
     marginTop: 20
   };
+
+  const handleNavigation = useCallback((path: '/signin') => {
+    if (isNavigating) return;
+    setIsNavigating(true);
+    router.push(path);
+  }, [isNavigating, router]);
 
   return (
     <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
@@ -33,7 +40,7 @@ export default function VerificationSuccessScreen() {
         </View>
         <CustomButton 
           title="Go to Sign In"
-          handlePress={() => router.push('/signin')}
+          handlePress={() => handleNavigation('/signin')}
           textStyles={dynamicTextStyles}
           containerStyles={dynamicContainerStyles}
         />

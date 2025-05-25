@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm, Control } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -6,7 +6,6 @@ import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
-import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { resetPasswordFormSchema } from "@/constants/schemas/resetPasswordSchema";
@@ -28,6 +27,7 @@ export default function ResetPasswordScreen() {
     const [resetSuccess, setResetSuccess] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isNavigating, setIsNavigating] = useState(false);
     const colorScheme = useColorScheme();
 
     useFocusEffect(
@@ -65,7 +65,14 @@ export default function ResetPasswordScreen() {
         });
     };
 
+    const handleNavigation = useCallback((path: '/signin') => {
+        if (isNavigating) return;
+        setIsNavigating(true);
+        router.push(path);
+    }, [isNavigating, router]);
+
     const submit = async (data: ResetPasswordFormData) => {
+        if (isNavigating) return;
         if (!token) {
             showToast('Reset token is missing. Please try again.');
             return;
@@ -86,6 +93,7 @@ export default function ResetPasswordScreen() {
             showToast(error instanceof Error ? error.message : 'Failed to reset password');
         } finally {
             setIsLoading(false);
+            setIsNavigating(false);
         }
     };
 
@@ -106,7 +114,7 @@ export default function ResetPasswordScreen() {
                             Your password has been reset successfully. You can now sign in with your new password.
                         </Text>
                     </View>
-                    <Link href="/signin" style={styles.homeLink}>
+                    <Link href="/signin" onPress={() => handleNavigation('/signin')} style={styles.homeLink}>
                         <Text style={styles.homeLinkText}>Back to Sign In</Text>
                     </Link>
                 </View>
@@ -133,8 +141,16 @@ export default function ResetPasswordScreen() {
                         errors={errors}
                         inputContainerStyles={inputContainerStyles}
                         props={{
-                            secureTextEntry: true
+                            secureTextEntry: !showPassword
                         }}
+                        rightIcon={
+                            <Feather
+                                name={showPassword ? 'eye' : 'eye-off'}
+                                size={20}
+                                color={Colors[colorScheme ?? 'light'].text}
+                                onPress={() => setShowPassword((prev) => !prev)}
+                            />
+                        }
                     />
                     <FormInputController 
                         control={control as any} 
@@ -143,8 +159,16 @@ export default function ResetPasswordScreen() {
                         title={'Confirm Password'} 
                         errors={errors}
                         props={{
-                            secureTextEntry: true
+                            secureTextEntry: !showConfirmPassword
                         }}
+                        rightIcon={
+                            <Feather
+                                name={showConfirmPassword ? 'eye' : 'eye-off'}
+                                size={20}
+                                color={Colors[colorScheme ?? 'light'].text}
+                                onPress={() => setShowConfirmPassword((prev) => !prev)}
+                            />
+                        }
                     />
                 </View>
                 <CustomButton 

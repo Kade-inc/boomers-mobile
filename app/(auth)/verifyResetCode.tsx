@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,6 +23,7 @@ export default function VerifyResetCodeScreen() {
     const { verifyResetToken } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [verificationSuccess, setVerificationSuccess] = useState(false);
+    const [isNavigating, setIsNavigating] = useState(false);
     const colorScheme = useColorScheme();
 
     const {
@@ -54,7 +55,14 @@ export default function VerifyResetCodeScreen() {
         });
     };
 
+    const handleNavigation = useCallback((path: '/forgotPassword' | '/resetPassword') => {
+        if (isNavigating) return;
+        setIsNavigating(true);
+        router.push(path);
+    }, [isNavigating, router]);
+
     const submit = async (data: VerifyResetCodeFormData) => {
+        if (isNavigating) return;
         try {
             setIsLoading(true);
             const response = await verifyResetToken.mutateAsync({
@@ -75,6 +83,7 @@ export default function VerifyResetCodeScreen() {
             showToast(error instanceof Error ? error.message : 'Failed to verify code');
         } finally {
             setIsLoading(false);
+            setIsNavigating(false);
         }
     };
 
@@ -128,7 +137,7 @@ export default function VerifyResetCodeScreen() {
                     isLoading={isLoading}
                 />
                 <View style={styles.backLinkContainer}>
-                    <Link href="/forgotPassword" style={styles.backLink}>
+                    <Link href="/forgotPassword" onPress={() => handleNavigation('/forgotPassword')} style={styles.backLink}>
                         Back to Forgot Password
                     </Link>
                 </View>
