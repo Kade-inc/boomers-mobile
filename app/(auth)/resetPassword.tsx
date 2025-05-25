@@ -1,225 +1,249 @@
-import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { useForm, Controller} from "react-hook-form"
+import React from 'react';
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useForm, Control } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
-import { yupResolver } from '@hookform/resolvers/yup'
-import { Link, router } from "expo-router";
+import { yupResolver } from '@hookform/resolvers/yup';
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { resetPasswordFormSchema } from "@/constants/schemas/resetPasswordSchema";
+import { useAuth } from "@/src/hooks/queries/useAuth";
+import { Link } from "expo-router";
+import { Feather } from '@expo/vector-icons';
+
+interface ResetPasswordFormData {
+    password: string;
+    confirmPassword: string;
+}
 
 export default function ResetPasswordScreen() {
+    const { userId, token } = useLocalSearchParams<{ userId: string; token: string }>();
+    const { resetPassword } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
+    const [resetSuccess, setResetSuccess] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            setResetSuccess(false);
+        }, [])
+    );
 
     const {
         control,
         handleSubmit,
-        formState: {
-          errors
-        }
-      } = useForm({
+        formState: { errors }
+    } = useForm<ResetPasswordFormData>({
         resolver: yupResolver(resetPasswordFormSchema)
-      })
-  
-      const  [signupSuccess, setSignupSuccess] = useState(false)
-  
+    });
 
-      const dynamicTextStyles = {
+    const dynamicTextStyles = {
         fontSize: 16,
         color: '#393E46'
-      }
-  
-      const dynamicContainerStyles = {
+    };
+
+    const dynamicContainerStyles = {
         marginTop: 20
-      }
+    };
 
-      const inputContainerStyles = {
-        // marginBottom: 20
-      }
-
-      const inputStyle = {
-        // marginBottom: 20
-      }
-  
-      // 'A user with that email/username exists 🫤'
-  
-      const showToast = (message: string) => {
+    const showToast = (message: string) => {
         Toast.show({
-          type: 'error',
-          text1: 'User exists',
-          text2: message,
-          autoHide: false,
-          visibilityTime: 10000,
-          position: 'bottom',
-          swipeable: true
+            type: 'error',
+            text1: 'Error',
+            text2: message,
+            autoHide: false,
+            visibilityTime: 10000,
+            position: 'bottom',
+            swipeable: true
         });
-      }
+    };
+
+    const submit = async (data: ResetPasswordFormData) => {
+        if (!token) {
+            showToast('Reset token is missing. Please try again.');
+            return;
+        }
+        try {
+            setIsLoading(true);
+            const response = await resetPassword.mutateAsync({
+                userId,
+                token,
+                password: data.password
+            });
+            if (response.message) {
+                setResetSuccess(true);
+            } else {
+                showToast('Failed to reset password');
+            }
+        } catch (error) {
+            showToast(error instanceof Error ? error.message : 'Failed to reset password');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const inputContainerStyles = {
+      marginBottom: 20
+    }
+
+    const inputStyle = {
+      marginTop: 10
+    }
 
     return (
-         <SafeAreaView style={styles.mainContainer}>
-        <ScrollView style={styles.container}>
-          <View style={styles.headerView}>
-            <Text style={styles.logo}>LOGO</Text>
-          </View>
-          {!signupSuccess ? 
+        <SafeAreaView style={styles.mainContainer}>
+            {!resetSuccess ? (
                 <>
-                       <View style={styles.subHeaderView}>
-                <Text style={styles.headerSubText}>Reset Password</Text>
-              </View>
-              <View style={styles.formInputs}>
-                <FormInputController 
-                  control={control} 
-                  name={'password'} 
-                  placeholder={'Password'} 
-                  errors={errors}
-                  inputContainerStyles={inputContainerStyles}
-                  props={{
-                    secureTextEntry: true
-                  }}
-                  />
-                <FormInputController 
-                  control={control} 
-                  name={'confirmPassword'} 
-                  placeholder={'Confirm Password'} 
-                  errors={errors}
-                  props={{
-                    secureTextEntry: true
-                  }}
-                  />
-              </View>
-              <CustomButton title="Reset Password"
-                handlePress={handleSubmit(submit)}
-                textStyles={dynamicTextStyles}
-                containerStyles={dynamicContainerStyles}/>
-              <View style={styles.additionalLinks}>
-                <Link href="/signin" style={styles.signInLink}>
-                  Sign In
-                </Link>
-              </View>
-                </>: 
-
+                    <ScrollView style={styles.container}>
+                        <View style={styles.headerView}>
+                            <Text style={styles.logo}>LOGO</Text>
+                        </View>
+                        <View style={styles.subHeaderView}>
+                            <Text style={styles.headerSubText}>Reset Password</Text>
+                        </View>
+                        <View style={styles.formInputs}>
+                            <FormInputController 
+                                control={control as unknown as Control<any>} 
+                                name={'password'} 
+                                placeholder={'Password'} 
+                                title={'New Password'}
+                                errors={errors}
+                                props={{
+                                    secureTextEntry: !showPassword
+                                }}
+                                rightIcon={
+                                    <Feather
+                                        name={showPassword ? 'eye' : 'eye-off'}
+                                        size={20}
+                                        color="#393E46"
+                                        onPress={() => setShowPassword((prev) => !prev)}
+                                    />
+                                }
+                                inputStyle={inputStyle}
+                                inputContainerStyles={inputContainerStyles}
+                            />
+                            <FormInputController 
+                                control={control as unknown as Control<any>} 
+                                name={'confirmPassword'} 
+                                placeholder={'Confirm Password'} 
+                                title={'Confirm Password'}
+                                errors={errors}
+                                props={{
+                                    secureTextEntry: !showConfirmPassword
+                                }}
+                                rightIcon={
+                                    <Feather
+                                        name={showConfirmPassword ? 'eye' : 'eye-off'}
+                                        size={20}
+                                        color="#393E46"
+                                        onPress={() => setShowConfirmPassword((prev) => !prev)}
+                                    />
+                                }
+                                inputStyle={inputStyle}
+                                inputContainerStyles={inputContainerStyles}
+                            />
+                        </View>
+                        <CustomButton 
+                            title="Reset Password"
+                            handlePress={handleSubmit(submit)}
+                            textStyles={dynamicTextStyles}
+                            containerStyles={dynamicContainerStyles}
+                            isLoading={isLoading}
+                        />
+                    </ScrollView>
+                    <View style={styles.backLinkContainer}>
+                        <Link href="/forgotPassword" style={styles.backLink}>
+                            Back
+                        </Link>
+                    </View>
+                </>
+            ) : (
                 <View style={styles.successContainer}>
-                <View style={styles.successMiddle}>
-                  <Image source={images.signupSuccess4x} style={styles.successIcon}/>
-                  <Text style={styles.mailText}>You're password was successfully reset.</Text>
+                    <View style={styles.successContent}>
+                        <View style={styles.successMiddle}>
+                            <Image source={images.signupSuccess4x} style={styles.successIcon}/>
+                            <Text style={styles.mailText}>Your password was successfully reset.</Text>
+                        </View>
+                        <CustomButton 
+                            title="Go to Sign In"
+                            handlePress={() => router.push('/signin')}
+                            textStyles={dynamicTextStyles}
+                            containerStyles={dynamicContainerStyles}
+                        />
+                    </View>
                 </View>
-            
-              <CustomButton title="Go to Sign In"
-                handlePress={() => router.push('/signin')}
-                textStyles={dynamicTextStyles}
-                containerStyles={dynamicContainerStyles}/>
-             
-                </View>}
-           
-        </ScrollView>
-      </SafeAreaView>
-    )
+            )}
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
     mainContainer: {
-      flex: 1,
-      backgroundColor: 'white'
+        flex: 1,
+        backgroundColor: 'white'
     },
-      container: {
+    container: {
         padding: 20,
         flex: 1,
-      },
-      body: {
-          // color: 'white'
-      },
-      link: {
-        marginTop: 15,
-        paddingVertical: 15,
-      },
-      headerView: {
+    },
+    headerView: {
         alignItems: 'center'
-      },
-      logo: {
+    },
+    logo: {
         fontFamily: 'ChangaOne',
         fontSize: 30,
         marginTop: 10,
         color: '#393E46',
-      },
-      subHeaderView: {
+    },
+    subHeaderView: {
         alignItems: 'flex-start',
         marginTop: 20
-      },
-      header: {
-        fontFamily: 'ChangaOne',
-        fontSize: 30,
-        color: '#393E46'
-      },
-      headerSubText: {
+    },
+    headerSubText: {
         fontFamily: 'MontserratBold',
         marginTop: 10,
         fontSize: 18
-      },
-      subText: {
-        fontFamily: 'MontserratSemiBold',
-        marginTop: 10,
-        fontSize: 14,
-        textAlign: 'center'
-      },
-
-    //   formInputs: {
-    //     marginTop: 20
-    //   },
-      additionalLinks: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop:20
-      },
-      additionalText: {
-        fontFamily: 'MontserratMedium',
-         color: '#393E46',
-      },
-      forgotPassword: {
-        fontFamily: 'MontserratSemiBold',
-         color: '#393E46',
-      },
-      signInLink: {
-        fontFamily: 'MontserratBold',
-         color: '#393E46'
-      },
-      signupSuccessHeader: {
+    },
+    formInputs: {
+        marginTop: 20
+    },
+    successContainer: {
         flex: 1,
-        paddingTop: 40
-      },
-      signupSuccessHeaderText: {
-        fontFamily: 'MontserratBold',
-        color: '#393E46',
-        fontSize: 18
-      },
-      successIcon: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    successContent: {
+        width: '100%',
+        paddingHorizontal: 20,
+    },
+    successMiddle: {
+        alignItems: 'center',
+        marginBottom: 40,
+    },
+    successIcon: {
         width: 100,
         height: 100,
-      },
-      mailText: {
+    },
+    mailText: {
         fontFamily: 'MontserratSemiBold',
         color: '#393E46',
         fontSize: 17,
         marginTop: 20,
         textAlign: 'center'
-      },
-      successContainer: {
-        justifyContent: 'center',
-        // alignItems: 'center',
-        minHeight: 500,
-        // marginBottom: 20,
-        // backgroundColor: 'red',
-        // flex: 1
-      },
-      checkEmail: {
-        fontFamily: 'MontserratMedium',
-        color: '#393E46',
+    },
+    backLinkContainer: {
+        paddingVertical: 20,
+        alignItems: 'flex-start',
+        paddingLeft: 20
+    },
+    backLink: {
+        fontFamily: 'MontserratSemiBold',
+        color: '#F8B500',
         fontSize: 16,
-        textAlign: 'center'
-      },
-      successMiddle: {
-        alignItems: 'center',
-        // flex: 1
-      }
-    });
+    },
+});
     

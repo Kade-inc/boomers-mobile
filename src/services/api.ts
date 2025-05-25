@@ -75,9 +75,10 @@ export const endpoints = {
   auth: {
     register: '/users/register',
     login: '/users/login',
-    forgotPassword: '/auth/forgot-password',
-    resetPassword: '/auth/reset-password',
-    verify: '/users/verify'
+    forgotPassword: '/users/forgot-password',
+    resetPassword: '/users/reset-password',
+    verify: '/users/verify',
+    verifyResetToken: '/users/verify-reset-token'
   },
   // Add more endpoint categories as needed
 } as const;
@@ -92,7 +93,7 @@ export interface ApiResponse<T = any> {
 // Types for auth responses
 export interface RegisterResponse {
   successful: boolean;
-  verificationCode: string;
+  verificationCode?: string;
 }
 
 // Types for auth requests
@@ -109,31 +110,54 @@ export interface VerifyRequest {
 }
 
 export interface LoginRequest {
-  email: string;
+  accountId: string;
   password: string;
 }
 
 // Types for auth responses
 export interface AuthResponse {
+  message: string;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+  source?: 'mobile' | 'web';
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+  verificationCode?: string;
+}
+
+export interface VerifyResetTokenRequest {
+  email: string;
+  verificationCode: string;
+}
+
+export interface VerifyResetTokenResponse {
+  userId: string;
+}
+
+export interface ResetPasswordRequest {
+  userId: string;
   token: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
+  password: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
 }
 
 // Auth service functions
 export const authService = {
   register: async (data: RegisterRequest): Promise<ApiResponse<RegisterResponse>> => {
     try {
-      console.log('Sending register request with data:', data);
       const response = await api.post(endpoints.auth.register, data);
-      console.log('Register response:', response.data);
 
       // Check if response has the expected structure
       if (!response.data || typeof response.data !== 'object') {
-        console.error('Unexpected response format:', response.data);
         return {
           success: false,
           error: 'Invalid response format from server',
@@ -156,10 +180,8 @@ export const authService = {
         error: 'Registration failed',
       };
     } catch (error) {
-      console.error('Register error details:', error);
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Registration failed';
-        console.error('Axios error response:', error.response?.data);
         return {
           success: false,
           error: errorMessage,
@@ -175,14 +197,14 @@ export const authService = {
   login: async (data: LoginRequest): Promise<ApiResponse<AuthResponse>> => {
     try {
       const response = await api.post(endpoints.auth.login, data);
-      const { token, user } = response.data.data;
       
-      // Store token
-      await AsyncStorage.setItem('token', token);
+      // Store tokens
+      await AsyncStorage.setItem('token', response.data.accessToken);
+      await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
       
       return {
         success: true,
-        data: response.data.data,
+        data: response.data,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -206,14 +228,14 @@ export const authService = {
     }
   },
 
-  forgotPassword: async (email: string): Promise<ApiResponse> => {
+  forgotPassword: async (data: ForgotPasswordRequest): Promise<ApiResponse<ForgotPasswordResponse>> => {
     try {
-      const response = await api.post(endpoints.auth.forgotPassword, { email });
+      const response = await api.post(endpoints.auth.forgotPassword, data);
       return {
         success: true,
         data: response.data.data,
       };
-    } catch (error) {
+    } catch (error:any) {
       if (axios.isAxiosError(error)) {
         return {
           success: false,
@@ -227,12 +249,12 @@ export const authService = {
     }
   },
 
-  resetPassword: async (token: string, password: string): Promise<ApiResponse> => {
+  resetPassword: async (data: ResetPasswordRequest): Promise<ApiResponse<ResetPasswordResponse>> => {
     try {
-      const response = await api.post(endpoints.auth.resetPassword, { token, password });
+      const response = await api.post(endpoints.auth.resetPassword, data);
       return {
         success: true,
-        data: response.data.data,
+        data: { message: response.data.message }
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -268,4 +290,63 @@ export const authService = {
       };
     }
   },
+
+  verifyResetToken: async (data: VerifyResetTokenRequest): Promise<ApiResponse<VerifyResetTokenResponse>> => {
+    try {
+      const response = await api.post(endpoints.auth.verifyResetToken, data);
+      return {
+        success: true,
+        data: response.data.data,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to verify reset token',
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred',
+      };
+    }
+  },
+};
+
+// Add these functions after the authService object
+export const getStoredTokens = async () => {
+  try {
+    const accessToken = await AsyncStorage.getItem('token');
+    const refreshToken = await AsyncStorage.getItem('refreshToken');
+    return { accessToken, refreshToken };
+  } catch (error) {
+    console.error('Error getting stored tokens:', error);
+    return { accessToken: null, refreshToken: null };
+  }
+};
+
+export const isTokenValid = (token: string | null): boolean => {
+  if (!token) return false;
+  
+  try {
+    // Decode the JWT token
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    const { exp } = JSON.parse(jsonPayload);
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    return exp > currentTime;
+  } catch (error) {
+    console.error('Error validating token:', error);
+    return false;
+  }
+};
+
+export const checkAuthStatus = async (): Promise<boolean> => {
+  const { accessToken } = await getStoredTokens();
+  return isTokenValid(accessToken);
 }; 

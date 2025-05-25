@@ -1,17 +1,21 @@
-import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { useForm, Controller} from "react-hook-form"
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useForm} from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
-// import { signUpFormSchema } from "@/constants/schemas/authSchemas";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
+import { useAuth } from "@/src/hooks/queries/useAuth";
+import { useRouter } from "expo-router";
 
 export default function ForgotPasswordScreen() {
+
+    const { forgotPassword } = useAuth();
+    const router = useRouter();
 
     const {
         control,
@@ -23,9 +27,28 @@ export default function ForgotPasswordScreen() {
         resolver: yupResolver(forgotPasswordFormSchema)
       })
   
-      const  [signupSuccess, setSignupSuccess] = useState(false)
-  
 
+      const submit = async (data: { email: string }) => {
+        try {
+          const response = await forgotPassword.mutateAsync({
+            email: data.email,
+            source: 'mobile'
+          });
+
+          if (response.message) {
+            // Navigate to verification code screen
+            router.push({
+              pathname: '/verifyResetCode',
+              params: { email: data.email }
+            });
+          } else {
+            showToast('Failed to process forgot password request');
+          }
+        } catch (error) {
+          console.error("Forgot password error:", error);
+          showToast(error instanceof Error ? error.message : 'Failed to process forgot password request');
+        }
+      };
   
       const dynamicTextStyles = {
         fontSize: 16,
@@ -45,7 +68,7 @@ export default function ForgotPasswordScreen() {
       const showToast = (message: string) => {
         Toast.show({
           type: 'error',
-          text1: 'User exists',
+          text1: 'Error',
           text2: message,
           autoHide: false,
           visibilityTime: 10000,
@@ -67,7 +90,7 @@ export default function ForgotPasswordScreen() {
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
-                  control={control} 
+                  control={control as any} 
                   name={'email'} 
                   placeholder={'Enter your email'} 
                   title={'Email'} 
@@ -78,7 +101,9 @@ export default function ForgotPasswordScreen() {
               <CustomButton title="Reset Password"
                 handlePress={handleSubmit(submit)}
                 textStyles={dynamicTextStyles}
-                containerStyles={dynamicContainerStyles}/>
+                containerStyles={dynamicContainerStyles}
+                isLoading={forgotPassword.isPending}
+              />
               <View style={styles.additionalLinks}>
                 <Text style={styles.additionalText}>
                     Remember Password?{" "}
