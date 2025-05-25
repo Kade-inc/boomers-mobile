@@ -11,6 +11,8 @@ import Toast from "react-native-toast-message";
 import { loginFormSchema } from "@/constants/schemas/loginSchemas";
 import { useAuth as useAuthMutations } from "@/src/hooks/queries/useAuth";
 import { useAuth as useAuthContext } from "@/src/context/AuthContext";
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
 
 interface LoginFormData {
   username: string;
@@ -18,6 +20,7 @@ interface LoginFormData {
 }
 
 export default function SigninScreen() {
+    const colorScheme = useColorScheme();
     const {
         control,
         handleSubmit,
@@ -77,14 +80,14 @@ export default function SigninScreen() {
       }
 
     return (
-         <SafeAreaView style={styles.mainContainer}>
+         <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
         <ScrollView style={styles.container}>
           <View style={styles.headerView}>
-            <Text style={styles.logo}>LOGO</Text>
+            <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
           </View>
               <View style={styles.subHeaderView}>
-              <Text style={styles.header}>SIGN IN</Text>
-              <Text style={styles.headerSubText}>Enter your credentials to sign in.</Text>
+              <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>SIGN IN</Text>
+              <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter your credentials to sign in.</Text>
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
@@ -116,16 +119,16 @@ export default function SigninScreen() {
                 isLoading={login.isPending}
                 />
               <View style={styles.additionalLinks}>
-                <Text style={styles.additionalText}>
+                <Text style={[styles.additionalText, { color: Colors[colorScheme ?? 'light'].text }]}>
                     Don't have an account?{" "}
                 </Text>
-                <Link href="/signup" style={styles.signInLink}>
+                <Link href="/signup" style={[styles.signInLink, { color: Colors[colorScheme ?? 'light'].text }]}>
                   Sign Up
                 </Link>
               </View>
               <View style={styles.additionalLinks}>
-                <Link href="/forgotPassword" style={styles.signInLink}>
-                  <Text style={styles.forgotPassword}>
+                <Link href="/forgotPassword" style={[styles.signInLink, { color: Colors[colorScheme ?? 'light'].text }]}>
+                  <Text style={[styles.forgotPassword, { color: Colors[colorScheme ?? 'light'].text }]}>
                     Forgot your password?{" "}
                 </Text>
                 </Link>
@@ -138,7 +141,6 @@ export default function SigninScreen() {
 const styles = StyleSheet.create({
     mainContainer: {
       flex: 1,
-      backgroundColor: 'white'
     },
       container: {
         padding: 20,
@@ -158,7 +160,6 @@ const styles = StyleSheet.create({
         fontFamily: 'ChangaOne',
         fontSize: 30,
         marginTop: 10,
-        color: '#393E46',
       },
       subHeaderView: {
         alignItems: 'flex-start',
@@ -167,7 +168,6 @@ const styles = StyleSheet.create({
       header: {
         fontFamily: 'ChangaOne',
         fontSize: 30,
-        color: '#393E46'
       },
       headerSubText: {
         fontFamily: 'MontserratMedium',
@@ -183,15 +183,12 @@ const styles = StyleSheet.create({
       },
       additionalText: {
         fontFamily: 'MontserratMedium',
-         color: '#393E46',
       },
       forgotPassword: {
         fontFamily: 'MontserratSemiBold',
-         color: '#393E46',
       },
       signInLink: {
         fontFamily: 'MontserratBold',
-         color: '#393E46'
       },
       signupSuccessHeader: {
         flex: 1,
@@ -199,7 +196,6 @@ const styles = StyleSheet.create({
       },
       signupSuccessHeaderText: {
         fontFamily: 'MontserratBold',
-        color: '#393E46',
         fontSize: 18
       },
       successIcon: {
@@ -208,7 +204,6 @@ const styles = StyleSheet.create({
       },
       mailText: {
         fontFamily: 'MontserratSemiBold',
-        color: '#393E46',
         fontSize: 17,
         marginTop: 20
       },
@@ -219,7 +214,6 @@ const styles = StyleSheet.create({
       },
       checkEmail: {
         fontFamily: 'MontserratMedium',
-        color: '#393E46',
         fontSize: 16,
         textAlign: 'center'
       },

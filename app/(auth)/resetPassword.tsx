@@ -13,6 +13,8 @@ import { resetPasswordFormSchema } from "@/constants/schemas/resetPasswordSchema
 import { useAuth } from "@/src/hooks/queries/useAuth";
 import { Link } from "expo-router";
 import { Feather } from '@expo/vector-icons';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
 
 interface ResetPasswordFormData {
     password: string;
@@ -26,6 +28,7 @@ export default function ResetPasswordScreen() {
     const [resetSuccess, setResetSuccess] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const colorScheme = useColorScheme();
 
     useFocusEffect(
         React.useCallback(() => {
@@ -87,96 +90,71 @@ export default function ResetPasswordScreen() {
     };
 
     const inputContainerStyles = {
-      marginBottom: 20
-    }
+        marginBottom: 20
+    };
 
-    const inputStyle = {
-      marginTop: 10
+    if (resetSuccess) {
+        return (
+            <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+                <View style={styles.successContainer}>
+                    <View style={styles.successMiddle}>
+                        <Image source={images.signupSuccess4x} style={styles.successIcon} />
+                        <Text style={[styles.mailText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                            Password Reset Successful!
+                        </Text>
+                        <Text style={[styles.checkEmail, { color: Colors[colorScheme ?? 'light'].text }]}>
+                            Your password has been reset successfully. You can now sign in with your new password.
+                        </Text>
+                    </View>
+                    <Link href="/signin" style={styles.homeLink}>
+                        <Text style={styles.homeLinkText}>Back to Sign In</Text>
+                    </Link>
+                </View>
+            </SafeAreaView>
+        );
     }
 
     return (
-        <SafeAreaView style={styles.mainContainer}>
-            {!resetSuccess ? (
-                <>
-                    <ScrollView style={styles.container}>
-                        <View style={styles.headerView}>
-                            <Text style={styles.logo}>LOGO</Text>
-                        </View>
-                        <View style={styles.subHeaderView}>
-                            <Text style={styles.headerSubText}>Reset Password</Text>
-                        </View>
-                        <View style={styles.formInputs}>
-                            <FormInputController 
-                                control={control as unknown as Control<any>} 
-                                name={'password'} 
-                                placeholder={'Password'} 
-                                title={'New Password'}
-                                errors={errors}
-                                props={{
-                                    secureTextEntry: !showPassword
-                                }}
-                                rightIcon={
-                                    <Feather
-                                        name={showPassword ? 'eye' : 'eye-off'}
-                                        size={20}
-                                        color="#393E46"
-                                        onPress={() => setShowPassword((prev) => !prev)}
-                                    />
-                                }
-                                inputStyle={inputStyle}
-                                inputContainerStyles={inputContainerStyles}
-                            />
-                            <FormInputController 
-                                control={control as unknown as Control<any>} 
-                                name={'confirmPassword'} 
-                                placeholder={'Confirm Password'} 
-                                title={'Confirm Password'}
-                                errors={errors}
-                                props={{
-                                    secureTextEntry: !showConfirmPassword
-                                }}
-                                rightIcon={
-                                    <Feather
-                                        name={showConfirmPassword ? 'eye' : 'eye-off'}
-                                        size={20}
-                                        color="#393E46"
-                                        onPress={() => setShowConfirmPassword((prev) => !prev)}
-                                    />
-                                }
-                                inputStyle={inputStyle}
-                                inputContainerStyles={inputContainerStyles}
-                            />
-                        </View>
-                        <CustomButton 
-                            title="Reset Password"
-                            handlePress={handleSubmit(submit)}
-                            textStyles={dynamicTextStyles}
-                            containerStyles={dynamicContainerStyles}
-                            isLoading={isLoading}
-                        />
-                    </ScrollView>
-                    <View style={styles.backLinkContainer}>
-                        <Link href="/forgotPassword" style={styles.backLink}>
-                            Back
-                        </Link>
-                    </View>
-                </>
-            ) : (
-                <View style={styles.successContainer}>
-                    <View style={styles.successContent}>
-                        <View style={styles.successMiddle}>
-                            <Image source={images.signupSuccess4x} style={styles.successIcon}/>
-                            <Text style={styles.mailText}>Your password was successfully reset.</Text>
-                        </View>
-                        <CustomButton 
-                            title="Go to Sign In"
-                            handlePress={() => router.push('/signin')}
-                            textStyles={dynamicTextStyles}
-                            containerStyles={dynamicContainerStyles}
-                        />
-                    </View>
+        <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+            <ScrollView style={styles.container}>
+                <View style={styles.headerView}>
+                    <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
                 </View>
-            )}
+                <View style={styles.subHeaderView}>
+                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>RESET PASSWORD</Text>
+                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter your new password.</Text>
+                </View>
+                <View style={styles.formInputs}>
+                    <FormInputController 
+                        control={control as any} 
+                        name={'password'} 
+                        placeholder={'Enter new password'} 
+                        title={'New Password'} 
+                        errors={errors}
+                        inputContainerStyles={inputContainerStyles}
+                        props={{
+                            secureTextEntry: true
+                        }}
+                    />
+                    <FormInputController 
+                        control={control as any} 
+                        name={'confirmPassword'} 
+                        placeholder={'Confirm new password'} 
+                        title={'Confirm Password'} 
+                        errors={errors}
+                        props={{
+                            secureTextEntry: true
+                        }}
+                    />
+                </View>
+                <CustomButton 
+                    title={isLoading ? "Resetting..." : "Reset Password"}
+                    handlePress={handleSubmit(submit)}
+                    textStyles={dynamicTextStyles}
+                    containerStyles={dynamicContainerStyles}
+                    isLoading={isLoading}
+                />
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -184,7 +162,6 @@ export default function ResetPasswordScreen() {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: 'white'
     },
     container: {
         padding: 20,
@@ -197,53 +174,57 @@ const styles = StyleSheet.create({
         fontFamily: 'ChangaOne',
         fontSize: 30,
         marginTop: 10,
-        color: '#393E46',
     },
     subHeaderView: {
         alignItems: 'flex-start',
         marginTop: 20
     },
+    header: {
+        fontFamily: 'ChangaOne',
+        fontSize: 30,
+    },
     headerSubText: {
-        fontFamily: 'MontserratBold',
+        fontFamily: 'MontserratMedium',
         marginTop: 10,
-        fontSize: 18
     },
     formInputs: {
         marginTop: 20
     },
     successContainer: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    successContent: {
-        width: '100%',
-        paddingHorizontal: 20,
+        padding: 20,
+        justifyContent: 'space-between'
     },
     successMiddle: {
+        flex: 1,
         alignItems: 'center',
-        marginBottom: 40,
+        justifyContent: 'center'
     },
     successIcon: {
         width: 100,
         height: 100,
+        marginBottom: 20
     },
     mailText: {
-        fontFamily: 'MontserratSemiBold',
-        color: '#393E46',
-        fontSize: 17,
-        marginTop: 20,
+        fontFamily: 'MontserratBold',
+        fontSize: 24,
+        marginBottom: 10,
         textAlign: 'center'
     },
-    backLinkContainer: {
-        paddingVertical: 20,
-        alignItems: 'flex-start',
-        paddingLeft: 20
-    },
-    backLink: {
-        fontFamily: 'MontserratSemiBold',
-        color: '#F8B500',
+    checkEmail: {
+        fontFamily: 'MontserratMedium',
         fontSize: 16,
+        textAlign: 'center',
+        paddingHorizontal: 20
     },
+    homeLink: {
+        marginTop: 20,
+        alignItems: 'center'
+    },
+    homeLinkText: {
+        fontFamily: 'MontserratBold',
+        color: '#F8B500',
+        fontSize: 16
+    }
 });
     

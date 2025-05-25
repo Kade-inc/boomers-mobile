@@ -1,61 +1,35 @@
+import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Link, router, useLocalSearchParams } from "expo-router";
-import { useState, useEffect } from "react";
+import { router, useLocalSearchParams } from "expo-router";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
-import { verifyResetCodeSchema } from "../../constants/schemas/verifyResetCodeSchema";
+import { verifyResetCodeSchema } from "@/constants/schemas/verifyResetCodeSchema";
 import { useAuth } from "@/src/hooks/queries/useAuth";
-import VerificationCodeInput from '@/components/VerificationCodeInput';
+import { Link } from "expo-router";
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
+
+interface VerifyResetCodeFormData {
+    verificationCode: string;
+}
 
 export default function VerifyResetCodeScreen() {
     const { email } = useLocalSearchParams<{ email: string }>();
-    const { verifyResetToken, forgotPassword } = useAuth();
+    const { verifyResetToken } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
-    const [countdown, setCountdown] = useState(30);
-    const [canResend, setCanResend] = useState(false);
-
-    useEffect(() => {
-        if (countdown > 0) {
-            const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-            return () => clearTimeout(timer);
-        } else {
-            setCanResend(true);
-        }
-    }, [countdown]);
-
-    const handleResendCode = async () => {
-        try {
-            setIsLoading(true);
-            const response = await forgotPassword.mutateAsync({
-                email,
-                source: 'mobile'
-            });
-
-            if (response.message) {
-                setCountdown(30);
-                setCanResend(false);
-                showToast('Verification code has been resent', 'success');
-            } else {
-                showToast('Failed to resend verification code');
-            }
-        } catch (error) {
-            console.error("Resend code error:", error);
-            showToast(error instanceof Error ? error.message : 'Failed to resend verification code');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const [verificationSuccess, setVerificationSuccess] = useState(false);
+    const colorScheme = useColorScheme();
 
     const {
         control,
         handleSubmit,
         formState: { errors }
-    } = useForm<{ verificationCode: string }>({
+    } = useForm<VerifyResetCodeFormData>({
         resolver: yupResolver(verifyResetCodeSchema)
     });
 
@@ -68,10 +42,10 @@ export default function VerifyResetCodeScreen() {
         marginTop: 20
     };
 
-    const showToast = (message: string, type: 'error' | 'success' = 'error') => {
+    const showToast = (message: string) => {
         Toast.show({
-            type,
-            text1: type === 'error' ? 'Error' : 'Success',
+            type: 'error',
+            text1: 'Error',
             text2: message,
             autoHide: false,
             visibilityTime: 10000,
@@ -80,7 +54,7 @@ export default function VerifyResetCodeScreen() {
         });
     };
 
-    const submit = async (data: { verificationCode: string }) => {
+    const submit = async (data: VerifyResetCodeFormData) => {
         try {
             setIsLoading(true);
             const response = await verifyResetToken.mutateAsync({
@@ -88,79 +62,77 @@ export default function VerifyResetCodeScreen() {
                 verificationCode: data.verificationCode
             });
 
-            // Navigate to reset password screen with the userId and token
-            router.push({
-                pathname: '/resetPassword',
-                params: { userId: response.userId, token: data.verificationCode }
-            });
+            if (response.userId) {
+                setVerificationSuccess(true);
+                router.push({
+                    pathname: '/resetPassword',
+                    params: { userId: response.userId, token: data.verificationCode }
+                });
+            } else {
+                showToast('Failed to verify code');
+            }
         } catch (error) {
-            console.error("Verify code error:", error);
             showToast(error instanceof Error ? error.message : 'Failed to verify code');
         } finally {
             setIsLoading(false);
         }
     };
 
-    const inputStyle = {
-        marginTop: 10
-      }
+    const inputContainerStyles = {
+        marginBottom: 20
+    };
+
+    if (verificationSuccess) {
+        return (
+            <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+                <View style={styles.successContainer}>
+                    <View style={styles.successMiddle}>
+                        <Image source={images.signupSuccess4x} style={styles.successIcon} />
+                        <Text style={[styles.mailText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                            Code Verified Successfully!
+                        </Text>
+                        <Text style={[styles.checkEmail, { color: Colors[colorScheme ?? 'light'].text }]}>
+                            You can now reset your password.
+                        </Text>
+                    </View>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     return (
-        <SafeAreaView style={styles.mainContainer}>
-            <View style={styles.container}>
-                <ScrollView style={styles.scrollView}>
-                    <View style={styles.headerView}>
-                        <Text style={styles.logo}>LOGO</Text>
-                    </View>
-                    <View style={styles.subHeaderView}>
-                        <Image source={images.forgotPassword} style={styles.successIcon}/>
-                        <Text style={styles.headerSubText}>Enter Verification Code</Text>
-                        <Text style={styles.subText}>Please enter the code sent to your email</Text>
-                    </View>
-                    <View style={styles.formInputs}>
-                        <VerificationCodeInput 
-                            control={control as any} 
-                            name={'verificationCode'} 
-                            title={'Verification Code'}
-                            errors={errors}
-                        />
-                    </View>
-                    <CustomButton 
-                        title="Verify Code"
-                        handlePress={handleSubmit(submit)}
-                        textStyles={dynamicTextStyles}
-                        containerStyles={dynamicContainerStyles}
-                        isLoading={isLoading}
+        <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+            <ScrollView style={styles.container}>
+                <View style={styles.headerView}>
+                    <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+                </View>
+                <View style={styles.subHeaderView}>
+                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>VERIFY CODE</Text>
+                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter the verification code sent to your email.</Text>
+                </View>
+                <View style={styles.formInputs}>
+                    <FormInputController 
+                        control={control as any} 
+                        name={'verificationCode'} 
+                        placeholder={'Enter verification code'} 
+                        title={'Verification Code'} 
+                        errors={errors}
+                        inputContainerStyles={inputContainerStyles}
                     />
-                    {/* <View style={styles.additionalLinks}>
-                        <Text style={styles.additionalText}>
-                            Remember Password?{" "}
-                        </Text>
-                        <Link href="/signin" style={styles.signInLink}>
-                            Sign In
-                        </Link>
-                    </View> */}
-                    <View style={styles.additionalLinks}>
-                        <Text style={styles.additionalText}>
-                            Didn't receive code?{" "}
-                            {canResend ? (
-                                <Text style={styles.resendLink} onPress={handleResendCode}>
-                                    Resend code
-                                </Text>
-                            ) : (
-                                <Text style={styles.countdownText}>
-                                    Resend code in {countdown}s
-                                </Text>
-                            )}
-                        </Text>
-                    </View>
-                </ScrollView>
+                </View>
+                <CustomButton 
+                    title={isLoading ? "Verifying..." : "Verify Code"}
+                    handlePress={handleSubmit(submit)}
+                    textStyles={dynamicTextStyles}
+                    containerStyles={dynamicContainerStyles}
+                    isLoading={isLoading}
+                />
                 <View style={styles.backLinkContainer}>
                     <Link href="/forgotPassword" style={styles.backLink}>
-                        Back
+                        Back to Forgot Password
                     </Link>
                 </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -168,13 +140,9 @@ export default function VerifyResetCodeScreen() {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: 'white'
     },
     container: {
-        flex: 1,
         padding: 20,
-    },
-    scrollView: {
         flex: 1,
     },
     headerView: {
@@ -184,58 +152,55 @@ const styles = StyleSheet.create({
         fontFamily: 'ChangaOne',
         fontSize: 30,
         marginTop: 10,
-        color: '#393E46',
     },
     subHeaderView: {
-        alignItems: 'center',
+        alignItems: 'flex-start',
         marginTop: 20
     },
-    headerSubText: {
-        fontFamily: 'MontserratBold',
-        marginTop: 10,
-        fontSize: 18
+    header: {
+        fontFamily: 'ChangaOne',
+        fontSize: 30,
     },
-    subText: {
-        fontFamily: 'MontserratSemiBold',
+    headerSubText: {
+        fontFamily: 'MontserratMedium',
         marginTop: 10,
-        fontSize: 14,
-        textAlign: 'center'
     },
     formInputs: {
         marginTop: 20
     },
-    additionalLinks: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: 20
+    successContainer: {
+        flex: 1,
+        padding: 20,
+        justifyContent: 'center'
     },
-    additionalText: {
-        fontFamily: 'MontserratMedium',
-        color: '#393E46',
-    },
-    signInLink: {
-        fontFamily: 'MontserratBold',
-        color: '#393E46'
-    },
-    resendLink: {
-        fontFamily: 'MontserratBold',
-        color: '#393E46',
-    },
-    countdownText: {
-        fontFamily: 'MontserratMedium',
-        color: 'green'
+    successMiddle: {
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     successIcon: {
         width: 100,
         height: 100,
+        marginBottom: 20
+    },
+    mailText: {
+        fontFamily: 'MontserratBold',
+        fontSize: 24,
+        marginBottom: 10,
+        textAlign: 'center'
+    },
+    checkEmail: {
+        fontFamily: 'MontserratMedium',
+        fontSize: 16,
+        textAlign: 'center',
+        paddingHorizontal: 20
     },
     backLinkContainer: {
-        paddingVertical: 20,
-        alignItems: 'flex-start'
+        marginTop: 20,
+        alignItems: 'center'
     },
     backLink: {
-        fontFamily: 'MontserratSemiBold',
+        fontFamily: 'MontserratBold',
         color: '#F8B500',
-        fontSize: 16,
+        fontSize: 16
     }
 }); 

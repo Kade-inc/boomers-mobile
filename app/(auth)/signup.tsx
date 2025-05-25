@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm } from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,10 +7,12 @@ import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
 import { signUpFormSchema } from "@/constants/schemas/authSchemas";
 import { Link, router, useFocusEffect } from "expo-router";
-import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { useAuth } from "@/src/hooks/queries/useAuth";
+import { Feather } from '@expo/vector-icons';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
 
 interface SignUpFormData {
   email: string;
@@ -37,10 +39,14 @@ export default function SignupScreen() {
 
     const [signupSuccess, setSignupSuccess] = useState(false)
     const { register } = useAuth()
+    const [isLoading, setIsLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const colorScheme = useColorScheme()
 
     // Reset form and success state when the screen comes into focus
     useFocusEffect(
-      useCallback(() => {
+      React.useCallback(() => {
         setSignupSuccess(false);
         reset({
           email: '',
@@ -54,19 +60,26 @@ export default function SignupScreen() {
 
     const submit = async (data: SignUpFormData) => {
       try {
-        const { email, username, password, source } = data
-        
-        await register.mutateAsync({
-          email,
-          username,
-          password,
-          source
+        setIsLoading(true)
+        const response = await register.mutateAsync({
+          email: data.email,
+          username: data.username,
+          password: data.password,
+          source: 'mobile'
         })
-        
-        setSignupSuccess(true)
+        if (response.successful) {
+          router.push({
+            pathname: '/verificationSuccess',
+            params: { email: data.email }
+          })
+        } else {
+          showToast('Failed to register')
+        }
       } catch (error) {
         console.error("Registration error:", error)
-        showToast(error instanceof Error ? error.message : 'Registration failed')
+        showToast(error instanceof Error ? error.message : 'Failed to register')
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -91,7 +104,7 @@ export default function SignupScreen() {
     const showToast = (message: string) => {
       Toast.show({
         type: 'error',
-        text1: 'Registration Failed',
+        text1: 'Error',
         text2: message,
         autoHide: false,
         visibilityTime: 10000,
@@ -101,16 +114,16 @@ export default function SignupScreen() {
     }
 
     return (
-      <SafeAreaView style={styles.mainContainer}>
+      <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
         <ScrollView style={styles.container}>
           <View style={styles.headerView}>
-            <Text style={styles.logo}>LOGO</Text>
+            <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
           </View>
           {!signupSuccess ? 
             <>
               <View style={styles.subHeaderView}>
-              <Text style={styles.header}>SIGN UP</Text>
-              <Text style={styles.headerSubText}>Create an account to begin your journey.</Text>
+              <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>SIGN UP</Text>
+              <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Create your account to get started.</Text>
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
@@ -134,37 +147,53 @@ export default function SignupScreen() {
                 <FormInputController 
                   control={control as any} 
                   name={'password'} 
-                  placeholder={'Enter a password'} 
+                  placeholder={'Enter your password'} 
                   title={'Password'}
-                  props={{
-                    secureTextEntry: true
-                  }}
                   errors={errors}
                   inputContainerStyles={inputContainerStyles}
                   inputStyle={inputStyle}
+                  props={{
+                    secureTextEntry: !showPassword
+                  }}
+                  rightIcon={
+                    <Feather
+                      name={showPassword ? 'eye' : 'eye-off'}
+                      size={20}
+                      color={Colors[colorScheme ?? 'light'].text}
+                      onPress={() => setShowPassword((prev) => !prev)}
+                    />
+                  }
                   />
                 <FormInputController 
                   control={control as any} 
                   name={'confirmPassword'} 
                   placeholder={'Confirm your password'} 
                   title={'Confirm Password'}
-                  props={{
-                    secureTextEntry: true
-                  }}
                   errors={errors}
                   inputStyle={inputStyle}
+                  props={{
+                    secureTextEntry: !showConfirmPassword
+                  }}
+                  rightIcon={
+                    <Feather
+                      name={showConfirmPassword ? 'eye' : 'eye-off'}
+                      size={20}
+                      color={Colors[colorScheme ?? 'light'].text}
+                      onPress={() => setShowConfirmPassword((prev) => !prev)}
+                    />
+                  }
                   />
               </View>
               <CustomButton 
-                title={register.isPending ? "Signing Up..." : "Sign Up"}
+                title={isLoading ? "Signing up..." : "Sign Up"}
                 handlePress={handleSubmit(submit)}
                 textStyles={dynamicTextStyles}
                 containerStyles={dynamicContainerStyles}
-                isLoading={register.isPending}
+                isLoading={isLoading}
                 />
               <View style={styles.additionalLinks}>
-                <Text style={styles.additionalText}>
-                  Already Have an account?{" "}
+                <Text style={[styles.additionalText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                  Already have an account?{" "}
                 </Text>
                 <Link href="/signin" style={styles.signInLink}>
                   Sign In
@@ -203,7 +232,6 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white'
   },
     container: {
       padding: 20,
@@ -223,7 +251,6 @@ const styles = StyleSheet.create({
       fontFamily: 'ChangaOne',
       fontSize: 30,
       marginTop: 10,
-      color: '#393E46',
     },
     subHeaderView: {
       alignItems: 'flex-start',
@@ -232,7 +259,6 @@ const styles = StyleSheet.create({
     header: {
       fontFamily: 'ChangaOne',
       fontSize: 30,
-      color: '#393E46'
     },
     headerSubText: {
       fontFamily: 'MontserratMedium',
@@ -248,11 +274,10 @@ const styles = StyleSheet.create({
     },
     additionalText: {
       fontFamily: 'MontserratMedium',
-       color: '#393E46'
     },
     signInLink: {
       fontFamily: 'MontserratBold',
-       color: '#393E46'
+      color: '#F8B500'
     },
     signupSuccessHeader: {
       flex: 1,

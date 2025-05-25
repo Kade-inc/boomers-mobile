@@ -11,11 +11,13 @@ import Toast from "react-native-toast-message";
 import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
 import { useAuth } from "@/src/hooks/queries/useAuth";
 import { useRouter } from "expo-router";
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
 
 export default function ForgotPasswordScreen() {
-
     const { forgotPassword } = useAuth();
     const router = useRouter();
+    const colorScheme = useColorScheme();
 
     const {
         control,
@@ -27,7 +29,6 @@ export default function ForgotPasswordScreen() {
         resolver: yupResolver(forgotPasswordFormSchema)
       })
   
-
       const submit = async (data: { email: string }) => {
         try {
           const response = await forgotPassword.mutateAsync({
@@ -62,9 +63,7 @@ export default function ForgotPasswordScreen() {
       const inputStyle = {
         marginTop: 10
       }
-  
-      // 'A user with that email/username exists 🫤'
-  
+
       const showToast = (message: string) => {
         Toast.show({
           type: 'error',
@@ -77,145 +76,91 @@ export default function ForgotPasswordScreen() {
         });
       }
 
+      const inputContainerStyles = {
+        marginBottom: 20,
+      }
+
     return (
-         <SafeAreaView style={styles.mainContainer}>
-        <ScrollView style={styles.container}>
-          <View style={styles.headerView}>
-            <Text style={styles.logo}>LOGO</Text>
-          </View>
-              <View style={styles.subHeaderView}>
-              <Image source={images.forgotPassword} style={styles.successIcon}/>
-                <Text style={styles.headerSubText}>Forgot Password?</Text>
-                <Text style={styles.subText}>Enter your email to receive a password reset link</Text>
-              </View>
-              <View style={styles.formInputs}>
-                <FormInputController 
-                  control={control as any} 
-                  name={'email'} 
-                  placeholder={'Enter your email'} 
-                  title={'Email'} 
-                  errors={errors}
-                  inputStyle={inputStyle}
-                  />
-              </View>
-              <CustomButton title="Reset Password"
-                handlePress={handleSubmit(submit)}
-                textStyles={dynamicTextStyles}
-                containerStyles={dynamicContainerStyles}
-                isLoading={forgotPassword.isPending}
-              />
-              <View style={styles.additionalLinks}>
-                <Text style={styles.additionalText}>
-                    Remember Password?{" "}
-                </Text>
-                <Link href="/signin" style={styles.signInLink}>
-                  Sign In
-                </Link>
-              </View>
-        </ScrollView>
-      </SafeAreaView>
+        <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+            <ScrollView style={styles.container}>
+                <View style={styles.headerView}>
+                    <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+                </View>
+                <View style={styles.subHeaderView}>
+                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>FORGOT PASSWORD</Text>
+                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter your email to reset your password.</Text>
+                </View>
+                <View style={styles.formInputs}>
+                    <FormInputController 
+                        control={control as any} 
+                        name={'email'} 
+                        placeholder={'Enter your email'} 
+                        title={'Email'} 
+                        errors={errors}
+                        inputContainerStyles={inputContainerStyles}
+                        inputStyle={inputStyle}
+                    />
+                </View>
+                <CustomButton 
+                    title={forgotPassword.isPending ? "Sending..." : "Send Reset Link"}
+                    handlePress={handleSubmit(submit)}
+                    textStyles={dynamicTextStyles}
+                    containerStyles={dynamicContainerStyles}
+                    isLoading={forgotPassword.isPending}
+                />
+                <View style={styles.additionalLinks}>
+                    <Link href="/signin" style={[styles.signInLink, { color: Colors[colorScheme ?? 'light'].text }]}>
+                        <Text style={[styles.additionalText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                            Back to Sign In
+                        </Text>
+                    </Link>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     mainContainer: {
-      flex: 1,
-      backgroundColor: 'white'
+        flex: 1,
     },
-      container: {
+    container: {
         padding: 20,
         flex: 1,
-      },
-      body: {
-          // color: 'white'
-      },
-      link: {
-        marginTop: 15,
-        paddingVertical: 15,
-      },
-      headerView: {
+    },
+    headerView: {
         alignItems: 'center'
-      },
-      logo: {
+    },
+    logo: {
         fontFamily: 'ChangaOne',
         fontSize: 30,
         marginTop: 10,
-        color: '#393E46',
-      },
-      subHeaderView: {
-        alignItems: 'center',
+    },
+    subHeaderView: {
+        alignItems: 'flex-start',
         marginTop: 20
-      },
-      header: {
+    },
+    header: {
         fontFamily: 'ChangaOne',
         fontSize: 30,
-        color: '#393E46'
-      },
-      headerSubText: {
-        fontFamily: 'MontserratBold',
+    },
+    headerSubText: {
+        fontFamily: 'MontserratMedium',
         marginTop: 10,
-        fontSize: 18
-      },
-      subText: {
-        fontFamily: 'MontserratSemiBold',
-        marginTop: 10,
-        fontSize: 14,
-        textAlign: 'center'
-      },
-
-      formInputs: {
+    },
+    formInputs: {
         marginTop: 20
-      },
-      additionalLinks: {
+    },
+    additionalLinks: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop:20
-      },
-      additionalText: {
-        fontFamily: 'MontserratMedium',
-         color: '#393E46',
-      },
-      forgotPassword: {
-        fontFamily: 'MontserratSemiBold',
-         color: '#393E46',
-      },
-      signInLink: {
-        fontFamily: 'MontserratBold',
-         color: '#393E46'
-      },
-      signupSuccessHeader: {
-        flex: 1,
-        paddingTop: 40
-      },
-      signupSuccessHeaderText: {
-        fontFamily: 'MontserratBold',
-        color: '#393E46',
-        fontSize: 18
-      },
-      successIcon: {
-        width: 100,
-        height: 100,
-      },
-      mailText: {
-        fontFamily: 'MontserratSemiBold',
-        color: '#393E46',
-        fontSize: 17,
         marginTop: 20
-      },
-      successContainer: {
-        alignItems: 'center',
-        minHeight: 400,
-        marginBottom: 20
-      },
-      checkEmail: {
+    },
+    additionalText: {
         fontFamily: 'MontserratMedium',
-        color: '#393E46',
-        fontSize: 16,
-        textAlign: 'center'
-      },
-      successMiddle: {
-        alignItems: 'center',
-        flex: 1
-      }
-    });
+    },
+    signInLink: {
+        fontFamily: 'MontserratBold',
+    }
+});
     
