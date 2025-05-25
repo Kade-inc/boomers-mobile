@@ -233,7 +233,9 @@ export const authService = {
       const response = await api.post(endpoints.auth.forgotPassword, data);
       return {
         success: true,
-        data: response.data.data,
+        data: {
+          message: response.data.message
+        },
       };
     } catch (error:any) {
       if (axios.isAxiosError(error)) {

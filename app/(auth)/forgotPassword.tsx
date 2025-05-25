@@ -30,6 +30,7 @@ export default function ForgotPasswordScreen() {
       })
   
       const submit = async (data: { email: string }) => {
+        console.log('data', data);
         if (isNavigating) return;
         try {
           setIsNavigating(true);
@@ -38,7 +39,9 @@ export default function ForgotPasswordScreen() {
             source: 'mobile'
           });
 
-          if (response.message) {
+          console.log("RESPONSE: ", response);
+
+          if (response?.message) {
             // Navigate to verification code screen
             router.push({
               pathname: '/verifyResetCode',
@@ -95,9 +98,10 @@ export default function ForgotPasswordScreen() {
             <ScrollView style={styles.container}>
                 <View style={styles.headerView}>
                     <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+                    <Image source={images.forgotPassword} style={styles.forgotPasswordImage} />
                 </View>
                 <View style={styles.subHeaderView}>
-                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>FORGOT PASSWORD</Text>
+                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>Forgot Password?</Text>
                     <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter your email to reset your password.</Text>
                 </View>
                 <View style={styles.formInputs}>
@@ -112,7 +116,7 @@ export default function ForgotPasswordScreen() {
                     />
                 </View>
                 <CustomButton 
-                    title={forgotPassword.isPending ? "Sending..." : "Send Reset Link"}
+                    title={forgotPassword.isPending ? "Sending..." : "Reset Password"}
                     handlePress={handleSubmit(submit)}
                     textStyles={dynamicTextStyles}
                     containerStyles={dynamicContainerStyles}
@@ -151,12 +155,12 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     header: {
-        fontFamily: 'ChangaOne',
-        fontSize: 30,
+        fontFamily: 'MontserratBold',
+        fontSize: 20,
     },
     headerSubText: {
         fontFamily: 'MontserratMedium',
-        marginTop: 10,
+        marginTop: 14,
     },
     formInputs: {
         marginTop: 20
@@ -171,6 +175,12 @@ const styles = StyleSheet.create({
     },
     signInLink: {
         fontFamily: 'MontserratBold',
-    }
+    },
+    forgotPasswordImage: {
+        width: 120,
+        height: 120,
+        marginTop: 20,
+        resizeMode: 'contain'
+    },
 });
     

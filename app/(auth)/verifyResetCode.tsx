@@ -1,9 +1,8 @@
-import React, { useState, useCallback } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useState, useCallback, useEffect } from 'react';
+import { Image, ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
-import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { router, useLocalSearchParams } from "expo-router";
 import { images } from "@/constants";
@@ -13,6 +12,7 @@ import { useAuth } from "@/src/hooks/queries/useAuth";
 import { Link } from "expo-router";
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
+import VerificationCodeInput from '@/components/VerificationCodeInput';
 
 interface VerifyResetCodeFormData {
     verificationCode: string;
@@ -20,11 +20,28 @@ interface VerifyResetCodeFormData {
 
 export default function VerifyResetCodeScreen() {
     const { email } = useLocalSearchParams<{ email: string }>();
-    const { verifyResetToken } = useAuth();
+    const { verifyResetToken, forgotPassword } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
+    const [isResending, setIsResending] = useState(false);
     const [verificationSuccess, setVerificationSuccess] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
+    const [resendTimer, setResendTimer] = useState(30);
+    const [canResend, setCanResend] = useState(false);
     const colorScheme = useColorScheme();
+
+    useEffect(() => {
+        let timer: ReturnType<typeof setInterval>;
+        if (resendTimer > 0) {
+            timer = setInterval(() => {
+                setResendTimer((prev) => prev - 1);
+            }, 1000);
+        } else {
+            setCanResend(true);
+        }
+        return () => {
+            if (timer) clearInterval(timer);
+        };
+    }, [resendTimer]);
 
     const {
         control,
@@ -87,6 +104,35 @@ export default function VerifyResetCodeScreen() {
         }
     };
 
+    const handleResendCode = async () => {
+        if (isResending || !canResend) return;
+        try {
+            setIsResending(true);
+            const response = await forgotPassword.mutateAsync({
+                email,
+                source: 'mobile'
+            });
+
+            if (response?.message) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Success',
+                    text2: 'Verification code has been resent to your email',
+                    position: 'bottom',
+                    visibilityTime: 3000
+                });
+                setResendTimer(30);
+                setCanResend(false);
+            } else {
+                showToast('Failed to resend verification code');
+            }
+        } catch (error) {
+            showToast(error instanceof Error ? error.message : 'Failed to resend verification code');
+        } finally {
+            setIsResending(false);
+        }
+    };
+
     const inputContainerStyles = {
         marginBottom: 20
     };
@@ -114,19 +160,18 @@ export default function VerifyResetCodeScreen() {
             <ScrollView style={styles.container}>
                 <View style={styles.headerView}>
                     <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+                    <Image source={images.forgotPassword} style={styles.forgotPasswordImage} />
                 </View>
                 <View style={styles.subHeaderView}>
-                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>VERIFY CODE</Text>
+                    <Text style={[styles.mailText2, { color: Colors[colorScheme ?? 'light'].text }]}>We sent you a code</Text>
                     <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter the verification code sent to your email.</Text>
                 </View>
                 <View style={styles.formInputs}>
-                    <FormInputController 
-                        control={control as any} 
-                        name={'verificationCode'} 
-                        placeholder={'Enter verification code'} 
-                        title={'Verification Code'} 
+                    <VerificationCodeInput
+                        control={control as any}
+                        name="verificationCode"
                         errors={errors}
-                        inputContainerStyles={inputContainerStyles}
+                        title="Verification Code"
                     />
                 </View>
                 <CustomButton 
@@ -136,12 +181,31 @@ export default function VerifyResetCodeScreen() {
                     containerStyles={dynamicContainerStyles}
                     isLoading={isLoading}
                 />
-                <View style={styles.backLinkContainer}>
-                    <Link href="/forgotPassword" onPress={() => handleNavigation('/forgotPassword')} style={styles.backLink}>
-                        Back to Forgot Password
-                    </Link>
+                <View style={styles.resendContainer}>
+                    <Text style={[styles.resendText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                        Did not receive code?
+                    </Text>
+                    <TouchableOpacity 
+                        onPress={handleResendCode} 
+                        disabled={!canResend || isResending}
+                    >
+                        <Text style={[
+                            styles.resendText, 
+                            { 
+                                color: canResend ? '#4CAF50' : '#666',
+                                opacity: canResend ? 1 : 0.5
+                            }
+                        ]}>
+                            {isResending ? 'Resending...' : canResend ? 'Resend code' : `Resend code (${resendTimer}s)`}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
+            <View style={styles.backLinkWrapper}>
+                <Link href="/forgotPassword" onPress={() => handleNavigation('/forgotPassword')} style={styles.backLink}>
+                    Back
+                </Link>
+            </View>
         </SafeAreaView>
     );
 }
@@ -161,6 +225,12 @@ const styles = StyleSheet.create({
         fontFamily: 'ChangaOne',
         fontSize: 30,
         marginTop: 10,
+    },
+    forgotPasswordImage: {
+        width: 120,
+        height: 120,
+        marginTop: 20,
+        resizeMode: 'contain'
     },
     subHeaderView: {
         alignItems: 'flex-start',
@@ -203,13 +273,33 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         paddingHorizontal: 20
     },
-    backLinkContainer: {
-        marginTop: 20,
-        alignItems: 'center'
+    backLinkWrapper: {
+        width: '100%',
+        alignItems: 'flex-start',
+        paddingHorizontal: 20,
+        paddingBottom: 20
     },
     backLink: {
         fontFamily: 'MontserratBold',
         color: '#F8B500',
         fontSize: 16
-    }
+    },
+    resendContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 5,
+        marginTop: 20
+    },
+    resendText: {
+        fontFamily: 'MontserratSemiBold',
+        fontSize: 14,
+        textAlign: 'center'
+    },
+    mailText2: {
+        fontFamily: 'MontserratBold',
+        fontSize: 20,
+        marginBottom: 10,
+        textAlign: 'center'
+    },
 }); 

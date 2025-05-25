@@ -65,7 +65,7 @@ export default function ResetPasswordScreen() {
         });
     };
 
-    const handleNavigation = useCallback((path: '/signin') => {
+    const handleNavigation = useCallback((path: '/signin' | '/verifyResetCode') => {
         if (isNavigating) return;
         setIsNavigating(true);
         router.push(path);
@@ -129,8 +129,7 @@ export default function ResetPasswordScreen() {
                     <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
                 </View>
                 <View style={styles.subHeaderView}>
-                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>RESET PASSWORD</Text>
-                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter your new password.</Text>
+                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Reset Password</Text>
                 </View>
                 <View style={styles.formInputs}>
                     <FormInputController 
@@ -179,6 +178,11 @@ export default function ResetPasswordScreen() {
                     isLoading={isLoading}
                 />
             </ScrollView>
+            <View style={styles.backLinkWrapper}>
+                <Link href="/verifyResetCode" onPress={() => handleNavigation('/verifyResetCode')} style={styles.backLink}>
+                    Back
+                </Link>
+            </View>
         </SafeAreaView>
     );
 }
@@ -208,7 +212,8 @@ const styles = StyleSheet.create({
         fontSize: 30,
     },
     headerSubText: {
-        fontFamily: 'MontserratMedium',
+        fontFamily: 'MontserratBold',
+        fontSize: 20,
         marginTop: 10,
     },
     formInputs: {
@@ -246,6 +251,17 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     homeLinkText: {
+        fontFamily: 'MontserratBold',
+        color: '#F8B500',
+        fontSize: 16
+    },
+    backLinkWrapper: {
+        width: '100%',
+        alignItems: 'flex-start',
+        paddingHorizontal: 20,
+        paddingBottom: 20
+    },
+    backLink: {
         fontFamily: 'MontserratBold',
         color: '#F8B500',
         fontSize: 16
