@@ -1,15 +1,18 @@
+import React from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import Toast, { BaseToast, ErrorToast, ToastConfigParams }  from 'react-native-toast-message';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider, useAuth } from '../src/context/AuthContext';
+import { View, ActivityIndicator } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 
 // Create a client
@@ -31,6 +34,37 @@ SplashScreen.setOptions({
   duration: 400,
   fade: true
 })
+
+function RootLayoutNav() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  console.log('isAuthenticated', isAuthenticated);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.replace('/(auth)/signin');
+      } else {
+        router.replace('/(tabs)');
+      }
+    }
+  }, [isAuthenticated, isLoading]);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#F8B500" />
+      </View>
+    );
+  }
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    </Stack>
+  );
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -90,21 +124,15 @@ export default function RootLayout() {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-        <StatusBar style="light" />
-        <Toast config={toastConfig} />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <RootLayoutNav />
+          <StatusBar style="light" />
+          <Toast config={toastConfig} />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
 

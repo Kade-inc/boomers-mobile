@@ -9,7 +9,8 @@ import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { loginFormSchema } from "@/constants/schemas/loginSchemas";
-import { useAuth } from "@/src/hooks/queries/useAuth";
+import { useAuth as useAuthMutations } from "@/src/hooks/queries/useAuth";
+import { useAuth as useAuthContext } from "@/src/context/AuthContext";
 
 interface LoginFormData {
   username: string;
@@ -27,7 +28,8 @@ export default function SigninScreen() {
         resolver: yupResolver(loginFormSchema)
       })
   
-      const { login } = useAuth()
+      const { login } = useAuthMutations();
+      const { checkAuth } = useAuthContext();
   
       const submit = async (data: LoginFormData) => {
         try {
@@ -35,7 +37,9 @@ export default function SigninScreen() {
             accountId: data.username,
             password: data.password
           });
-          router.replace('/explore');
+
+          await checkAuth(); // Update auth state
+          router.replace('/(tabs)/explore');
         } catch (error) {
           showToast(error instanceof Error ? error.message : 'Login failed');
         }

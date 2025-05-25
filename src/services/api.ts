@@ -311,4 +311,42 @@ export const authService = {
       };
     }
   },
+};
+
+// Add these functions after the authService object
+export const getStoredTokens = async () => {
+  try {
+    const accessToken = await AsyncStorage.getItem('token');
+    const refreshToken = await AsyncStorage.getItem('refreshToken');
+    return { accessToken, refreshToken };
+  } catch (error) {
+    console.error('Error getting stored tokens:', error);
+    return { accessToken: null, refreshToken: null };
+  }
+};
+
+export const isTokenValid = (token: string | null): boolean => {
+  if (!token) return false;
+  
+  try {
+    // Decode the JWT token
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    const { exp } = JSON.parse(jsonPayload);
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    return exp > currentTime;
+  } catch (error) {
+    console.error('Error validating token:', error);
+    return false;
+  }
+};
+
+export const checkAuthStatus = async (): Promise<boolean> => {
+  const { accessToken } = await getStoredTokens();
+  return isTokenValid(accessToken);
 }; 
