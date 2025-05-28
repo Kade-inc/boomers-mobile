@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm, Control } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -6,15 +6,14 @@ import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
-import { useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { resetPasswordFormSchema } from "@/constants/schemas/resetPasswordSchema";
 import { useAuth } from "@/src/hooks/queries/useAuth";
 import { Link } from "expo-router";
 import { Feather } from '@expo/vector-icons';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
+import { ThemeContext } from '@/src/context/ThemeContext';
+import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface ResetPasswordFormData {
     password: string;
@@ -22,13 +21,14 @@ interface ResetPasswordFormData {
 }
 
 export default function ResetPasswordScreen() {
+    const { currentTheme } = useContext(ThemeContext);
     const { userId, token } = useLocalSearchParams<{ userId: string; token: string }>();
     const { resetPassword } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [resetSuccess, setResetSuccess] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const colorScheme = useColorScheme();
+    const [isNavigating, setIsNavigating] = useState(false);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -46,7 +46,7 @@ export default function ResetPasswordScreen() {
 
     const dynamicTextStyles = {
         fontSize: 16,
-        color: '#393E46'
+        color: ColorsRevised.black
     };
 
     const dynamicContainerStyles = {
@@ -65,7 +65,14 @@ export default function ResetPasswordScreen() {
         });
     };
 
+    const handleNavigation = useCallback((path: '/signin' | '/verifyResetCode') => {
+        if (isNavigating) return;
+        setIsNavigating(true);
+        router.push(path);
+    }, [isNavigating, router]);
+
     const submit = async (data: ResetPasswordFormData) => {
+        if (isNavigating) return;
         if (!token) {
             showToast('Reset token is missing. Please try again.');
             return;
@@ -86,6 +93,7 @@ export default function ResetPasswordScreen() {
             showToast(error instanceof Error ? error.message : 'Failed to reset password');
         } finally {
             setIsLoading(false);
+            setIsNavigating(false);
         }
     };
 
@@ -93,36 +101,42 @@ export default function ResetPasswordScreen() {
         marginBottom: 20
     };
 
+    const handleRedirectToSignIn = () => {
+        handleNavigation('/signin');
+    }
+
     if (resetSuccess) {
         return (
-            <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+            <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
                 <View style={styles.successContainer}>
                     <View style={styles.successMiddle}>
                         <Image source={images.signupSuccess4x} style={styles.successIcon} />
-                        <Text style={[styles.mailText, { color: Colors[colorScheme ?? 'light'].text }]}>
-                            Password Reset Successful!
+                        <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+                            Password successfully reset!
                         </Text>
-                        <Text style={[styles.checkEmail, { color: Colors[colorScheme ?? 'light'].text }]}>
+                        <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                             Your password has been reset successfully. You can now sign in with your new password.
                         </Text>
                     </View>
-                    <Link href="/signin" style={styles.homeLink}>
-                        <Text style={styles.homeLinkText}>Back to Sign In</Text>
-                    </Link>
+                    <CustomButton 
+                    title="Sign In"
+                    handlePress={handleRedirectToSignIn}
+                    textStyles={dynamicTextStyles}
+                    containerStyles={dynamicContainerStyles}
+                    />
                 </View>
             </SafeAreaView>
         );
     }
 
     return (
-        <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+        <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
             <ScrollView style={styles.container}>
                 <View style={styles.headerView}>
-                    <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+                    <Text style={[styles.logo, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>LOGO</Text>
                 </View>
                 <View style={styles.subHeaderView}>
-                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>RESET PASSWORD</Text>
-                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter your new password.</Text>
+                    <Text style={[styles.headerSubText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Reset Password</Text>
                 </View>
                 <View style={styles.formInputs}>
                     <FormInputController 
@@ -133,8 +147,16 @@ export default function ResetPasswordScreen() {
                         errors={errors}
                         inputContainerStyles={inputContainerStyles}
                         props={{
-                            secureTextEntry: true
+                            secureTextEntry: !showPassword
                         }}
+                        rightIcon={
+                            <Feather
+                                name={showPassword ? 'eye' : 'eye-off'}
+                                size={20}
+                                color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
+                                onPress={() => setShowPassword((prev) => !prev)}
+                            />
+                        }
                     />
                     <FormInputController 
                         control={control as any} 
@@ -143,8 +165,16 @@ export default function ResetPasswordScreen() {
                         title={'Confirm Password'} 
                         errors={errors}
                         props={{
-                            secureTextEntry: true
+                            secureTextEntry: !showConfirmPassword
                         }}
+                        rightIcon={
+                            <Feather
+                                name={showConfirmPassword ? 'eye' : 'eye-off'}
+                                size={20}
+                                color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
+                                onPress={() => setShowConfirmPassword((prev) => !prev)}
+                            />
+                        }
                     />
                 </View>
                 <CustomButton 
@@ -155,6 +185,11 @@ export default function ResetPasswordScreen() {
                     isLoading={isLoading}
                 />
             </ScrollView>
+            <View style={styles.backLinkWrapper}>
+                <Link href="/verifyResetCode" onPress={() => handleNavigation('/verifyResetCode')} style={styles.backLink}>
+                    Back
+                </Link>
+            </View>
         </SafeAreaView>
     );
 }
@@ -184,7 +219,8 @@ const styles = StyleSheet.create({
         fontSize: 30,
     },
     headerSubText: {
-        fontFamily: 'MontserratMedium',
+        fontFamily: 'MontserratBold',
+        fontSize: 20,
         marginTop: 10,
     },
     formInputs: {
@@ -223,7 +259,18 @@ const styles = StyleSheet.create({
     },
     homeLinkText: {
         fontFamily: 'MontserratBold',
-        color: '#F8B500',
+        color: ColorsRevised.yellow,
+        fontSize: 16
+    },
+    backLinkWrapper: {
+        width: '100%',
+        alignItems: 'flex-start',
+        paddingHorizontal: 20,
+        paddingBottom: 20
+    },
+    backLink: {
+        fontFamily: 'MontserratBold',
+        color: ColorsRevised.yellow,
         fontSize: 16
     }
 });

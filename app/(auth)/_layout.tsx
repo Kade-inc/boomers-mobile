@@ -1,15 +1,15 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View } from 'react-native'
+import React, { useContext } from 'react'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { Colors } from '@/constants/Colors'
+import { ColorsRevised } from '@/constants/ColorsRevised'
+import { ThemeContext } from '@/src/context/ThemeContext'
 
 const AuthLayout = () => {
-  const colorScheme = useColorScheme();
+  const { currentTheme } = useContext(ThemeContext);
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors[colorScheme ?? 'light'].background }}>
+    <View style={{ flex: 1, backgroundColor: currentTheme === 'dark' ? ColorsRevised.light : ColorsRevised.gray }}>
       <Stack>
         <Stack.Screen 
           name="signin"
@@ -48,7 +48,7 @@ const AuthLayout = () => {
           }}
         />
       </Stack>
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style={currentTheme === 'dark' ? 'light' : 'dark'} />
     </View>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm } from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,8 +11,8 @@ import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { useAuth } from "@/src/hooks/queries/useAuth";
 import { Feather } from '@expo/vector-icons';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
+import { ThemeContext } from '@/src/context/ThemeContext';
+import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface SignUpFormData {
   email: string;
@@ -23,6 +23,7 @@ interface SignUpFormData {
 }
 
 export default function SignupScreen() {
+  const { currentTheme } = useContext(ThemeContext);
     const {
       control,
       handleSubmit,
@@ -42,7 +43,6 @@ export default function SignupScreen() {
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const colorScheme = useColorScheme()
 
     // Reset form and success state when the screen comes into focus
     useFocusEffect(
@@ -85,7 +85,7 @@ export default function SignupScreen() {
 
     const dynamicTextStyles = {
       fontSize: 16,
-      color: '#393E46'
+      color: ColorsRevised.black
     }
 
     const dynamicContainerStyles = {
@@ -114,16 +114,16 @@ export default function SignupScreen() {
     }
 
     return (
-      <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+      <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
         <ScrollView style={styles.container}>
           <View style={styles.headerView}>
-            <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+            <Text style={[styles.logo, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>LOGO</Text>
           </View>
           {!signupSuccess ? 
             <>
               <View style={styles.subHeaderView}>
-              <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>SIGN UP</Text>
-              <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Create your account to get started.</Text>
+              <Text style={[styles.header, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>SIGN UP</Text>
+              <Text style={[styles.headerSubText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Create your account to get started.</Text>
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
@@ -159,7 +159,7 @@ export default function SignupScreen() {
                     <Feather
                       name={showPassword ? 'eye' : 'eye-off'}
                       size={20}
-                      color={Colors[colorScheme ?? 'light'].text}
+                      color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
                       onPress={() => setShowPassword((prev) => !prev)}
                     />
                   }
@@ -178,7 +178,7 @@ export default function SignupScreen() {
                     <Feather
                       name={showConfirmPassword ? 'eye' : 'eye-off'}
                       size={20}
-                      color={Colors[colorScheme ?? 'light'].text}
+                      color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
                       onPress={() => setShowConfirmPassword((prev) => !prev)}
                     />
                   }
@@ -192,7 +192,7 @@ export default function SignupScreen() {
                 isLoading={isLoading}
                 />
               <View style={styles.additionalLinks}>
-                <Text style={[styles.additionalText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                <Text style={[styles.additionalText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                   Already have an account?{" "}
                 </Text>
                 <Link href="/signin" style={styles.signInLink}>
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     },
     signInLink: {
       fontFamily: 'MontserratBold',
-      color: '#F8B500'
+      color: ColorsRevised.yellow
     },
     signupSuccessHeader: {
       flex: 1,

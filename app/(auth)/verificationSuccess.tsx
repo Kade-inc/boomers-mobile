@@ -1,39 +1,46 @@
-import React from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '@/components/CustomButton';
 import { router } from 'expo-router';
 import { images } from '@/constants';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
+import { ThemeContext } from '@/src/context/ThemeContext';
+import { ColorsRevised } from '@/constants/ColorsRevised';
 
-export default function VerificationSuccessScreen() {
-  const colorScheme = useColorScheme();
+export default function VerificationSuccessScreen() { 
+  const { currentTheme } = useContext(ThemeContext);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const dynamicTextStyles = {
     fontSize: 16,
-    color: '#393E46'
+    color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black
   };
 
   const dynamicContainerStyles = {
     marginTop: 20
   };
 
+  const handleNavigation = useCallback((path: '/signin') => {
+    if (isNavigating) return;
+    setIsNavigating(true);
+    router.push(path);
+  }, [isNavigating, router]);
+
   return (
-    <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+    <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
       <View style={styles.successContainer}>
         <View style={styles.successMiddle}>
           <Image source={images.signupSuccess4x} style={styles.successIcon} />
-          <Text style={[styles.mailText, { color: Colors[colorScheme ?? 'light'].text }]}>
+          <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
             Email Verified Successfully!
           </Text>
-          <Text style={[styles.checkEmail, { color: Colors[colorScheme ?? 'light'].text }]}>
+          <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
             Your email has been verified. You can now sign in to your account.
           </Text>
         </View>
         <CustomButton 
           title="Go to Sign In"
-          handlePress={() => router.push('/signin')}
+          handlePress={() => handleNavigation('/signin')}
           textStyles={dynamicTextStyles}
           containerStyles={dynamicContainerStyles}
         />

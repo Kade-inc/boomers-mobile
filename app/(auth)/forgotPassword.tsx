@@ -4,20 +4,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Link } from "expo-router";
-import { useState } from "react";
+import { Link, useRouter } from "expo-router";
+import { useState, useCallback, useContext } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
 import { useAuth } from "@/src/hooks/queries/useAuth";
-import { useRouter } from "expo-router";
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
+import { ThemeContext } from "@/src/context/ThemeContext";
+import { ColorsRevised } from "@/constants/ColorsRevised";
 
 export default function ForgotPasswordScreen() {
     const { forgotPassword } = useAuth();
     const router = useRouter();
-    const colorScheme = useColorScheme();
+    const [isNavigating, setIsNavigating] = useState(false);
 
     const {
         control,
@@ -30,13 +29,18 @@ export default function ForgotPasswordScreen() {
       })
   
       const submit = async (data: { email: string }) => {
+        console.log('data', data);
+        if (isNavigating) return;
         try {
+          setIsNavigating(true);
           const response = await forgotPassword.mutateAsync({
             email: data.email,
             source: 'mobile'
           });
 
-          if (response.message) {
+          console.log("RESPONSE: ", response);
+
+          if (response?.message) {
             // Navigate to verification code screen
             router.push({
               pathname: '/verifyResetCode',
@@ -48,8 +52,16 @@ export default function ForgotPasswordScreen() {
         } catch (error) {
           console.error("Forgot password error:", error);
           showToast(error instanceof Error ? error.message : 'Failed to process forgot password request');
+        } finally {
+          setIsNavigating(false);
         }
       };
+
+      const handleNavigation = useCallback((path: '/signin' | '/verifyResetCode') => {
+        if (isNavigating) return;
+        setIsNavigating(true);
+        router.push(path);
+      }, [isNavigating, router]);
   
       const dynamicTextStyles = {
         fontSize: 16,
@@ -80,15 +92,18 @@ export default function ForgotPasswordScreen() {
         marginBottom: 20,
       }
 
-    return (
-        <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+      const { currentTheme } = useContext(ThemeContext);
+
+      return (
+        <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
             <ScrollView style={styles.container}>
                 <View style={styles.headerView}>
-                    <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+                    <Text style={[styles.logo, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>LOGO</Text>
+                    <Image source={images.forgotPassword} style={styles.forgotPasswordImage} />
                 </View>
                 <View style={styles.subHeaderView}>
-                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>FORGOT PASSWORD</Text>
-                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter your email to reset your password.</Text>
+                    <Text style={[styles.header, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Forgot Password?</Text>
+                    <Text style={[styles.headerSubText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Enter your email to reset your password.</Text>
                 </View>
                 <View style={styles.formInputs}>
                     <FormInputController 
@@ -102,15 +117,15 @@ export default function ForgotPasswordScreen() {
                     />
                 </View>
                 <CustomButton 
-                    title={forgotPassword.isPending ? "Sending..." : "Send Reset Link"}
+                    title={forgotPassword.isPending ? "Sending..." : "Reset Password"}
                     handlePress={handleSubmit(submit)}
                     textStyles={dynamicTextStyles}
                     containerStyles={dynamicContainerStyles}
                     isLoading={forgotPassword.isPending}
                 />
                 <View style={styles.additionalLinks}>
-                    <Link href="/signin" style={[styles.signInLink, { color: Colors[colorScheme ?? 'light'].text }]}>
-                        <Text style={[styles.additionalText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                    <Link href="/signin" onPress={() => handleNavigation('/signin')} style={[styles.signInLink, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+                        <Text style={[styles.additionalText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                             Back to Sign In
                         </Text>
                     </Link>
@@ -141,12 +156,12 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     header: {
-        fontFamily: 'ChangaOne',
-        fontSize: 30,
+        fontFamily: 'MontserratBold',
+        fontSize: 20,
     },
     headerSubText: {
         fontFamily: 'MontserratMedium',
-        marginTop: 10,
+        marginTop: 14,
     },
     formInputs: {
         marginTop: 20
@@ -161,6 +176,12 @@ const styles = StyleSheet.create({
     },
     signInLink: {
         fontFamily: 'MontserratBold',
-    }
+    },
+    forgotPasswordImage: {
+        width: 120,
+        height: 120,
+        marginTop: 20,
+        resizeMode: 'contain'
+    },
 });
     

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { Control, Controller, FieldErrors, FieldValues, Path } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
+import { ThemeContext } from '@/src/context/ThemeContext';
+import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface FormInputControllerProps<T extends FieldValues> {
     control: Control<T>;
@@ -28,12 +28,12 @@ const FormInputController = <T extends FieldValues>({
     props,
     rightIcon
 }: FormInputControllerProps<T>) => {
+    const { currentTheme } = useContext(ThemeContext);
     const [showPassword, setShowPassword] = useState(false);
-    const colorScheme = useColorScheme();
 
     return (
         <View style={[styles.container, inputContainerStyles]}>
-            <Text style={[styles.title, { color: Colors[colorScheme ?? 'light'].text }]}>{title}</Text>
+            <Text style={[styles.title, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>{title}</Text>
             <Controller
                 control={control}
                 name={name}
@@ -45,12 +45,12 @@ const FormInputController = <T extends FieldValues>({
                                 styles.input,
                                 inputStyle,
                                 {
-                                    color: Colors[colorScheme ?? 'light'].text,
-                                    backgroundColor: Colors[colorScheme ?? 'light'].background,
-                                    borderColor: Colors[colorScheme ?? 'light'].text
+                                    color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black,
+                                    backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray,
+                                    borderColor: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black
                                 }
                             ]}
-                            placeholderTextColor={Colors[colorScheme ?? 'light'].icon}
+                            placeholderTextColor={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
                             value={value}
                             onBlur={onBlur}
                             onChangeText={onChange}
@@ -58,13 +58,13 @@ const FormInputController = <T extends FieldValues>({
                             {...props}
                             secureTextEntry={props?.secureTextEntry && !showPassword}
                         />
-                        {rightIcon && <View style={styles.iconWrapper}>{rightIcon}</View>}
+                        {/* To be removed {rightIcon && <View style={styles.iconWrapper}>{rightIcon}</View>} */}
                         {props?.secureTextEntry && (
                             <View style={styles.iconWrapper}>
                                 <Feather
                                     name={showPassword ? 'eye-off' : 'eye'}
                                     size={24}
-                                    color={Colors[colorScheme ?? 'light'].icon}
+                                    color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
                                     onPress={() => setShowPassword(!showPassword)}
                                 />
                             </View>
@@ -72,7 +72,7 @@ const FormInputController = <T extends FieldValues>({
                     </View>
                 )}
             />
-            {errors && errors[name] && <Text style={[styles.textError]}>{String(errors[name]?.message)}</Text>}
+            {errors && errors[name] && <Text style={[styles.textError, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>{String(errors[name]?.message)}</Text>}
         </View>
     );
 };
@@ -101,12 +101,13 @@ const styles = StyleSheet.create({
     iconWrapper: {
         position: 'absolute',
         right: 10,
+        top: 4,
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
     },
     textError: {
-      backgroundColor: '#EB4335',
+        backgroundColor: '#EB4335',
         paddingLeft: 5,
         paddingVertical: 8,
         borderRadius: 3,

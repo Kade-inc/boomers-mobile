@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { View, TextInput, StyleSheet, Text } from 'react-native';
 import { Control, Controller, FieldValues } from 'react-hook-form';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
 
 interface VerificationCodeInputProps {
     control: Control<FieldValues>;
@@ -12,6 +14,7 @@ interface VerificationCodeInputProps {
 const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({ control, name, errors, title }) => {
     const [code, setCode] = useState(['', '', '', '', '', '']);
     const inputRefs = useRef<Array<TextInput | null>>([]);
+    const colorScheme = useColorScheme();
 
     const handleChange = (text: string, index: number, onChange: (value: string) => void) => {
         const newCode = [...code];
@@ -47,12 +50,19 @@ const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({ control, 
                             <TextInput
                                 key={index}
                                 ref={(ref) => { inputRefs.current[index] = ref }}
-                                style={styles.input}
+                                style={[
+                                    styles.input,
+                                    {
+                                        color: Colors[colorScheme ?? 'light'].text,
+                                        borderColor: Colors[colorScheme ?? 'light'].text
+                                    }
+                                ]}
                                 maxLength={1}
                                 keyboardType="numeric"
                                 value={code[index]}
                                 onChangeText={(text) => handleChange(text, index, onChange)}
                                 onKeyPress={(e) => handleKeyPress(e, index)}
+                                placeholderTextColor={Colors[colorScheme ?? 'light'].icon}
                             />
                         ))}
                     </View>
@@ -83,7 +93,6 @@ const styles = StyleSheet.create({
         height: 45,
         borderWidth: 1,
         borderRadius: 8,
-        borderColor: '#393E46',
         textAlign: 'center',
         fontSize: 20,
         fontFamily: 'MontserratRegular',
