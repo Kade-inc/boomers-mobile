@@ -1,38 +1,87 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import React from 'react';
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import '../global.css'
+import Toast, { BaseToast, ErrorToast, ToastConfigParams }  from 'react-native-toast-message';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider, useAuth } from '../src/context/AuthContext';
+import { View, ActivityIndicator } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { StyleSheet, Text } from 'react-native';
+import { useReactQueryDevTools } from '@dev-plugins/react-query';
+
+import ThemeProvider from '@/src/context/ThemeContext';
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 30, // 30 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+SplashScreen.setOptions({
+  duration: 400,
+  fade: true
+})
+
+function RootLayoutNav() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  console.log('isAuthenticated', isAuthenticated);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        // router.replace('/(auth)/signin');
+        router.replace('/');
+      } else {
+        router.replace('/(tabs)');
+      }
+    }
+  }, [isAuthenticated, isLoading]);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#F8B500" />
+      </View>
+    );
+  }
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
-  // const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    "Montserrat-Black": require("../assets/fonts/Montserrat-Black.ttf"),
-    "Montserrat-BlackItalic": require("../assets/fonts/Montserrat-BlackItalic.ttf"),
-    "Montserrat-Bold": require("../assets/fonts/Montserrat-Bold.ttf"),
-    "Montserrat-BoldItalic": require("../assets/fonts/Montserrat-BoldItalic.ttf"),
-    "Montserrat-ExtraBold": require("../assets/fonts/Montserrat-ExtraBold.ttf"),
-    "Montserrat-ExtraBoldItalic": require("../assets/fonts/Montserrat-ExtraBoldItalic.ttf"),
-    "Montserrat-ExtraLight": require("../assets/fonts/Montserrat-ExtraLight.ttf"),
-    "Montserrat-ExtraLightItalic": require("../assets/fonts/Montserrat-ExtraLightItalic.ttf"),
-    "Montserrat-Italic": require("../assets/fonts/Montserrat-Italic.ttf"),
-    "Montserrat-LightItalic": require("../assets/fonts/Montserrat-LightItalic.ttf"),
-    "Montserrat-Medium": require("../assets/fonts/Montserrat-Medium.ttf"),
-    "Montserrat-MediumItalic": require("../assets/fonts/Montserrat-MediumItalic.ttf"),
-    "Montserrat-Regular": require("../assets/fonts/Montserrat-Regular.ttf"),
-    "Montserrat-SemiBold": require("../assets/fonts/Montserrat-SemiBold.ttf"),
-    "Montserrat-SemiBoldItalic": require("../assets/fonts/Montserrat-SemiBoldItalic.ttf"),
-    "Montserrat-Thin": require("../assets/fonts/Montserrat-Thin.ttf"),
-    "Montserrat-ThinItalic": require("../assets/fonts/Montserrat-ThinItalic.ttf"),
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    ChangaOne: require('../assets/fonts/ChangaOneRegular.ttf'),
+    MontserratRegular: require('../assets/fonts/MontserratRegular.ttf'),
+    MontserratMedium: require('../assets/fonts/MontserratMedium.ttf'),
+    MontserratSemiBold: require('../assets/fonts/MontserratSemiBold.ttf'),
+    MontserratBold: require('../assets/fonts/MontserratBold.ttf'),
+    MontserratExtraBold: require('../assets/fonts/MontserratExtraBold.ttf'),
+    MontserratBlack: require('../assets/fonts/MontserratBlack.ttf')
   });
+
+  useReactQueryDevTools(queryClient);
 
   useEffect(() => {
     if (loaded) {
@@ -44,15 +93,48 @@ export default function RootLayout() {
     return null;
   }
 
+  const toastConfig = {
+    success: (props: ToastConfigParams<any>) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: 'pink' }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 15,
+          fontWeight: '400'
+        }}
+      />
+    ),
+    error: (props: ToastConfigParams<any>) => (
+      <ErrorToast
+        style={{ borderLeftColor: '#C01212' }}
+        {...props}
+        text1Style={{
+          fontSize: 17
+        }}
+        text2Style={{
+          fontSize: 13
+        }}
+      />
+    ),
+    custom: (props: ToastConfigParams<any>) => (
+      <View style={{ height: 60, width: '100%', backgroundColor: 'red' }}>
+        <Text>{props.text1}</Text>
+        <Text>{props.props?.uuid}</Text>
+      </View>
+    )
+  };
+
   return (
-    // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-    <>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false}} />
-      </Stack>
-      <StatusBar style="auto" />
-    </>
-    // </ThemeProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <RootLayoutNav />
+          <StatusBar style="light" />
+          <Toast config={toastConfig} />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
+
