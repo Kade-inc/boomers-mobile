@@ -17,7 +17,8 @@ export default function HomeScreen() {
 
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
         <View style={[styles.display, ]}>
-          <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}}>Testing stiff</Text>
+          <Link href="/signin"><Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}}>Testing stiff</Text></Link>
+          
         </View>
     </SafeAreaView>
 

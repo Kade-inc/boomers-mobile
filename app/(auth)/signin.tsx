@@ -5,7 +5,7 @@ import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Link, router } from "expo-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { loginFormSchema } from "@/constants/schemas/loginSchemas";
@@ -13,6 +13,8 @@ import { useAuth as useAuthMutations } from "@/src/hooks/queries/useAuth";
 import { useAuth as useAuthContext } from "@/src/context/AuthContext";
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
+import { ThemeContext } from "@/src/context/ThemeContext";
+import { ColorsRevised } from "@/constants/ColorsRevised";
 
 interface LoginFormData {
   username: string;
@@ -79,15 +81,17 @@ export default function SigninScreen() {
         marginTop: 10
       }
 
+      const { currentTheme } = useContext(ThemeContext);  
+
     return (
-         <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+         <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
         <ScrollView style={styles.container}>
           <View style={styles.headerView}>
-            <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+            <Text style={[styles.logo, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>LOGO</Text>
           </View>
               <View style={styles.subHeaderView}>
-              <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>SIGN IN</Text>
-              <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter your credentials to sign in.</Text>
+              <Text style={[styles.header, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>SIGN IN</Text>
+              <Text style={[styles.headerSubText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Enter your credentials to sign in.</Text>
               </View>
               <View style={styles.formInputs}>
                 <FormInputController 
@@ -119,16 +123,16 @@ export default function SigninScreen() {
                 isLoading={login.isPending}
                 />
               <View style={styles.additionalLinks}>
-                <Text style={[styles.additionalText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                <Text style={[styles.additionalText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                     Don't have an account?{" "}
                 </Text>
-                <Link href="/signup" style={[styles.signInLink, { color: Colors[colorScheme ?? 'light'].text }]}>
+                <Link href="/signup" style={[styles.signInLink, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                   Sign Up
                 </Link>
               </View>
               <View style={styles.additionalLinks}>
-                <Link href="/forgotPassword" style={[styles.signInLink, { color: Colors[colorScheme ?? 'light'].text }]}>
-                  <Text style={[styles.forgotPassword, { color: Colors[colorScheme ?? 'light'].text }]}>
+                <Link href="/forgotPassword" style={[styles.signInLink, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+                  <Text style={[styles.forgotPassword, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                     Forgot your password?{" "}
                 </Text>
                 </Link>

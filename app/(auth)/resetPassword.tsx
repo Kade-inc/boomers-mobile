@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm, Control } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,8 +12,8 @@ import { resetPasswordFormSchema } from "@/constants/schemas/resetPasswordSchema
 import { useAuth } from "@/src/hooks/queries/useAuth";
 import { Link } from "expo-router";
 import { Feather } from '@expo/vector-icons';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
+import { ThemeContext } from '@/src/context/ThemeContext';
+import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface ResetPasswordFormData {
     password: string;
@@ -21,6 +21,7 @@ interface ResetPasswordFormData {
 }
 
 export default function ResetPasswordScreen() {
+    const { currentTheme } = useContext(ThemeContext);
     const { userId, token } = useLocalSearchParams<{ userId: string; token: string }>();
     const { resetPassword } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +29,6 @@ export default function ResetPasswordScreen() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
-    const colorScheme = useColorScheme();
 
     useFocusEffect(
         React.useCallback(() => {
@@ -46,7 +46,7 @@ export default function ResetPasswordScreen() {
 
     const dynamicTextStyles = {
         fontSize: 16,
-        color: '#393E46'
+        color: ColorsRevised.black
     };
 
     const dynamicContainerStyles = {
@@ -101,35 +101,42 @@ export default function ResetPasswordScreen() {
         marginBottom: 20
     };
 
+    const handleRedirectToSignIn = () => {
+        handleNavigation('/signin');
+    }
+
     if (resetSuccess) {
         return (
-            <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+            <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
                 <View style={styles.successContainer}>
                     <View style={styles.successMiddle}>
                         <Image source={images.signupSuccess4x} style={styles.successIcon} />
-                        <Text style={[styles.mailText, { color: Colors[colorScheme ?? 'light'].text }]}>
-                            Password Reset Successful!
+                        <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+                            Password successfully reset!
                         </Text>
-                        <Text style={[styles.checkEmail, { color: Colors[colorScheme ?? 'light'].text }]}>
+                        <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                             Your password has been reset successfully. You can now sign in with your new password.
                         </Text>
                     </View>
-                    <Link href="/signin" onPress={() => handleNavigation('/signin')} style={styles.homeLink}>
-                        <Text style={styles.homeLinkText}>Back to Sign In</Text>
-                    </Link>
+                    <CustomButton 
+                    title="Sign In"
+                    handlePress={handleRedirectToSignIn}
+                    textStyles={dynamicTextStyles}
+                    containerStyles={dynamicContainerStyles}
+                    />
                 </View>
             </SafeAreaView>
         );
     }
 
     return (
-        <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+        <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
             <ScrollView style={styles.container}>
                 <View style={styles.headerView}>
-                    <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+                    <Text style={[styles.logo, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>LOGO</Text>
                 </View>
                 <View style={styles.subHeaderView}>
-                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Reset Password</Text>
+                    <Text style={[styles.headerSubText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Reset Password</Text>
                 </View>
                 <View style={styles.formInputs}>
                     <FormInputController 
@@ -146,7 +153,7 @@ export default function ResetPasswordScreen() {
                             <Feather
                                 name={showPassword ? 'eye' : 'eye-off'}
                                 size={20}
-                                color={Colors[colorScheme ?? 'light'].text}
+                                color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
                                 onPress={() => setShowPassword((prev) => !prev)}
                             />
                         }
@@ -164,7 +171,7 @@ export default function ResetPasswordScreen() {
                             <Feather
                                 name={showConfirmPassword ? 'eye' : 'eye-off'}
                                 size={20}
-                                color={Colors[colorScheme ?? 'light'].text}
+                                color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
                                 onPress={() => setShowConfirmPassword((prev) => !prev)}
                             />
                         }
@@ -252,7 +259,7 @@ const styles = StyleSheet.create({
     },
     homeLinkText: {
         fontFamily: 'MontserratBold',
-        color: '#F8B500',
+        color: ColorsRevised.yellow,
         fontSize: 16
     },
     backLinkWrapper: {
@@ -263,7 +270,7 @@ const styles = StyleSheet.create({
     },
     backLink: {
         fontFamily: 'MontserratBold',
-        color: '#F8B500',
+        color: ColorsRevised.yellow,
         fontSize: 16
     }
 });

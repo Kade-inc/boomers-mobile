@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,15 +10,16 @@ import Toast from "react-native-toast-message";
 import { verifyResetCodeSchema } from "@/constants/schemas/verifyResetCodeSchema";
 import { useAuth } from "@/src/hooks/queries/useAuth";
 import { Link } from "expo-router";
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
 import VerificationCodeInput from '@/components/VerificationCodeInput';
+import { ThemeContext } from '@/src/context/ThemeContext';
+import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface VerifyResetCodeFormData {
     verificationCode: string;
 }
 
 export default function VerifyResetCodeScreen() {
+    const { currentTheme } = useContext(ThemeContext);
     const { email } = useLocalSearchParams<{ email: string }>();
     const { verifyResetToken, forgotPassword } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +28,6 @@ export default function VerifyResetCodeScreen() {
     const [isNavigating, setIsNavigating] = useState(false);
     const [resendTimer, setResendTimer] = useState(30);
     const [canResend, setCanResend] = useState(false);
-    const colorScheme = useColorScheme();
 
     useEffect(() => {
         let timer: ReturnType<typeof setInterval>;
@@ -139,14 +139,14 @@ export default function VerifyResetCodeScreen() {
 
     if (verificationSuccess) {
         return (
-            <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+            <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
                 <View style={styles.successContainer}>
                     <View style={styles.successMiddle}>
                         <Image source={images.signupSuccess4x} style={styles.successIcon} />
-                        <Text style={[styles.mailText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                        <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                             Code Verified Successfully!
                         </Text>
-                        <Text style={[styles.checkEmail, { color: Colors[colorScheme ?? 'light'].text }]}>
+                        <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                             You can now reset your password.
                         </Text>
                     </View>
@@ -156,15 +156,15 @@ export default function VerifyResetCodeScreen() {
     }
 
     return (
-        <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+        <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
             <ScrollView style={styles.container}>
                 <View style={styles.headerView}>
-                    <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+                    <Text style={[styles.logo, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>LOGO</Text>
                     <Image source={images.forgotPassword} style={styles.forgotPasswordImage} />
                 </View>
                 <View style={styles.subHeaderView}>
-                    <Text style={[styles.mailText2, { color: Colors[colorScheme ?? 'light'].text }]}>We sent you a code</Text>
-                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter the verification code sent to your email.</Text>
+                    <Text style={[styles.mailText2, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>We sent you a code</Text>
+                    <Text style={[styles.headerSubText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Enter the verification code sent to your email.</Text>
                 </View>
                 <View style={styles.formInputs}>
                     <VerificationCodeInput
@@ -182,7 +182,7 @@ export default function VerifyResetCodeScreen() {
                     isLoading={isLoading}
                 />
                 <View style={styles.resendContainer}>
-                    <Text style={[styles.resendText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                    <Text style={[styles.resendText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                         Did not receive code?
                     </Text>
                     <TouchableOpacity 
@@ -192,7 +192,7 @@ export default function VerifyResetCodeScreen() {
                         <Text style={[
                             styles.resendText, 
                             { 
-                                color: canResend ? '#4CAF50' : '#666',
+                                color: ColorsRevised.yellow,
                                 opacity: canResend ? 1 : 0.5
                             }
                         ]}>

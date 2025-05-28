@@ -5,18 +5,17 @@ import CustomButton from '@/components/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Link, useRouter } from "expo-router";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useContext } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
 import { useAuth } from "@/src/hooks/queries/useAuth";
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
+import { ThemeContext } from "@/src/context/ThemeContext";
+import { ColorsRevised } from "@/constants/ColorsRevised";
 
 export default function ForgotPasswordScreen() {
     const { forgotPassword } = useAuth();
     const router = useRouter();
-    const colorScheme = useColorScheme();
     const [isNavigating, setIsNavigating] = useState(false);
 
     const {
@@ -93,16 +92,18 @@ export default function ForgotPasswordScreen() {
         marginBottom: 20,
       }
 
-    return (
-        <SafeAreaView style={[styles.mainContainer, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
+      const { currentTheme } = useContext(ThemeContext);
+
+      return (
+        <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
             <ScrollView style={styles.container}>
                 <View style={styles.headerView}>
-                    <Text style={[styles.logo, { color: Colors[colorScheme ?? 'light'].text }]}>LOGO</Text>
+                    <Text style={[styles.logo, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>LOGO</Text>
                     <Image source={images.forgotPassword} style={styles.forgotPasswordImage} />
                 </View>
                 <View style={styles.subHeaderView}>
-                    <Text style={[styles.header, { color: Colors[colorScheme ?? 'light'].text }]}>Forgot Password?</Text>
-                    <Text style={[styles.headerSubText, { color: Colors[colorScheme ?? 'light'].text }]}>Enter your email to reset your password.</Text>
+                    <Text style={[styles.header, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Forgot Password?</Text>
+                    <Text style={[styles.headerSubText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Enter your email to reset your password.</Text>
                 </View>
                 <View style={styles.formInputs}>
                     <FormInputController 
@@ -123,8 +124,8 @@ export default function ForgotPasswordScreen() {
                     isLoading={forgotPassword.isPending}
                 />
                 <View style={styles.additionalLinks}>
-                    <Link href="/signin" onPress={() => handleNavigation('/signin')} style={[styles.signInLink, { color: Colors[colorScheme ?? 'light'].text }]}>
-                        <Text style={[styles.additionalText, { color: Colors[colorScheme ?? 'light'].text }]}>
+                    <Link href="/signin" onPress={() => handleNavigation('/signin')} style={[styles.signInLink, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+                        <Text style={[styles.additionalText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                             Back to Sign In
                         </Text>
                     </Link>
