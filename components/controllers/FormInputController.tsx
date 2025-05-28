@@ -58,7 +58,7 @@ const FormInputController = <T extends FieldValues>({
                             {...props}
                             secureTextEntry={props?.secureTextEntry && !showPassword}
                         />
-                        {rightIcon && <View style={styles.iconWrapper}>{rightIcon}</View>}
+                        {/* To be removed {rightIcon && <View style={styles.iconWrapper}>{rightIcon}</View>} */}
                         {props?.secureTextEntry && (
                             <View style={styles.iconWrapper}>
                                 <Feather
@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     iconWrapper: {
         position: 'absolute',
         right: 10,
+        top: 4,
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',

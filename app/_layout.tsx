@@ -43,7 +43,8 @@ function RootLayoutNav() {
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        router.replace('/(auth)/signin');
+        // router.replace('/(auth)/signin');
+        router.replace('/');
       } else {
         router.replace('/(tabs)');
       }
