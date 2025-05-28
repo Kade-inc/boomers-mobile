@@ -1,5 +1,5 @@
 import React from 'react';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -15,6 +15,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { StyleSheet, Text } from 'react-native';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 
+import ThemeProvider from '@/src/context/ThemeContext';
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -127,7 +128,7 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <ThemeProvider>
           <RootLayoutNav />
           <StatusBar style="light" />
           <Toast config={toastConfig} />

@@ -42,7 +42,7 @@ export default function SigninScreen() {
           });
 
           await checkAuth(); // Update auth state
-          router.replace('/(tabs)/explore');
+          router.replace('/(tabs)');
         } catch (error) {
           showToast(error instanceof Error ? error.message : 'Login failed');
         }

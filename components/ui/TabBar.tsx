@@ -1,15 +1,17 @@
 import { View,  StyleSheet, LayoutChangeEvent } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import TabBarButton from './TabBarButton';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-
+import { ColorsRevised } from '@/constants/ColorsRevised';
+import { ThemeContext } from '@/src/context/ThemeContext';
+    
 
 
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     const [dimensions, setDimensions] = useState({ width: 100, height: 20 });
-
+    const { currentTheme } = useContext(ThemeContext);
     const buttonWidth = dimensions.width / state.routes.length;
 
     const onTabBarLayout = (event: LayoutChangeEvent) => {
@@ -25,7 +27,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     })
 
   return (
-    <View style={styles.tabBar} onLayout={onTabBarLayout}>
+    <View style={[styles.tabBar, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark : ColorsRevised.gray}]} onLayout={onTabBarLayout}>
         <Animated.View style={[animatedStyle, {
             position: 'absolute',
             backgroundColor: '#F8B500',
@@ -74,7 +76,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             onPress={onPress}
             onLongPress={onLongPress}
             routeName={route.name}
-            color={isFocused ? '#393E46' : '#393E46'}
+            color={isFocused ? ColorsRevised.dark : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black}
             label={label}   
             />
         );
