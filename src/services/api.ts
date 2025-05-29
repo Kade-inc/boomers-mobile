@@ -78,7 +78,8 @@ export const endpoints = {
     forgotPassword: '/users/forgot-password',
     resetPassword: '/users/reset-password',
     verify: '/users/verify',
-    verifyResetToken: '/users/verify-reset-token'
+    verifyResetToken: '/users/verify-reset-token',
+    logout: '/users/logout'
   },
   // Add more endpoint categories as needed
 } as const;
@@ -148,6 +149,10 @@ export interface ResetPasswordRequest {
 
 export interface ResetPasswordResponse {
   message: string;
+}
+
+export interface LogoutRequest {
+  token: string;
 }
 
 // Auth service functions
@@ -220,11 +225,19 @@ export const authService = {
     }
   },
 
-  logout: async (): Promise<void> => {
+  logout: async (data: LogoutRequest): Promise<ApiResponse<void>> => {
     try {
-      await AsyncStorage.removeItem('token');
+      const response = await api.post(endpoints.auth.logout, data);
+      return {
+        success: true,
+        data: response.data,
+      };
     } catch (error) {
       console.error('Error during logout:', error);
+      return {
+        success: false,
+        error: 'An unexpected error occurred',
+      };
     }
   },
 

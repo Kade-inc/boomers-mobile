@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { authService, VerifyResetTokenRequest, VerifyResetTokenResponse } from "../../services/api";
+import { ApiResponse, authService, LogoutRequest, VerifyResetTokenRequest, VerifyResetTokenResponse } from "../../services/api";
 import { AuthResponse, LoginRequest, RegisterRequest, RegisterResponse, ForgotPasswordRequest, ForgotPasswordResponse, ResetPasswordRequest, ResetPasswordResponse } from "../../services/api";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -53,12 +53,23 @@ export const useAuth = () => {
           return response.data;
       }
   });
+  
+    const logout = useMutation<ApiResponse<void>, Error, LogoutRequest>({
+        mutationFn: async (data) => {
+            const response = await authService.logout(data);
+            if (!response.success) {
+                throw new Error(response.error || 'Failed to process logout request');
+            }
+            return response;
+        }
+    });
 
     return {
         login,
         register,
         forgotPassword,
         resetPassword,
-        verifyResetToken
+        verifyResetToken,
+        logout
     };
 }; 
