@@ -1,16 +1,42 @@
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { ActivityIndicator, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import SettingsButton from '@/components/SettingsButton';
 import { ThemeContext } from '@/src/context/ThemeContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router} from 'expo-router';
+import { useAuth } from '@/src/hooks/queries/useAuth';
+import Toast from 'react-native-toast-message';
 
 export default function SearchScreen() {
   const { currentTheme, toggleTheme, useSystemTheme, isSystemTheme } = useContext(ThemeContext);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const { logout } = useAuth();
+
+  const handleLogOut = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+      await logout.mutateAsync({token});
+   
+      console.log('Logout successful');
+      AsyncStorage.removeItem('token');
+      AsyncStorage.removeItem('refreshToken');
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error instanceof Error ? error.message : 'Failed to logout',
+        position: 'bottom',
+        visibilityTime: 3000
+      });
+      console.error('Error during logout:', error);
+    } finally {
+      router.push('/signin');
+    }
+  }
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
       <View style={styles.subContainer}>
@@ -29,6 +55,12 @@ export default function SearchScreen() {
       <SettingsButton title="Light" icon="lightbulb-on" onPress={() => {toggleTheme('light')}} isActive={!isSystemTheme && currentTheme === 'light'}/>
       <SettingsButton title="Dark" icon="weather-night" onPress={() => {toggleTheme('dark')}} isActive={!isSystemTheme && currentTheme === 'dark'}/>
       <SettingsButton title="System" icon="theme-light-dark" onPress={() => {useSystemTheme()}} isActive={isSystemTheme}/>
+      <TouchableOpacity style={[styles.button, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark: ColorsRevised.white}]} onPress={handleLogOut} disabled={logout.isPending}>
+        <Text style={{color: 'red'}}>
+          {logout.isPending ? 'Logging Out...' : 'Log Out'}
+        </Text>
+        {logout.isPending && <ActivityIndicator size="small" color="red" style={{marginLeft: 10}} />}
+      </TouchableOpacity>
       </View>
   </SafeAreaView>
   );
