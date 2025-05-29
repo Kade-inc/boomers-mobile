@@ -15,56 +15,92 @@ export const api = axios.create({
 // Add request interceptor for authentication
 api.interceptors.request.use(
   async (config) => {
+    console.log('Request Interceptor - URL:', config.url);
     try {
       // Get token from AsyncStorage
       const token = await AsyncStorage.getItem('token');
+      console.log('Request Interceptor - Token exists:', !!token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     } catch (error) {
-      console.error('Error getting token:', error);
+      console.error('Request Interceptor - Error:', error);
       return config;
     }
   },
   (error) => {
+    console.error('Request Interceptor - Rejected:', error);
     return Promise.reject(error);
   }
 );
 
 // Add response interceptor for error handling
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('Response Interceptor - Success:', response.config.url);
+    return response;
+  },
   async (error) => {
+    console.log('Response Interceptor - Error:', error.config?.url, error.response?.status);
+    const originalRequest = error.config;
+
+    // If error is 401 and we haven't tried to refresh the token yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('Response Interceptor - Attempting token refresh');
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = await AsyncStorage.getItem('refreshToken');
+        console.log('Response Interceptor - Refresh token exists:', !!refreshToken);
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+
+        // Call refresh token endpoint
+        const response = await api.post(endpoints.auth.refreshToken, { refreshToken });
+        console.log('Response Interceptor - Token refresh response:', response.data.success);
+        
+        if (response.data.success) {
+          console.log("NEW RESPONSE: ", response.data)
+          // Store new tokens
+          await AsyncStorage.setItem('token', response.data.data.accessToken);
+          await AsyncStorage.setItem('refreshToken', response.data.data.refreshToken);
+          
+          // Update the failed request's authorization header
+          originalRequest.headers.Authorization = `Bearer ${response.data.data.accessToken}`;
+          
+          // Retry the original request
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        console.error('Response Interceptor - Token refresh failed:', refreshError);
+        // If refresh token fails, clear tokens and handle logout
+        await AsyncStorage.removeItem('token');
+        await AsyncStorage.removeItem('refreshToken');
+        return Promise.reject(refreshError);
+      }
+    }
+
+    // Handle other error cases
     if (error.response) {
-      // Handle specific error cases
       switch (error.response.status) {
-        case 401:
-          // Unauthorized - clear token and redirect to login
-          await AsyncStorage.removeItem('token');
-          // You might want to trigger a navigation to login screen here
-          break;
         case 403:
-          // Forbidden
-          console.error('Access forbidden');
+          console.error('Response Interceptor - Access forbidden');
           break;
         case 404:
-          // Not found
-          console.error('Resource not found');
+          console.error('Response Interceptor - Resource not found');
           break;
         case 500:
-          // Server error
-          console.error('Server error');
+          console.error('Response Interceptor - Server error');
           break;
         default:
-          console.error('API Error:', error.response.data);
+          console.error('Response Interceptor - API Error:', error.response.data);
       }
     } else if (error.request) {
-      // Network error
-      console.error('Network Error: No response received');
+      console.error('Response Interceptor - Network Error: No response received');
     } else {
-      // Other errors
-      console.error('Error:', error.message);
+      console.error('Response Interceptor - Error:', error.message);
     }
     return Promise.reject(error);
   }
@@ -79,7 +115,8 @@ export const endpoints = {
     resetPassword: '/users/reset-password',
     verify: '/users/verify',
     verifyResetToken: '/users/verify-reset-token',
-    logout: '/users/logout'
+    logout: '/users/logout',
+    refreshToken: '/users/refresh-token'
   },
   // Add more endpoint categories as needed
 } as const;
@@ -151,8 +188,17 @@ export interface ResetPasswordResponse {
   message: string;
 }
 
-export interface LogoutRequest {
-  token: string;
+  export interface LogoutRequest {
+    token: string;
+  }
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
 }
 
 // Auth service functions
@@ -326,8 +372,28 @@ export const authService = {
       };
     }
   },
-};
 
+  refreshToken: async (data: RefreshTokenRequest): Promise<ApiResponse<RefreshTokenResponse>> => {
+    try {
+      const response = await api.post(endpoints.auth.refreshToken, data);
+      return {
+        success: true,
+        data: response.data.data,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to refresh token',
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred',
+      };
+    }
+  }
+};
 // Add these functions after the authService object
 export const getStoredTokens = async () => {
   try {
