@@ -88,7 +88,7 @@ export default function HomeScreen() {
         
                     <TouchableOpacity style={styles.teamsContainerHeaderMore}>
                       <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
-                      {icon.arrowRight({color: ColorsRevised.black, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
+                      {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
                     </TouchableOpacity>
                 </View>
                 {teamOptionsExpanded && (
@@ -119,17 +119,17 @@ export default function HomeScreen() {
                     <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Challenges</Text>
                     
                     {!challengesOptionsExpanded ? <TouchableOpacity onPress={() => setChallengesOptionsExpanded(!challengesOptionsExpanded)}>
-                      {icon.downCircle({borderRadius: 100, padding: 2, color: '#F8B500'})}
+                      {icon.downCircle({color: '#F8B500', borderRadius: 100, padding: 2})}
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => setChallengesOptionsExpanded(!challengesOptionsExpanded)}>
-                      {icon.upCircle({borderRadius: 100, padding: 2, color: '#F8B500'})}
+                      {icon.upCircle({color: '#F8B500', borderRadius: 100, padding: 2})}
                     </TouchableOpacity>}
                     </View>
         
                     <TouchableOpacity style={styles.teamsContainerHeaderMore}>
                       <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
-                      {icon.arrowRight({color: ColorsRevised.black, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
+                      {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
                     </TouchableOpacity>
                 </View>
                 {challengesOptionsExpanded && (
