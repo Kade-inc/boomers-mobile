@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { router, useLocalSearchParams } from "expo-router";
 import { images } from "@/constants";

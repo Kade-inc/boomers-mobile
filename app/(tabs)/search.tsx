@@ -2,7 +2,7 @@ import { ActivityIndicator, StyleSheet, Switch, Text, TouchableOpacity, View } f
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useContext } from 'react';
 import { ColorsRevised } from '@/constants/ColorsRevised';
-import SettingsButton from '@/components/SettingsButton';
+import SettingsButton from '@/components/ui/SettingsButton';
 import { ThemeContext } from '@/src/context/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router} from 'expo-router';

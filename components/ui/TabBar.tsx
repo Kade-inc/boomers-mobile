@@ -27,7 +27,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     })
 
   return (
-    <View style={[styles.tabBar, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark : ColorsRevised.gray}]} onLayout={onTabBarLayout}>
+    <View style={[styles.tabBar, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark : ColorsRevised.white}]} onLayout={onTabBarLayout}>
         <Animated.View style={[animatedStyle, {
             position: 'absolute',
             backgroundColor: '#F8B500',

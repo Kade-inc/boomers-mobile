@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useContext } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import { router } from 'expo-router';
 import { images } from '@/constants';
 import { ThemeContext } from '@/src/context/ThemeContext';

@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 export const icon = {
     index: (props:any) => <Feather name="home" size={24}  {...props} />,
@@ -10,4 +11,7 @@ export const icon = {
     send: (props:any) => <Feather name="send" size={24}  {...props} />,
     zap: (props:any) => <Feather name="zap" size={24}  {...props} />,
     smile: (props:any) => <Feather name="smile" size={24}  {...props} />,
+    arrowRight: (props:any) => <Feather name="arrow-right" size={18}  {...props} />,
+    downCircle: (props:any) => <AntDesign name="downcircle" size={24} {...props} />,
+    upCircle: (props:any) => <AntDesign name="upcircle" size={24} {...props} />,
   }

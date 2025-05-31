@@ -1,7 +1,7 @@
 import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useForm, Controller} from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Link, router } from "expo-router";
