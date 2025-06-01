@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     },
     signInLink: {
       fontFamily: 'MontserratBold',
-      color: ColorsRevised.yellow
+      color: ColorsRevised.black
     },
     signupSuccessHeader: {
       flex: 1,

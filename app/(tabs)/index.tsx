@@ -1,6 +1,6 @@
-import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useContext, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { ThemeContext } from '@/src/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { icon } from '@/constants/icon';
 import Slider from '@/components/ui/Slider';
 import { SliderData } from '@/data/SliderData';
+
+const { width } = Dimensions.get('window');
+// Calculate the effective carousel item width based on SafeAreaView padding
+const HORIZONTAL_PADDING = 20 * 2; // 20 on each side of the safe area
+const ITEM_WIDTH = width - HORIZONTAL_PADDING;
 
 export default function HomeScreen() {
   const { currentTheme } = useContext(ThemeContext);
@@ -29,6 +34,31 @@ export default function HomeScreen() {
       id: 3,
       title: 'Team 3',
       description: 'Team 3 description'
+    },
+    {
+      id: 4,
+      title: 'Team 4',
+      description: 'Team 4 description'
+    },
+    {
+      id: 5,
+      title: 'Team 5',
+      description: 'Team 5 description'
+    },
+    {
+      id: 6,
+      title: 'Team 6',
+      description: 'Team 6 description'
+    },
+    {
+      id: 7,
+      title: 'Team 7',
+      description: 'Team 7 description'
+    },
+    {
+      id: 8,
+      title: 'Team 8',
+      description: 'Team 8 description'
     }
   ]
   const [teamOptionsExpanded, setTeamOptionsExpanded] = useState(false)
@@ -36,6 +66,10 @@ export default function HomeScreen() {
   const [selectedTeamFilter, setSelectedTeamFilter] = useState('All')
   const [selectedChallengeFilter, setSelectedChallengeFilter] = useState('All')
 
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const challengeScrollViewRef = useRef<ScrollView>(null);
+  const [challengeCurrentIndex, setChallengeCurrentIndex] = useState(0);
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
@@ -111,7 +145,40 @@ export default function HomeScreen() {
                   </View>
                 </View>
                   )}
-                <Slider itemList={SliderData}/>
+                  <View>
+            <ScrollView 
+              ref={scrollViewRef}
+              horizontal 
+              pagingEnabled 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.carouselContent}
+              onMomentumScrollEnd={(event) => {
+                const offsetX = event.nativeEvent.contentOffset.x;
+                const index = Math.round(offsetX / ITEM_WIDTH);
+                setCurrentIndex(index);
+              }}
+            >
+              {sliderData.map((item, index) => (
+                <View key={`${item.id}-${index}`} style={styles.carouselItem}>
+                
+                </View>
+              ))}
+            </ScrollView>
+
+            {/* Dots Indicator */}
+            <View style={styles.dotsContainer}>
+              {sliderData.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    currentIndex === index ? styles.activeDot : styles.inactiveDot,
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
+                {/* <Slider itemList={SliderData}/> */}
               </View>
               <View style={styles.challengesContainer}>
               <View style={styles.teamsContainerHeader}>
@@ -152,7 +219,41 @@ export default function HomeScreen() {
                   </View>
                 </View>
                   )}
-                <Slider itemList={SliderData}/>
+
+<View>
+            <ScrollView 
+              ref={challengeScrollViewRef}
+              horizontal 
+              pagingEnabled 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.carouselContent}
+              onMomentumScrollEnd={(event) => {
+                const offsetX = event.nativeEvent.contentOffset.x;
+                const index = Math.round(offsetX / ITEM_WIDTH);
+                setChallengeCurrentIndex(index);
+              }}
+            >
+              {sliderData.map((item, index) => (
+                <View key={`${item.id}-${index}`} style={styles.carouselItem}>
+              
+                </View>
+              ))}
+            </ScrollView>
+
+            {/* Dots Indicator */}
+            <View style={styles.dotsContainer}>
+              {sliderData.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    challengeCurrentIndex === index ? styles.activeDot : styles.inactiveDot,
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
+                {/* <Slider itemList={SliderData}/> */}
               </View>
               <View style={styles.recommendationsContainer}></View>
             </View>
@@ -287,7 +388,7 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   mainBodyContent: {
-
+    gap: 15
   },
   teamsContainer: {
     gap: 10,
@@ -328,5 +429,41 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     gap: 15
-  }
+  },
+  carouselContent: {
+    gap: 10
+  },
+  carouselItem: {
+    width: ITEM_WIDTH,
+    height: 100,
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
+  carouselBody: {
+  },
+  dotsContainer: {
+    // position: 'absolute',
+    // bottom: 10, // Positioning the dot container within the carousel container
+    flexDirection: 'row',
+    alignSelf: 'center',
+    marginTop: 10
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 5,
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: '#F8B500',
+  },
+  inactiveDot: {
+    backgroundColor: '#fff',
+  },
+  separatorDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
 });
