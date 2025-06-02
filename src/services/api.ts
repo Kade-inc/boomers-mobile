@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
 
 const BASE_URL = 'http://192.168.100.49:5001/api';
 
@@ -81,6 +82,9 @@ export const endpoints = {
     verifyResetToken: '/users/verify-reset-token',
     logout: '/users/logout'
   },
+  team: {
+    getUserTeams: '/teams'
+  }
   // Add more endpoint categories as needed
 } as const;
 
@@ -202,16 +206,21 @@ export const authService = {
   login: async (data: LoginRequest): Promise<ApiResponse<AuthResponse>> => {
     try {
       const response = await api.post(endpoints.auth.login, data);
-      
-      // Store tokens
+ 
       await AsyncStorage.setItem('token', response.data.accessToken);
       await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
-      
+
+      const decodedToken = await decodeToken();
+      if (decodedToken?.aud) {
+        await AsyncStorage.setItem('userId', decodedToken.aud);
+      }
+
       return {
         success: true,
         data: response.data,
       };
     } catch (error) {
+      console.log("ERROR: ", error)
       if (axios.isAxiosError(error)) {
         return {
           success: false,
@@ -325,8 +334,35 @@ export const authService = {
         error: 'An unexpected error occurred',
       };
     }
-  },
+  }
 };
+
+export const teamService = {
+  getUserTeams: async (userId: string): Promise<ApiResponse<TeamsResponse>> => {
+    try {
+      const response = await api.get(endpoints.team.getUserTeams, {
+        params: {
+          userId
+        }
+      });
+          return {
+            success: true,
+            data: response.data.data
+          };
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            return {
+              success: false,
+              error: error.response?.data?.message || 'Failed to fetch user teams'
+            };
+          }
+          return {
+            success: false,
+            error: 'An unexpected error occurred'
+          };
+        }
+      }
+}
 
 // Add these functions after the authService object
 export const getStoredTokens = async () => {
@@ -364,4 +400,42 @@ export const isTokenValid = (token: string | null): boolean => {
 export const checkAuthStatus = async (): Promise<boolean> => {
   const { accessToken } = await getStoredTokens();
   return isTokenValid(accessToken);
-}; 
+};
+
+const decodeToken = async (): Promise<any> => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) {
+      console.log("No token found");
+      return null;
+    }
+    const decoded = jwtDecode(token);
+    console.log("DECODED: ", decoded);
+    return decoded;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
+};
+
+export interface Team {
+  _id: string;
+  owner_id: string;
+  name: string;
+  teamUsername: string;
+  domain: string;
+  subdomain: string;
+  subdomainTopics: string[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface TeamsResponse {
+  message: string;
+  currentPage: number;
+  perPage: number;
+  totalPages: number;
+  totalCount: number;
+  data: Team[];
+} 

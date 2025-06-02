@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { ThemeContext } from '@/src/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { icon } from '@/constants/icon';
 import Slider from '@/components/ui/Slider';
 import { SliderData } from '@/data/SliderData';
+import CustomButton from '@/components/ui/CustomButton';
+import { Team } from '@/src/services/api';
+import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
@@ -65,17 +69,33 @@ export default function HomeScreen() {
   const [challengesOptionsExpanded, setChallengesOptionsExpanded] = useState(false)
   const [selectedTeamFilter, setSelectedTeamFilter] = useState('All')
   const [selectedChallengeFilter, setSelectedChallengeFilter] = useState('All')
-
+  const [userId, setUserId] = useState('')
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const challengeScrollViewRef = useRef<ScrollView>(null);
   const [challengeCurrentIndex, setChallengeCurrentIndex] = useState(0);
+  const [userTeams, setUserTeams] = useState<Team[]>([])
+
+  const {data: userTeamsData} = useGetUserTeams(userId)
+
+  useEffect(() => {
+    if (userTeamsData?.data?.data) {
+      setUserTeams(userTeamsData.data.data)
+    }
+  }, [userTeamsData])
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const id = await AsyncStorage.getItem('userId')
+      setUserId(id || '')
+    }
+    getUserId()
+  }, [])
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
-        <ScrollView style={styles.scrollView}>
-          <View style={[styles.display]}>
-            <View style={styles.headerView}>
+      <View style={styles.headerView}>
               <View>
                 <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 24, fontFamily: 'MontserratExtraBold'}}>LOGO</Text>
               </View>
@@ -84,6 +104,9 @@ export default function HomeScreen() {
                 {icon.send({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})}
               </View>
             </View>
+        <ScrollView style={styles.scrollView}>
+          <View style={[styles.display]}>
+
             <View style={styles.headerBottomView}>
               <View style={styles.headerBottomSubView}>
                 <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Hi Paul,</Text>
@@ -106,7 +129,9 @@ export default function HomeScreen() {
               </View>
             </View>
             <View style={styles.mainBodyContent}>
-              <View style={styles.teamsContainer}>
+              {userTeams.length > 0 ? (
+                <>
+                    <View style={styles.teamsContainer}>
                 <View style={styles.teamsContainerHeader}>
                   <View style={styles.teamsContainerHeaderLeft}>
                     <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Teams</Text>
@@ -132,7 +157,7 @@ export default function HomeScreen() {
                     <Text style={{color: 'white', backgroundColor: '#000000', paddingHorizontal: 15, borderRadius: 2, paddingVertical: 8, fontFamily: 'MontserratMedium', fontSize: 12}}>Create</Text>
                   </TouchableOpacity>
                   <View style={styles.teamsFilters}>
-                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}}>Filters</Text>
+                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontFamily: 'MontserratMedium'}}>Filters</Text>
                     <TouchableOpacity onPress={() => setSelectedTeamFilter('All')}>
                       <Text style={[{color: selectedTeamFilter === 'All' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, backgroundColor: selectedTeamFilter === 'All' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>All</Text>
                     </TouchableOpacity>
@@ -206,7 +231,7 @@ export default function HomeScreen() {
                     <Text style={{color: 'white', backgroundColor: '#000000', paddingHorizontal: 15, borderRadius: 2, paddingVertical: 8, fontFamily: 'MontserratMedium', fontSize: 12}}>Create</Text>
                   </TouchableOpacity>
                   <View style={styles.teamsFilters}>
-                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}}>Filters</Text>
+                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontFamily: 'MontserratMedium'}}>Filters</Text>
                     <TouchableOpacity onPress={() => setSelectedChallengeFilter('All')}>
                       <Text style={[{color: selectedChallengeFilter === 'All' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, backgroundColor: selectedChallengeFilter === 'All' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>All</Text>
                     </TouchableOpacity>
@@ -220,7 +245,7 @@ export default function HomeScreen() {
                 </View>
                   )}
 
-<View>
+          <View>
             <ScrollView 
               ref={challengeScrollViewRef}
               horizontal 
@@ -255,7 +280,30 @@ export default function HomeScreen() {
           </View>
                 {/* <Slider itemList={SliderData}/> */}
               </View>
-              <View style={styles.recommendationsContainer}></View>
+                </>
+              ) : (
+                <View style={styles.recommendationsContainer}>
+
+                <View style={styles.recommendationsContainerBody}>
+                <Text style={{fontSize: 16, fontFamily: 'MontserratBold', color: ColorsRevised.black, textAlign: 'center'}}>LOGO</Text>
+                  <Text style={styles.recommendationsContainerBodyText}>You do not own or belong to any team</Text>
+                  <View style={{gap: 10}}>
+                  <CustomButton title='Create a Team' handlePress={() => {}} containerStyles={{ backgroundColor: '#000000'}} textStyles={{fontSize: 14, color: 'white'}}/>
+                  <CustomButton title='Join a Team' handlePress={() => {}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
+                  </View>
+                </View>
+
+                <View style={styles.recommendationsContainerBody}>
+                  <Text style={{fontSize: 14, fontFamily: 'MontserratSemiBold', color: ColorsRevised.black, textAlign: 'center'}}>Team Recommendations</Text>
+                  <Text style={{fontSize: 16, fontFamily: 'MontserratBold', color: ColorsRevised.black, textAlign: 'center'}}>LOGO</Text>
+                  <Text style={styles.recommendationsContainerBodyText}>No Team Recommendations</Text>
+                  <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20}]}>Add interests to get some team recommendations</Text>
+                  <CustomButton title='Edit Profile' handlePress={() => {}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
+                </View>
+              </View>
+              )}
+            
+             
             </View>
           </View>
         </ScrollView>
@@ -311,7 +359,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    paddingTop: 10
+    paddingTop: 10,
+    paddingHorizontal: 20,
   },
   headerSubView: {
     flexDirection: 'row',
@@ -415,7 +464,19 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   recommendationsContainer: {
-
+    gap: 10
+  },
+  recommendationsContainerBodyText: {
+    fontSize: 13,
+    fontFamily: 'MontserratMedium',
+    color: ColorsRevised.black,
+    textAlign: 'center'
+  },
+  recommendationsContainerBody: {
+    gap: 10,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 10,
   },
   teamsFilters: {
     flexDirection: 'row',
