@@ -10,9 +10,11 @@ import Toast, { BaseToast, ErrorToast, ToastConfigParams }  from 'react-native-t
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from '../src/context/AuthContext';
 import { View, ActivityIndicator } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Text } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 
 import ThemeProvider from '@/src/context/ThemeContext';
@@ -97,20 +99,25 @@ export default function RootLayout() {
     success: (props: ToastConfigParams<any>) => (
       <BaseToast
         {...props}
-        style={{ borderLeftColor: 'pink' }}
+        style={{ borderLeftColor: '#50C878' }}
         contentContainerStyle={{ paddingHorizontal: 15 }}
         text1Style={{
-          fontSize: 15,
+          fontSize: 16,
           fontWeight: '400'
+        }}
+        text2Style={{
+          fontSize: 13
         }}
       />
     ),
     error: (props: ToastConfigParams<any>) => (
       <ErrorToast
-        style={{ borderLeftColor: '#C01212' }}
         {...props}
+        style={{ borderLeftColor: '#DC143C' }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
         text1Style={{
-          fontSize: 17
+          fontSize: 16,
+          fontWeight: '400'
         }}
         text2Style={{
           fontSize: 13
@@ -118,10 +125,15 @@ export default function RootLayout() {
       />
     ),
     custom: (props: ToastConfigParams<any>) => (
-      <View style={{ height: 60, width: '100%', backgroundColor: 'red' }}>
-        <Text>{props.text1}</Text>
-        <Text>{props.props?.uuid}</Text>
-      </View>
+      <LinearGradient
+        colors={['#00989B', '#005E78']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ height: 60, width: '90%', borderRadius: 8, paddingHorizontal: 20, paddingVertical: 10}}
+      >
+        <Text style={{ color: 'white', fontSize: 16, fontWeight: '500' }}>{props.text1}</Text>
+        <Text style={{ color: 'white', fontSize: 13, fontWeight: '400' }}>{props.text2}</Text>
+      </LinearGradient>
     )
   };
 
