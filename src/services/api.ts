@@ -375,9 +375,11 @@ export const teamService = {
           userId
         }
       });
+
+      console.log("NO LOVE: ", response.data)
           return {
             success: true,
-            data: response.data.data
+            data: response.data
           };
         } catch (error) {
           if (axios.isAxiosError(error)) {
@@ -507,6 +509,7 @@ export interface Team {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  teamColor?: string;
 }
 
 export interface TeamsResponse {

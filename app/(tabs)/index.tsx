@@ -15,6 +15,7 @@ import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useRecommendations from '@/src/hooks/queries/useRecommendations';
 import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
+import TeamCard from '@/components/ui/TeamCard';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
@@ -81,11 +82,12 @@ export default function HomeScreen() {
   const {data: userTeamsData, refetch: refetchUserTeams} = useGetUserTeams(userId)
   const {data: recommendationsData, refetch: refetchRecommendations} = useRecommendations()
   const {data: challengesData, refetch: refetchChallenges} = useGetChallenges(userId, false)
-  console.log("THIS MAN: ", challengesData)
+  // console.log("THIS MAN: ", recommendationsData)
 
   useEffect(() => {
-    if (userTeamsData?.data?.data) {
-      setUserTeams(userTeamsData.data.data)
+    if (userTeamsData?.data) {
+      console.log("Teams data:", userTeamsData.data)
+      setUserTeams(userTeamsData.data.data.slice(0, 10))
     }
   }, [userTeamsData])
 
@@ -192,18 +194,16 @@ export default function HomeScreen() {
                 setCurrentIndex(index);
               }}
             >
-              {sliderData.map((item, index) => (
-                <View key={`${item.id}-${index}`} style={styles.carouselItem}>
-                
-                </View>
+              {userTeams.map((team: Team, index) => (
+                <TeamCard key={`${team._id}-${index}`} team={team} cardStyles={{width: ITEM_WIDTH - 20, backgroundColor: team.teamColor}} />
               ))}
             </ScrollView>
 
             {/* Dots Indicator */}
             <View style={styles.dotsContainer}>
-              {sliderData.map((_, index) => (
+              {userTeams.map((team: Team, index) => (
                 <View
-                  key={index}
+                  key={`${team._id}-${index}`}
                   style={[
                     styles.dot,
                     currentIndex === index ? styles.activeDot : styles.inactiveDot,
