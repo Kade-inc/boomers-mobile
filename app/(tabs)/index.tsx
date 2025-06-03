@@ -76,7 +76,7 @@ export default function HomeScreen() {
   const [challengeCurrentIndex, setChallengeCurrentIndex] = useState(0);
   const [userTeams, setUserTeams] = useState<Team[]>([])
 
-  const {data: userTeamsData} = useGetUserTeams(userId)
+  const {data: userTeamsData, refetch: refetchUserTeams} = useGetUserTeams(userId)
 
   useEffect(() => {
     if (userTeamsData?.data?.data) {
@@ -91,6 +91,10 @@ export default function HomeScreen() {
     }
     getUserId()
   }, [])
+
+  const getTeams = async () => {
+    refetchUserTeams()
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -298,7 +302,7 @@ export default function HomeScreen() {
                   <Text style={{fontSize: 16, fontFamily: 'MontserratBold', color: ColorsRevised.black, textAlign: 'center'}}>LOGO</Text>
                   <Text style={styles.recommendationsContainerBodyText}>No Team Recommendations</Text>
                   <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20}]}>Add interests to get some team recommendations</Text>
-                  <CustomButton title='Edit Profile' handlePress={() => {}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
+                  <CustomButton title='Edit Profile' handlePress={() => {getTeams()}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
                 </View>
               </View>
               )}

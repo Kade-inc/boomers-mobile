@@ -1,6 +1,7 @@
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+import { router } from 'expo-router';
 
 const BASE_URL = 'http://192.168.100.49:5001/api';
 
@@ -41,10 +42,35 @@ api.interceptors.response.use(
       // Handle specific error cases
       switch (error.response.status) {
         case 401:
-          // Unauthorized - clear token and redirect to login
-          await AsyncStorage.removeItem('token');
-          // You might want to trigger a navigation to login screen here
-          break;
+          const originalRequest = error.config;
+  
+          if (!originalRequest._retry) {
+            originalRequest._retry = true; // Prevent infinite loop
+            try {
+              const refresh_token = await AsyncStorage.getItem("refreshToken");
+              if (!refresh_token) {
+                throw new Error("No refresh token found");
+              }
+  
+              const response = await api.post(
+                "/users/refresh-token",
+                {
+                  refreshToken: refresh_token,
+                }
+              );
+  
+              const { accessToken, refreshToken } = response.data;
+              
+              await AsyncStorage.setItem('token', accessToken);
+              await AsyncStorage.setItem('refreshToken', refreshToken);
+              originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+              return api.request(originalRequest);
+            } catch (error) {
+              await AsyncStorage.removeItem('token');
+              await AsyncStorage.removeItem('refreshToken');
+              router.replace('/(auth)/signin');
+            }
+          }
         case 403:
           // Forbidden
           console.error('Access forbidden');
