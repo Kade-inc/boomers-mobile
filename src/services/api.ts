@@ -109,7 +109,11 @@ export const endpoints = {
     logout: '/users/logout'
   },
   team: {
-    getUserTeams: '/teams'
+    getUserTeams: '/teams',
+    getRecommendations: '/teams/recommendations',
+  },
+  challenge: {
+    getChallenges: '/challenges'
   }
   // Add more endpoint categories as needed
 } as const;
@@ -387,7 +391,55 @@ export const teamService = {
             error: 'An unexpected error occurred'
           };
         }
+      },
+  getRecommendations: async (): Promise<ApiResponse<RecommendationsResponse>> => {
+    try {
+      const response = await api.get(endpoints.team.getRecommendations);
+      return {
+        success: true,
+        data: response.data.data
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch recommendations'
+        };
       }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  }
+}
+
+export const challengeService = {
+  getChallenges: async (userId: string, valid: boolean): Promise<ApiResponse<ChallengesResponse>> => {
+    try {
+      const response = await api.get(endpoints.challenge.getChallenges, {
+        params: {
+          userId,
+          valid
+        }
+      });
+      return {
+        success: true,
+        data: response.data.data
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch challenges'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  }
 }
 
 // Add these functions after the authService object
@@ -465,3 +517,27 @@ export interface TeamsResponse {
   totalCount: number;
   data: Team[];
 } 
+
+export interface RecommendationsResponse {  
+  data: Team[];
+}
+
+export interface Challenge {
+  _id: string;
+  owner_id: string;
+  team_id: string;
+  comments: any[];
+  valid: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  challenge_name: string;
+  difficulty: number;
+  due_date: string;
+  description: string;
+}
+
+export interface ChallengesResponse {
+  message: string;
+  data: Challenge[];
+}

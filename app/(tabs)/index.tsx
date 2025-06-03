@@ -13,6 +13,8 @@ import CustomButton from '@/components/ui/CustomButton';
 import { Team } from '@/src/services/api';
 import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useRecommendations from '@/src/hooks/queries/useRecommendations';
+import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
@@ -77,6 +79,9 @@ export default function HomeScreen() {
   const [userTeams, setUserTeams] = useState<Team[]>([])
 
   const {data: userTeamsData, refetch: refetchUserTeams} = useGetUserTeams(userId)
+  const {data: recommendationsData, refetch: refetchRecommendations} = useRecommendations()
+  const {data: challengesData, refetch: refetchChallenges} = useGetChallenges(userId, false)
+  console.log("THIS MAN: ", challengesData)
 
   useEffect(() => {
     if (userTeamsData?.data?.data) {
@@ -289,7 +294,7 @@ export default function HomeScreen() {
                 <View style={styles.recommendationsContainer}>
 
                 <View style={styles.recommendationsContainerBody}>
-                <Text style={{fontSize: 16, fontFamily: 'MontserratBold', color: ColorsRevised.black, textAlign: 'center'}}>LOGO</Text>
+                  <View style={{alignItems: 'center'}}>{icon.teams({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
                   <Text style={styles.recommendationsContainerBodyText}>You do not own or belong to any team</Text>
                   <View style={{gap: 10}}>
                   <CustomButton title='Create a Team' handlePress={() => {}} containerStyles={{ backgroundColor: '#000000'}} textStyles={{fontSize: 14, color: 'white'}}/>
@@ -299,9 +304,9 @@ export default function HomeScreen() {
 
                 <View style={styles.recommendationsContainerBody}>
                   <Text style={{fontSize: 14, fontFamily: 'MontserratSemiBold', color: ColorsRevised.black, textAlign: 'center'}}>Team Recommendations</Text>
-                  <Text style={{fontSize: 16, fontFamily: 'MontserratBold', color: ColorsRevised.black, textAlign: 'center'}}>LOGO</Text>
+                  <View style={{alignItems: 'center'}}>{icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
                   <Text style={styles.recommendationsContainerBodyText}>No Team Recommendations</Text>
-                  <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20}]}>Add interests to get some team recommendations</Text>
+                  <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20, paddingHorizontal: 20}]}>Add interests to get some team recommendations</Text>
                   <CustomButton title='Edit Profile' handlePress={() => {getTeams()}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
                 </View>
               </View>
