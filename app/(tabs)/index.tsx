@@ -187,7 +187,7 @@ export default function HomeScreen() {
               horizontal 
               pagingEnabled 
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.carouselContent}
+              contentContainerStyle={[styles.carouselContent, {paddingHorizontal: 0}]}
               onMomentumScrollEnd={(event) => {
                 const offsetX = event.nativeEvent.contentOffset.x;
                 const index = Math.round(offsetX / ITEM_WIDTH);
@@ -195,7 +195,14 @@ export default function HomeScreen() {
               }}
             >
               {userTeams.map((team: Team, index) => (
-                <TeamCard key={`${team._id}-${index}`} team={team} cardStyles={{width: ITEM_WIDTH - 20, backgroundColor: team.teamColor}} />
+                <TeamCard 
+                  key={`${team._id}-${index}`} 
+                  team={team} 
+                  cardStyles={{
+                    width: ITEM_WIDTH - 20,
+                    marginHorizontal: 5
+                  }} 
+                />
               ))}
             </ScrollView>
 
@@ -501,6 +508,8 @@ const styles = StyleSheet.create({
     gap: 15
   },
   carouselContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: 10
   },
   carouselItem: {
