@@ -208,7 +208,7 @@ export default function HomeScreen() {
                 </View>
               ) : isTeamsError ? (
                 <View style={styles.loaderContainer}>
-                                      <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Teams</Text>
+                                      <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratSemiBold'}}>Teams</Text>
                   <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading teams</Text>
                 </View>
               ) : userTeams.length > 0 ? (
@@ -216,7 +216,7 @@ export default function HomeScreen() {
                     <View style={styles.teamsContainer}>
                 <View style={styles.teamsContainerHeader}>
                   <View style={styles.teamsContainerHeaderLeft}>
-                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Teams</Text>
+                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratSemiBold'}}>Teams</Text>
                     
                     {!teamOptionsExpanded ? <TouchableOpacity onPress={() => setTeamOptionsExpanded(!teamOptionsExpanded)}>
                       {icon.downCircle({borderRadius: 100, padding: 2, color: '#F8B500', size: 20})}
@@ -310,7 +310,7 @@ export default function HomeScreen() {
               <View style={styles.challengesContainer}>
               <View style={styles.teamsContainerHeader}>
                   <View style={styles.teamsContainerHeaderLeft}>
-                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Challenges</Text>
+                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratSemiBold'}}>Challenges</Text>
                     
                     {!challengesOptionsExpanded ? <TouchableOpacity onPress={() => setChallengesOptionsExpanded(!challengesOptionsExpanded)}>
                       {icon.downCircle({color: '#F8B500', borderRadius: 100, padding: 2, size: 20})}
