@@ -79,18 +79,29 @@ export default function HomeScreen() {
   const challengeScrollViewRef = useRef<ScrollView>(null);
   const [challengeCurrentIndex, setChallengeCurrentIndex] = useState(0);
   const [userTeams, setUserTeams] = useState<Team[]>([])
-
+  const [recommendations, setRecommendations] = useState<Team[]>([])
   const {data: userTeamsData, refetch: refetchUserTeams} = useGetUserTeams(userId)
   const {data: recommendationsData, refetch: refetchRecommendations} = useRecommendations()
   const {data: challengesData, refetch: refetchChallenges} = useGetChallenges(userId, false)
-  // console.log("THIS MAN: ", recommendationsData)
-
+  const recommendationsScrollViewRef = useRef<ScrollView>(null);
+  const [recommendationsCurrentIndex, setRecommendationsCurrentIndex] = useState(0);
   useEffect(() => {
     if (userTeamsData?.data) {
-      // console.log("Teams data:", userTeamsData.data)
       setUserTeams(userTeamsData.data.data.slice(0, 10))
     }
   }, [userTeamsData])
+
+  useEffect(() => {
+    console.log("Recommendations data received:", recommendationsData?.data?.data)
+    if (recommendationsData?.data?.data) {
+      console.log("Setting recommendations to:", recommendationsData.data.data)
+      setRecommendations(recommendationsData.data.data)
+    }
+  }, [recommendationsData])
+
+  useEffect(() => {
+    console.log("Recommendations state updated:", recommendations)
+  }, [recommendations])
 
   useEffect(() => {
     const getUserId = async () => {
@@ -314,7 +325,58 @@ export default function HomeScreen() {
                 </>
               ) : (
                 <View style={styles.recommendationsContainer}>
+                                  <View style={styles.recommendationsContainerBody}>
+                  <View style={{alignItems: 'center'}}>{icon.teams({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
+                  <Text style={styles.recommendationsContainerBodyText}>You do not own or belong to any team</Text>
+                  <View style={{gap: 10}}>
+                  <CustomButton title='Create a Team' handlePress={() => {}} containerStyles={{ backgroundColor: '#000000'}} textStyles={{fontSize: 14, color: 'white'}}/>
+                  <CustomButton title='Join a Team' handlePress={() => {}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
+                  </View>
+                </View>
+                <View style={styles.recommendationsContainerBody}>
+                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Recommendations</Text>
+                {recommendations.length > 0 ? (
+                  <>
+                            <ScrollView 
+                            ref={recommendationsScrollViewRef}
+                            horizontal 
+                            pagingEnabled 
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={[styles.carouselContent, {paddingHorizontal: 0}]}
+                            onMomentumScrollEnd={(event) => {
+                              const offsetX = event.nativeEvent.contentOffset.x;
+                              const index = Math.round(offsetX / ITEM_WIDTH);
+                              setRecommendationsCurrentIndex(index);
+                            }}
+                          >
+                            {recommendations.slice(0, 10)?.map((team: Team, index) => (
+                              <TeamCard 
+                                key={`${team._id}-${index}`} 
+                                team={team} 
+                                cardStyles={{
+                                  width: ITEM_WIDTH - 30,
+                                  marginHorizontal: 0
+                                }} 
+                              />
+                            ))}
+                          </ScrollView>
+                          <View style={styles.dotsContainer}>
+              {recommendations.slice(0, 10)?.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    recommendationsCurrentIndex === index ? styles.activeDot : styles.inactiveDot,
+                  ]}
+                />
+              ))}
+              
+            </View>
+            <CustomButton title='View All' handlePress={() => {}} containerStyles={{width: '100%', backgroundColor: '#F8B500'}} textStyles={{fontSize: 14, color: ColorsRevised.black}}/>
+            </>
+                ) : (
 
+                <>
                 <View style={styles.recommendationsContainerBody}>
                   <View style={{alignItems: 'center'}}>{icon.teams({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
                   <Text style={styles.recommendationsContainerBodyText}>You do not own or belong to any team</Text>
@@ -331,7 +393,10 @@ export default function HomeScreen() {
                   <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20, paddingHorizontal: 20}]}>Add interests to get some team recommendations</Text>
                   <CustomButton title='Edit Profile' handlePress={() => {getTeams()}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
                 </View>
-              </View>
+                
+                </>)}
+                </View>
+                </View>
               )}
             
              
