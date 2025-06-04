@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ThemeContext } from '@/src/context/ThemeContext';
@@ -80,9 +80,9 @@ export default function HomeScreen() {
   const [challengeCurrentIndex, setChallengeCurrentIndex] = useState(0);
   const [userTeams, setUserTeams] = useState<Team[]>([])
   const [recommendations, setRecommendations] = useState<Team[]>([])
-  const {data: userTeamsData, refetch: refetchUserTeams} = useGetUserTeams(userId)
-  const {data: recommendationsData, refetch: refetchRecommendations} = useRecommendations()
-  const {data: challengesData, refetch: refetchChallenges} = useGetChallenges(userId, false)
+  const {data: userTeamsData, refetch: refetchUserTeams, isPending: isTeamsLoading, isError: isTeamsError} = useGetUserTeams(userId)
+  const {data: recommendationsData, refetch: refetchRecommendations, isPending: isRecommendationsLoading, isError: isRecommendationsError} = useRecommendations()
+  const {data: challengesData, refetch: refetchChallenges, isPending: isChallengesLoading, isError: isChallengesError} = useGetChallenges(userId, false)
   const recommendationsScrollViewRef = useRef<ScrollView>(null);
   const [recommendationsCurrentIndex, setRecommendationsCurrentIndex] = useState(0);
   useEffect(() => {
@@ -114,6 +114,7 @@ export default function HomeScreen() {
   const getTeams = async () => {
     refetchUserTeams()
   }
+
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -152,7 +153,16 @@ export default function HomeScreen() {
               </View>
             </View>
             <View style={styles.mainBodyContent}>
-              {userTeams.length > 0 ? (
+              {(isTeamsLoading || isRecommendationsLoading || isChallengesLoading) ? (
+                <View style={styles.loaderContainer}>
+                  <ActivityIndicator size="large" color="#F8B500" />
+                </View>
+              ) : isTeamsError ? (
+                <View style={styles.loaderContainer}>
+                                      <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Teams</Text>
+                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading teams</Text>
+                </View>
+              ) : userTeams.length > 0 ? (
                 <>
                     <View style={styles.teamsContainer}>
                 <View style={styles.teamsContainerHeader}>
@@ -288,6 +298,13 @@ export default function HomeScreen() {
                   )}
 
           <View>
+            {isChallengesError ? (
+              <View style={styles.loaderContainer}>
+                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Challenges</Text>
+                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading challenges</Text>
+              </View>
+            ) : (
+              <>
             <ScrollView 
               ref={challengeScrollViewRef}
               horizontal 
@@ -319,10 +336,18 @@ export default function HomeScreen() {
                 />
               ))}
             </View>
+            </>
+            )}
           </View>
                 {/* <Slider itemList={SliderData}/> */}
               </View>
                 </>
+              ) : (<>
+              {isRecommendationsError ? (
+                <View style={styles.loaderContainer}>
+                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Recommendations</Text>
+                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading recommendations</Text>
+                </View>
               ) : (
                 <View style={styles.recommendationsContainer}>
                                   <View style={styles.recommendationsContainerBody}>
@@ -396,8 +421,8 @@ export default function HomeScreen() {
                 
                 </>)}
                 </View>
-                </View>
-              )}
+                </View>)}
+                </>)}
             
              
             </View>
@@ -624,5 +649,11 @@ const styles = StyleSheet.create({
     height: 7,
     borderRadius: 5,
     marginHorizontal: 5,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 200
   },
 });
