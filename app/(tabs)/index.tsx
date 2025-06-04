@@ -345,45 +345,54 @@ export default function HomeScreen() {
                 <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Challenges</Text>
                 <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading challenges</Text>
               </View>
-            ) : (
+            ) : filteredChallenges.length > 0 ? (
               <>
-            <ScrollView 
-              ref={challengeScrollViewRef}
-              horizontal 
-              pagingEnabled 
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.carouselContent}
-              onMomentumScrollEnd={(event) => {
-                const offsetX = event.nativeEvent.contentOffset.x;
-                const index = Math.round(offsetX / ITEM_WIDTH);
-                setChallengeCurrentIndex(index);
-              }}
-            >
-              {filteredChallenges.map((challenge: Challenge, index) => (
-                <ChallengeCard 
-                  key={`${challenge._id}-${index}`} 
-                  challenge={challenge} 
-                  cardStyles={{
-                    width: ITEM_WIDTH - 20,
-                    marginHorizontal: 5
-                  }} 
-                />
-              ))}
-            </ScrollView>
+                <ScrollView 
+                  ref={challengeScrollViewRef}
+                  horizontal 
+                  pagingEnabled 
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.carouselContent}
+                  onMomentumScrollEnd={(event) => {
+                    const offsetX = event.nativeEvent.contentOffset.x;
+                    const index = Math.round(offsetX / ITEM_WIDTH);
+                    setChallengeCurrentIndex(index);
+                  }}
+                >
+                  {filteredChallenges.map((challenge: Challenge, index) => (
+                    <ChallengeCard 
+                      key={`${challenge._id}-${index}`} 
+                      challenge={challenge} 
+                      cardStyles={{
+                        width: ITEM_WIDTH - 20,
+                        marginHorizontal: 5
+                      }} 
+                    />
+                  ))}
+                </ScrollView>
 
-            {/* Dots Indicator */}
-            <View style={styles.dotsContainer}>
-              {filteredChallenges.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.dot,
-                    challengeCurrentIndex === index ? styles.activeDot : styles.inactiveDot,
-                  ]}
-                />
-              ))}
-            </View>
-            </>
+                {/* Dots Indicator */}
+                <View style={styles.dotsContainer}>
+                  {filteredChallenges.map((_, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.dot,
+                        challengeCurrentIndex === index ? styles.activeDot : styles.inactiveDot,
+                      ]}
+                    />
+                  ))}
+                </View>
+              </>
+            ) : (
+              <View style={styles.emptyStateContainer}>
+                <View style={{alignItems: 'center'}}>
+                  {icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}
+                </View>
+                <Text style={[styles.emptyStateText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+                  No challenges found
+                </Text>
+              </View>
             )}
           </View>
                 {/* <Slider itemList={SliderData}/> */}
@@ -702,5 +711,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 200
+  },
+  emptyStateContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    gap: 10
+  },
+  emptyStateText: {
+    fontSize: 16,
+    fontFamily: 'MontserratMedium',
+    textAlign: 'center'
   },
 });
