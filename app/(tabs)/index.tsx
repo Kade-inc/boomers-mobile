@@ -87,6 +87,8 @@ export default function HomeScreen() {
   const recommendationsScrollViewRef = useRef<ScrollView>(null);
   const [recommendationsCurrentIndex, setRecommendationsCurrentIndex] = useState(0);
   const [challenges, setChallenges] = useState<Challenge[]>([])
+  const [filteredChallenges, setFilteredChallenges] = useState<Challenge[]>([])
+
   useEffect(() => {
     if (userTeamsData?.data) {
       setUserTeams(userTeamsData.data.data.slice(0, 10))
@@ -97,22 +99,39 @@ export default function HomeScreen() {
     if (challengesData?.data?.data) {
       const challenges = challengesData.data.data
       const freshChallenges = challenges
-      .filter((challenge) => {
-        if (!challenge.due_date) return false;
-        const dueDate = new Date(challenge.due_date);
-        const now = new Date();
-        return dueDate > now;
-      })
-      // Sort challenges by expiry date
-      .sort((a, b) => {
-        const dateA = new Date(a.due_date!);
-        const dateB = new Date(b.due_date!);
-        return dateA.getTime() - dateB.getTime();
-      });
-    setChallenges(freshChallenges);
-    // setUserChallenges(freshChallenges);
+        .filter((challenge) => {
+          if (!challenge.due_date) return false;
+          const dueDate = new Date(challenge.due_date);
+          const now = new Date();
+          return dueDate > now;
+        })
+        .sort((a, b) => {
+          const dateA = new Date(a.due_date!);
+          const dateB = new Date(b.due_date!);
+          return dateA.getTime() - dateB.getTime();
+        });
+      setChallenges(freshChallenges);
+      filterChallenges(freshChallenges);
     }
-  }, [challengesData])
+  }, [challengesData, selectedChallengeFilter])
+
+  const filterChallenges = (challenges: Challenge[]) => {
+    let filtered: Challenge[] = []
+    switch (selectedChallengeFilter) {
+      case 'All':
+        filtered = challenges
+        break
+      case 'Owner':
+        filtered = challenges.filter(challenge => challenge.owner_id === user?.user_id)
+        break
+      case 'Member':
+        filtered = challenges.filter(challenge => challenge.owner_id !== user?.user_id)
+        break
+      default:
+        filtered = challenges
+    }
+    setFilteredChallenges(filtered)
+  }
 
   useEffect(() => {
     console.log("Recommendations data received:", recommendationsData?.data?.data)
@@ -193,11 +212,11 @@ export default function HomeScreen() {
                     <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Teams</Text>
                     
                     {!teamOptionsExpanded ? <TouchableOpacity onPress={() => setTeamOptionsExpanded(!teamOptionsExpanded)}>
-                      {icon.downCircle({borderRadius: 100, padding: 2, color: '#F8B500'})}
+                      {icon.downCircle({borderRadius: 100, padding: 2, color: '#F8B500', size: 20})}
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => setTeamOptionsExpanded(!teamOptionsExpanded)}>
-                      {icon.upCircle({borderRadius: 100, padding: 2, color: '#F8B500'})}
+                      {icon.upCircle({borderRadius: 100, padding: 2, color: '#F8B500', size: 20})}
                     </TouchableOpacity>}
                     </View>
         
@@ -286,11 +305,11 @@ export default function HomeScreen() {
                     <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Challenges</Text>
                     
                     {!challengesOptionsExpanded ? <TouchableOpacity onPress={() => setChallengesOptionsExpanded(!challengesOptionsExpanded)}>
-                      {icon.downCircle({color: '#F8B500', borderRadius: 100, padding: 2})}
+                      {icon.downCircle({color: '#F8B500', borderRadius: 100, padding: 2, size: 20})}
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => setChallengesOptionsExpanded(!challengesOptionsExpanded)}>
-                      {icon.upCircle({color: '#F8B500', borderRadius: 100, padding: 2})}
+                      {icon.upCircle({color: '#F8B500', borderRadius: 100, padding: 2, size: 20})}
                     </TouchableOpacity>}
                     </View>
         
@@ -340,7 +359,7 @@ export default function HomeScreen() {
                 setChallengeCurrentIndex(index);
               }}
             >
-              {challenges.map((challenge: Challenge, index) => (
+              {filteredChallenges.map((challenge: Challenge, index) => (
                 <ChallengeCard 
                   key={`${challenge._id}-${index}`} 
                   challenge={challenge} 
@@ -354,7 +373,7 @@ export default function HomeScreen() {
 
             {/* Dots Indicator */}
             <View style={styles.dotsContainer}>
-              {challenges.map((_, index) => (
+              {filteredChallenges.map((_, index) => (
                 <View
                   key={index}
                   style={[
