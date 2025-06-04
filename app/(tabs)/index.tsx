@@ -1,21 +1,21 @@
 import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ThemeContext } from '@/src/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { icon } from '@/constants/icon';
 import Slider from '@/components/ui/Slider';
 import { SliderData } from '@/data/SliderData';
 import CustomButton from '@/components/ui/CustomButton';
-import { Team } from '@/src/services/api';
+import TeamCard from '@/components/ui/TeamCard';
+import { useAuth } from '@/src/context/AuthContext';
 import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import useRecommendations from '@/src/hooks/queries/useRecommendations';
 import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
-import TeamCard from '@/components/ui/TeamCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Team } from '@/src/services/api';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
@@ -24,6 +24,7 @@ const ITEM_WIDTH = width - HORIZONTAL_PADDING;
 
 export default function HomeScreen() {
   const { currentTheme } = useContext(ThemeContext);
+  const { user } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
 
   const sliderData = [
@@ -194,7 +195,14 @@ export default function HomeScreen() {
                 setCurrentIndex(index);
               }}
             >
-              {userTeams.map((team: Team, index) => (
+              {userTeams
+                .filter(team => {
+                  if (selectedTeamFilter === 'All') return true;
+                  if (selectedTeamFilter === 'Owner') return team.owner_id === user?.user_id;
+                  if (selectedTeamFilter === 'Member') return team.owner_id !== user?.user_id;
+                  return true;
+                })
+                .map((team: Team, index) => (
                 <TeamCard 
                   key={`${team._id}-${index}`} 
                   team={team} 
@@ -208,7 +216,14 @@ export default function HomeScreen() {
 
             {/* Dots Indicator */}
             <View style={styles.dotsContainer}>
-              {userTeams.map((team: Team, index) => (
+              {userTeams
+                .filter(team => {
+                  if (selectedTeamFilter === 'All') return true;
+                  if (selectedTeamFilter === 'Owner') return team.owner_id === user?.user_id;
+                  if (selectedTeamFilter === 'Member') return team.owner_id !== user?.user_id;
+                  return true;
+                })
+                .map((team: Team, index) => (
                 <View
                   key={`${team._id}-${index}`}
                   style={[
