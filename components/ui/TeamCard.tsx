@@ -27,7 +27,7 @@ const TeamCard = ({team, cardStyles}: TeamCardProps) => {
       style={[styles.carouselItem, cardStyles]}
     >
       <View style={styles.teamHeader}>
-        <Text style={{ color: 'white', fontSize: 14, fontFamily: 'MontserratMedium' }}>{team.name}</Text>
+        <Text style={{ color: 'white', fontSize: 16, fontFamily: 'MontserratSemiBold' }}>{team.name}</Text>
         <Text style={[{ color: 'white', fontSize: 12, fontFamily: 'MontserratMedium' }, styles.teamDefinition]}>{team.owner_id === user?.user_id ? 'Owner' : 'Member'}</Text>
       </View>
       <View style={styles.bottomSection}>

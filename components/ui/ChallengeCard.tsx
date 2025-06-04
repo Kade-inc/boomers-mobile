@@ -3,6 +3,7 @@ import React from 'react'
 import { Challenge, Team } from '@/src/services/api'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useAuth } from '@/src/context/AuthContext'
+import { icon } from '@/constants/icon'
 
 type ChallengeCardProps = {
     challenge: Challenge,
@@ -22,13 +23,13 @@ const ChallengeCard = ({challenge, cardStyles}: ChallengeCardProps) => {
 
   return (
     <LinearGradient
-      colors={['#00989B', '#005E78']}
+      colors={['#313752', '#495D6D']}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={[styles.carouselItem, cardStyles]}
     >
       <View style={styles.teamHeader}>
-        <Text style={{ color: 'white', fontSize: 14, fontFamily: 'MontserratMedium' }}>{challenge.challenge_name}</Text>
+        <Text style={{ color: 'white', fontSize: 16, fontFamily: 'MontserratSemiBold' }}>{challenge.challenge_name}</Text>
         <Text style={[{ color: 'white', fontSize: 12, fontFamily: 'MontserratMedium' }, styles.teamDefinition]}>{challenge.owner_id === user?.user_id ? 'Owner' : 'Member'}</Text>
       </View>
       <View style={styles.bottomSection}>
@@ -39,7 +40,7 @@ const ChallengeCard = ({challenge, cardStyles}: ChallengeCardProps) => {
       </View>
       <View style={styles.challengeBottomSection}>
         <Text style={{ color: 'white', fontSize: 12, fontFamily: 'MontserratMedium' }}>{challenge.difficulty === 1 ? 'Easy' : challenge.difficulty === 2 ? 'Medium' : 'Hard'}</Text>
-        <Text style={{ color: 'white', fontSize: 12, fontFamily: 'MontserratMedium' }}>{daysLeft} days left</Text>
+        <Text style={{ color: 'white', fontSize: 12, fontFamily: 'MontserratMedium' }}>{icon.clock({color: 'white', size: 12})} {daysLeft} days left</Text>
       </View>
       </View>
       <View>
@@ -53,7 +54,7 @@ export default ChallengeCard
 
 const styles = StyleSheet.create({
     carouselItem: {
-        height: 140,
+        height: 120,
         borderRadius: 5,
         padding: 15,
         flex: 1,

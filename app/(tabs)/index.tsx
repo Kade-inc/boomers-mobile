@@ -158,6 +158,13 @@ export default function HomeScreen() {
   }
 
 
+  const filteredTeams = userTeams.filter(team => {
+    if (selectedTeamFilter === 'All') return true;
+    if (selectedTeamFilter === 'Owner') return team.owner_id === user?.user_id;
+    if (selectedTeamFilter === 'Member') return team.owner_id !== user?.user_id;
+    return true;
+  })
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
@@ -279,14 +286,7 @@ export default function HomeScreen() {
 
             {/* Dots Indicator */}
             <View style={styles.dotsContainer}>
-              {userTeams
-                .filter(team => {
-                  if (selectedTeamFilter === 'All') return true;
-                  if (selectedTeamFilter === 'Owner') return team.owner_id === user?.user_id;
-                  if (selectedTeamFilter === 'Member') return team.owner_id !== user?.user_id;
-                  return true;
-                })
-                .map((team: Team, index) => (
+              {filteredTeams.length > 0 ? filteredTeams.map((team: Team, index) => (
                 <View
                   key={`${team._id}-${index}`}
                   style={[
@@ -294,7 +294,15 @@ export default function HomeScreen() {
                     currentIndex === index ? styles.activeDot : styles.inactiveDot,
                   ]}
                 />
-              ))}
+              )) :   
+               <View style={styles.emptyStateContainer}>
+              <View style={{alignItems: 'center'}}>
+                {icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}
+              </View>
+              <Text style={[styles.emptyStateText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+                No teams found
+              </Text>
+            </View>}
             </View>
           </View>
                 {/* <Slider itemList={SliderData}/> */}
