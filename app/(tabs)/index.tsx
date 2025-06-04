@@ -15,7 +15,8 @@ import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
 import useRecommendations from '@/src/hooks/queries/useRecommendations';
 import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Team } from '@/src/services/api';
+import { Challenge, Team } from '@/src/services/api';
+import ChallengeCard from '@/components/ui/ChallengeCard';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
@@ -82,14 +83,36 @@ export default function HomeScreen() {
   const [recommendations, setRecommendations] = useState<Team[]>([])
   const {data: userTeamsData, refetch: refetchUserTeams, isPending: isTeamsLoading, isError: isTeamsError} = useGetUserTeams(userId)
   const {data: recommendationsData, refetch: refetchRecommendations, isPending: isRecommendationsLoading, isError: isRecommendationsError} = useRecommendations()
-  const {data: challengesData, refetch: refetchChallenges, isPending: isChallengesLoading, isError: isChallengesError} = useGetChallenges(userId, false)
+  const {data: challengesData, refetch: refetchChallenges, isPending: isChallengesLoading, isError: isChallengesError} = useGetChallenges(userId, true)
   const recommendationsScrollViewRef = useRef<ScrollView>(null);
   const [recommendationsCurrentIndex, setRecommendationsCurrentIndex] = useState(0);
+  const [challenges, setChallenges] = useState<Challenge[]>([])
   useEffect(() => {
     if (userTeamsData?.data) {
       setUserTeams(userTeamsData.data.data.slice(0, 10))
     }
   }, [userTeamsData])
+
+  useEffect(() => {
+    if (challengesData?.data?.data) {
+      const challenges = challengesData.data.data
+      const freshChallenges = challenges
+      .filter((challenge) => {
+        if (!challenge.due_date) return false;
+        const dueDate = new Date(challenge.due_date);
+        const now = new Date();
+        return dueDate > now;
+      })
+      // Sort challenges by expiry date
+      .sort((a, b) => {
+        const dateA = new Date(a.due_date!);
+        const dateB = new Date(b.due_date!);
+        return dateA.getTime() - dateB.getTime();
+      });
+    setChallenges(freshChallenges);
+    // setUserChallenges(freshChallenges);
+    }
+  }, [challengesData])
 
   useEffect(() => {
     console.log("Recommendations data received:", recommendationsData?.data?.data)
@@ -317,16 +340,21 @@ export default function HomeScreen() {
                 setChallengeCurrentIndex(index);
               }}
             >
-              {sliderData.map((item, index) => (
-                <View key={`${item.id}-${index}`} style={styles.carouselItem}>
-              
-                </View>
+              {challenges.map((challenge: Challenge, index) => (
+                <ChallengeCard 
+                  key={`${challenge._id}-${index}`} 
+                  challenge={challenge} 
+                  cardStyles={{
+                    width: ITEM_WIDTH - 20,
+                    marginHorizontal: 5
+                  }} 
+                />
               ))}
             </ScrollView>
 
             {/* Dots Indicator */}
             <View style={styles.dotsContainer}>
-              {sliderData.map((_, index) => (
+              {challenges.map((_, index) => (
                 <View
                   key={index}
                   style={[
