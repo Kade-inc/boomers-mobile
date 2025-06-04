@@ -43,7 +43,7 @@ export default function SigninScreen() {
             password: data.password
           });
 
-          await checkAuth(); // Update auth state
+          await checkAuth(); // This will now fetch the user profile
           router.replace('/(tabs)');
         } catch (error) {
           showToast(error instanceof Error ? error.message : 'Login failed');
@@ -65,9 +65,9 @@ export default function SigninScreen() {
         Toast.show({
           type: 'error',
           text1: 'Login Failed',
-          text2: message,
-          autoHide: false,
-          visibilityTime: 10000,
+          text2: message === 'Error: Invalid email/phone or password' ? 'Invalid credentials 😬' : message,
+          autoHide: true,
+          visibilityTime: 5000,
           position: 'bottom',
           swipeable: true
         });

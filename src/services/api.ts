@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { router } from 'expo-router';
+import { UserProfile } from '@/entities/User';
 
 const BASE_URL = 'http://192.168.100.49:5001/api';
 
@@ -106,7 +107,8 @@ export const endpoints = {
     resetPassword: '/users/reset-password',
     verify: '/users/verify',
     verifyResetToken: '/users/verify-reset-token',
-    logout: '/users/logout'
+    logout: '/users/logout',
+    getUserProfile: '/users'
   },
   team: {
     getUserTeams: '/teams',
@@ -114,6 +116,9 @@ export const endpoints = {
   },
   challenge: {
     getChallenges: '/challenges'
+  },
+  user: {
+    getProfile: '/users'
   }
   // Add more endpoint categories as needed
 } as const;
@@ -364,6 +369,31 @@ export const authService = {
         error: 'An unexpected error occurred',
       };
     }
+  },
+
+  getUserProfile: async (userId: string): Promise<ApiResponse<UserProfile>> => {
+    try {
+      console.log("ENDPOINT: ", `${endpoints.auth.getUserProfile}/${userId}/profile`)
+      const response = await api.get(`${endpoints.auth.getUserProfile}/${userId}/profile`);
+      console.log("RESPONSE: ", response);
+      return {
+        success: true,
+        data: response.data.profile
+      };
+    } catch (error) {
+      console.log("ERROR DETAILS: ", error);
+      if (axios.isAxiosError(error)) {
+        console.log("AXIOS ERROR RESPONSE: ", error.response?.data);
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch user profile'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
   }
 };
 
@@ -375,8 +405,6 @@ export const teamService = {
           userId
         }
       });
-
-      console.log("NO LOVE: ", response.data)
           return {
             success: true,
             data: response.data
@@ -443,6 +471,30 @@ export const challengeService = {
     }
   }
 }
+
+export const userService = {
+  getUserProfile: async (userId: string): Promise<ApiResponse<any>> => {
+    try {
+      const response = await api.get(`${endpoints.user.getProfile}/${userId}/profile`);
+      console.log("RESPONSEssss: ", response.data.profile);
+      return {
+        success: true,
+        data: response.data.profile
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch user profile'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  }
+};
 
 // Add these functions after the authService object
 export const getStoredTokens = async () => {

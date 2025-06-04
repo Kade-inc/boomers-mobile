@@ -7,9 +7,7 @@ const useGetUserTeams = (
     return useQuery({
         queryKey: ['user-teams', userId],
         queryFn: async () => {
-            console.log('Fetching teams for userId:', userId);
             const response = await teamService.getUserTeams(userId);
-            console.log('Teams response:', response);
             return response;
         },
         enabled: !!userId,

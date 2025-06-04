@@ -86,7 +86,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (userTeamsData?.data) {
-      console.log("Teams data:", userTeamsData.data)
+      // console.log("Teams data:", userTeamsData.data)
       setUserTeams(userTeamsData.data.data.slice(0, 10))
     }
   }, [userTeamsData])
