@@ -4,7 +4,7 @@ import axios from 'axios';
 import { router } from 'expo-router';
 import { UserProfile } from '@/entities/User';
 
-const BASE_URL = 'http://192.168.100.47:5001/api';
+const BASE_URL = 'http://192.168.20.94:5001/api';
 
 // Create axios instance with default config
 export const api = axios.create({

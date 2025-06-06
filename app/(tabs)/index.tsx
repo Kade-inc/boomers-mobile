@@ -17,6 +17,7 @@ import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Challenge, Team } from '@/src/services/api';
 import ChallengeCard from '@/components/ui/ChallengeCard';
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
@@ -27,6 +28,7 @@ export default function HomeScreen() {
   const { currentTheme } = useContext(ThemeContext);
   const { user } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
+  const router = useRouter();
 
   const sliderData = [
     {
@@ -88,9 +90,10 @@ export default function HomeScreen() {
   const [recommendationsCurrentIndex, setRecommendationsCurrentIndex] = useState(0);
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [filteredChallenges, setFilteredChallenges] = useState<Challenge[]>([])
-
+  const [allTeams, setAllTeams] = useState<Team[]>([])
   useEffect(() => {
     if (userTeamsData?.data) {
+      setAllTeams(userTeamsData.data.data)
       setUserTeams(userTeamsData.data.data.slice(0, 10))
     }
   }, [userTeamsData])
@@ -227,10 +230,15 @@ export default function HomeScreen() {
                     </TouchableOpacity>}
                     </View>
         
-                    <TouchableOpacity style={styles.teamsContainerHeaderMore}>
-                      <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
-                      {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
-                    </TouchableOpacity>
+                    {allTeams.length > 10 && (
+                      <TouchableOpacity 
+                        style={styles.teamsContainerHeaderMore}
+                        onPress={() => router.push('/(stack)/all-teams')}
+                      >
+                        <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
+                        {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
+                      </TouchableOpacity>
+                    )}
                 </View>
                 {teamOptionsExpanded && (
                  
@@ -321,10 +329,15 @@ export default function HomeScreen() {
                     </TouchableOpacity>}
                     </View>
         
-                    <TouchableOpacity style={styles.teamsContainerHeaderMore}>
+                  {filteredChallenges.length > 10 && (
+                    <TouchableOpacity 
+                      style={styles.teamsContainerHeaderMore}
+                      onPress={() => router.push('/(stack)/all-teams')}
+                    >
                       <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
                       {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
                     </TouchableOpacity>
+                  )}
                 </View>
                 {challengesOptionsExpanded && (
                  

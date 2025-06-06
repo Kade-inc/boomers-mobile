@@ -1,5 +1,10 @@
-import { Feather } from "@expo/vector-icons";
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { Feather, AntDesign, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+
+interface IconProps {
+  color?: string;
+  size?: number;
+  [key: string]: any;
+}
 
 export const icon = {
     index: (props:any) => <Feather name="home" size={24}  {...props} />,
@@ -15,4 +20,8 @@ export const icon = {
     downCircle: (props:any) => <AntDesign name="downcircle" size={24} {...props} />,
     upCircle: (props:any) => <AntDesign name="upcircle" size={24} {...props} />,
     clock: (props:any) => <Feather name="clock" size={24}  {...props} />,
-  }
+    xCircle: (props:any) => <Feather name="x-circle" size={24} {...props} />,
+    arrowLeft: ({ color, size = 24, ...props }: IconProps) => (
+        <Feather name="arrow-left" size={size} color={color} {...props} />
+    ),
+}
