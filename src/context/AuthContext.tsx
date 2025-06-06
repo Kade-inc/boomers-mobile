@@ -19,6 +19,14 @@ interface UserProfile {
   __v: number;
   job: string;
   location: string;
+  city: string | null;
+  country: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  locationGeo?: {
+    type: "Point";
+    coordinates: [number, number]; // [longitude, latitude]
+  };
   interests: Interests;
 }
 
