@@ -5,10 +5,9 @@ import { ColorsRevised } from '@/constants/ColorsRevised';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { icon } from '@/constants/icon';
 import { useAuth } from '@/src/context/AuthContext';
-import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Team } from '@/src/services/api';
-import TeamCard from '@/components/ui/TeamCard';
+import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
+import { Challenge } from '@/src/services/api';
+import ChallengeCard from '@/components/ui/ChallengeCard';
 import { router, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -17,35 +16,47 @@ const { width } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20 * 2;
 const ITEM_WIDTH = width - HORIZONTAL_PADDING;
 
-export default function AllTeamsScreen() {
+export default function AllChallengesScreen() {
   const router = useRouter();
   const { currentTheme } = useContext(ThemeContext);
   const { user } = useAuth();
-  const [userId, setUserId] = useState('');
-  const [selectedTeamFilter, setSelectedTeamFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: userTeamsData, isPending: isTeamsLoading, isError: isTeamsError } = useGetUserTeams(user?.user_id || '');
+  const [selectedChallengeFilter, setSelectedChallengeFilter] = useState('All');
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const { data: challengesData, isPending: isChallengesLoading, isError: isChallengesError } = useGetChallenges(user?.user_id || '', true);
 
   useEffect(() => {
-    const getUserId = async () => {
-      const id = await AsyncStorage.getItem('userId');
-      setUserId(id || '');
-    };
-    getUserId();
-  }, []);
+    if (challengesData?.data?.data) {
+      const allChallenges = challengesData.data.data;
+      const freshChallenges = allChallenges
+        .filter((challenge) => {
+          if (!challenge.due_date) return false;
+          const dueDate = new Date(challenge.due_date);
+          const now = new Date();
+          return dueDate > now;
+        })
+        .sort((a, b) => {
+          const dateA = new Date(a.due_date!);
+          const dateB = new Date(b.due_date!);
+          return dateA.getTime() - dateB.getTime();
+        });
+      setChallenges(freshChallenges);
+    }
+  }, [challengesData]);
 
-  const filteredTeams = userTeamsData?.data?.data?.filter((team: Team) => {
+  const filteredChallenges = challenges.filter((challenge: Challenge) => {
     // First apply the role filter
-    const roleFiltered = selectedTeamFilter === 'All' ? true :
-      selectedTeamFilter === 'Owner' ? team.owner_id === user?.user_id :
-      team.owner_id !== user?.user_id;
+    const roleFiltered = selectedChallengeFilter === 'All' ? true :
+      selectedChallengeFilter === 'Owner' ? challenge.owner_id === user?.user_id :
+      challenge.owner_id !== user?.user_id;
 
     // Then apply the search filter
     const searchFiltered = searchQuery.trim() === '' ? true :
-      team.name.toLowerCase().includes(searchQuery.toLowerCase());
+      challenge.challenge_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      challenge.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
     return roleFiltered && searchFiltered;
-  }) || [];
+  });
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.gray }]}>
@@ -55,7 +66,7 @@ export default function AllTeamsScreen() {
           {icon.arrowLeft({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
-          All Teams
+          All Challenges
         </Text>
       </View>
 
@@ -70,7 +81,7 @@ export default function AllTeamsScreen() {
               styles.searchInput,
               { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }
             ]}
-            placeholder="Search teams..."
+            placeholder="Search challenges..."
             placeholderTextColor={currentTheme === 'dark' ? ColorsRevised.white + '80' : ColorsRevised.black + '80'}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -88,29 +99,29 @@ export default function AllTeamsScreen() {
           Filters
         </Text>
         <View style={styles.filterButtons}>
-          <TouchableOpacity onPress={() => setSelectedTeamFilter('All')}>
+          <TouchableOpacity onPress={() => setSelectedChallengeFilter('All')}>
             <Text style={[
               styles.filterButton,
-              { color: selectedTeamFilter === 'All' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
-              { backgroundColor: selectedTeamFilter === 'All' ? '#F8B500' : 'transparent' }
+              { color: selectedChallengeFilter === 'All' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
+              { backgroundColor: selectedChallengeFilter === 'All' ? '#F8B500' : 'transparent' }
             ]}>
               All
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setSelectedTeamFilter('Owner')}>
+          <TouchableOpacity onPress={() => setSelectedChallengeFilter('Owner')}>
             <Text style={[
               styles.filterButton,
-              { color: selectedTeamFilter === 'Owner' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
-              { backgroundColor: selectedTeamFilter === 'Owner' ? '#F8B500' : 'transparent' }
+              { color: selectedChallengeFilter === 'Owner' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
+              { backgroundColor: selectedChallengeFilter === 'Owner' ? '#F8B500' : 'transparent' }
             ]}>
               Owner
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setSelectedTeamFilter('Member')}>
+          <TouchableOpacity onPress={() => setSelectedChallengeFilter('Member')}>
             <Text style={[
               styles.filterButton,
-              { color: selectedTeamFilter === 'Member' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
-              { backgroundColor: selectedTeamFilter === 'Member' ? '#F8B500' : 'transparent' }
+              { color: selectedChallengeFilter === 'Member' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
+              { backgroundColor: selectedChallengeFilter === 'Member' ? '#F8B500' : 'transparent' }
             ]}>
               Member
             </Text>
@@ -119,23 +130,23 @@ export default function AllTeamsScreen() {
       </View>
 
       <ScrollView style={styles.content}>
-        {isTeamsLoading ? (
+        {isChallengesLoading ? (
           <View style={styles.loaderContainer}>
             <ActivityIndicator size="large" color={currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black} />
           </View>
-        ) : isTeamsError ? (
+        ) : isChallengesError ? (
           <View style={styles.loaderContainer}>
             {icon.xCircle({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
             <Text style={{ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium' }}>
-              Error loading teams
+              Error loading challenges
             </Text>
           </View>
-        ) : filteredTeams.length > 0 ? (
-          <View style={styles.teamsGrid}>
-            {filteredTeams.map((team: Team) => (
-              <TeamCard
-                key={team._id}
-                team={team}
+        ) : filteredChallenges.length > 0 ? (
+          <View style={styles.challengesGrid}>
+            {filteredChallenges.map((challenge: Challenge) => (
+              <ChallengeCard
+                key={challenge._id}
+                challenge={challenge}
                 cardStyles={{
                   width: ITEM_WIDTH,
                   marginBottom: 15
@@ -149,7 +160,7 @@ export default function AllTeamsScreen() {
               {icon.smile({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, size: 50 })}
             </View>
             <Text style={[styles.emptyStateText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
-              No teams found
+              No challenges found
             </Text>
           </View>
         )}
@@ -212,7 +223,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-  teamsGrid: {
+  challengesGrid: {
     gap: 15,
   },
   loaderContainer: {
@@ -232,4 +243,4 @@ const styles = StyleSheet.create({
     fontFamily: 'MontserratMedium',
     textAlign: 'center',
   },
-}); 
+});

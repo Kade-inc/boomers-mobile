@@ -332,7 +332,7 @@ export default function HomeScreen() {
                   {filteredChallenges.length > 10 && (
                     <TouchableOpacity 
                       style={styles.teamsContainerHeaderMore}
-                      onPress={() => router.push('/(stack)/all-teams')}
+                      onPress={() => router.push('/(stack)/all-challenges')}
                     >
                       <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
                       {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
