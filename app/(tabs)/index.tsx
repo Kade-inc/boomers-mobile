@@ -288,6 +288,7 @@ export default function HomeScreen() {
                     width: ITEM_WIDTH - 20,
                     marginHorizontal: 5
                   }} 
+                  screen='dashboard'
                 />
               ))}
             </ScrollView>
@@ -426,16 +427,16 @@ export default function HomeScreen() {
                   <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading recommendations</Text>
                 </View>
               ) : (
-                <View style={styles.recommendationsContainer}>
-                                  <View style={styles.recommendationsContainerBody}>
+                <View style={[styles.recommendationsContainer, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white}]}>
+                                  <View style={[styles.recommendationsContainerBody, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white}]}>
                   <View style={{alignItems: 'center'}}>{icon.teams({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
-                  <Text style={styles.recommendationsContainerBodyText}>You do not own or belong to any team</Text>
+                  <Text style={[styles.recommendationsContainerBodyText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>You do not own or belong to any team</Text>
                   <View style={{gap: 10}}>
                   <CustomButton title='Create a Team' handlePress={() => {}} containerStyles={{ backgroundColor: '#000000'}} textStyles={{fontSize: 14, color: 'white'}}/>
                   <CustomButton title='Join a Team' handlePress={() => {}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
                   </View>
                 </View>
-                <View style={styles.recommendationsContainerBody}>
+                <View style={[styles.recommendationsContainerBody, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white}]}>
                   <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Recommendations</Text>
                 {recommendations.length > 0 ? (
                   <>
@@ -451,7 +452,7 @@ export default function HomeScreen() {
                               setRecommendationsCurrentIndex(index);
                             }}
                           >
-                            {recommendations.slice(0, 10)?.map((team: Team, index) => (
+                            {recommendations.slice(0, 3)?.map((team: Team, index) => (
                               <TeamCard 
                                 key={`${team._id}-${index}`} 
                                 team={team} 
@@ -459,11 +460,12 @@ export default function HomeScreen() {
                                   width: ITEM_WIDTH - 30,
                                   marginHorizontal: 0
                                 }} 
+                                screen='dashboard'
                               />
                             ))}
                           </ScrollView>
                           <View style={styles.dotsContainer}>
-              {recommendations.slice(0, 10)?.map((_, index) => (
+              {recommendations.slice(0, 3)?.map((_, index) => (
                 <View
                   key={index}
                   style={[
@@ -474,7 +476,7 @@ export default function HomeScreen() {
               ))}
               
             </View>
-            <CustomButton title='View All' handlePress={() => {}} containerStyles={{width: '100%', backgroundColor: '#F8B500'}} textStyles={{fontSize: 14, color: ColorsRevised.black}}/>
+            <CustomButton title='View All' handlePress={() => {router.push('/(stack)/all-recommendations')}} containerStyles={{width: '100%', backgroundColor: '#F8B500'}} textStyles={{fontSize: 14, color: ColorsRevised.black}}/>
             </>
                 ) : (
 

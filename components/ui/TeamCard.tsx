@@ -7,9 +7,10 @@ import { useAuth } from '@/src/context/AuthContext'
 type TeamCardProps = {
     team: Team,
     cardStyles: StyleProp<ViewStyle>
+    screen: string
 }
 
-const TeamCard = ({team, cardStyles}: TeamCardProps) => {
+const TeamCard = ({team, cardStyles, screen}: TeamCardProps) => {
   const { user } = useAuth()
 
   // Extract colors from the gradient string
@@ -28,7 +29,7 @@ const TeamCard = ({team, cardStyles}: TeamCardProps) => {
     >
       <View style={styles.teamHeader}>
         <Text style={{ color: 'white', fontSize: 16, fontFamily: 'MontserratSemiBold' }}>{team.name}</Text>
-        <Text style={[{ color: 'white', fontSize: 12, fontFamily: 'MontserratMedium' }, styles.teamDefinition]}>{team.owner_id === user?.user_id ? 'Owner' : 'Member'}</Text>
+        {screen === 'dashboard' || screen === 'all-teams' && <Text style={[{ color: 'white', fontSize: 12, fontFamily: 'MontserratMedium' }, styles.teamDefinition]}>{team.owner_id === user?.user_id ? 'Owner' : 'Member'}</Text>}
       </View>
       <View style={styles.bottomSection}>
       <View style={styles.teamInterests}>

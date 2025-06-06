@@ -5,8 +5,7 @@ import { ColorsRevised } from '@/constants/ColorsRevised';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { icon } from '@/constants/icon';
 import { useAuth } from '@/src/context/AuthContext';
-import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import useRecommendations from '@/src/hooks/queries/useRecommendations';
 import { Team } from '@/src/services/api';
 import TeamCard from '@/components/ui/TeamCard';
 import { router, useRouter } from 'expo-router';
@@ -17,34 +16,16 @@ const { width } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20 * 2;
 const ITEM_WIDTH = width - HORIZONTAL_PADDING;
 
-export default function AllTeamsScreen() {
+export default function AllRecommendationsScreen() {
   const router = useRouter();
   const { currentTheme } = useContext(ThemeContext);
   const { user } = useAuth();
-  const [userId, setUserId] = useState('');
-  const [selectedTeamFilter, setSelectedTeamFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: userTeamsData, isPending: isTeamsLoading, isError: isTeamsError } = useGetUserTeams(user?.user_id || '');
+  const { data: recommendationsData, isPending: isRecommendationsLoading, isError: isRecommendationsError } = useRecommendations();
 
-  useEffect(() => {
-    const getUserId = async () => {
-      const id = await AsyncStorage.getItem('userId');
-      setUserId(id || '');
-    };
-    getUserId();
-  }, []);
-
-  const filteredTeams = userTeamsData?.data?.data?.filter((team: Team) => {
-    // First apply the role filter
-    const roleFiltered = selectedTeamFilter === 'All' ? true :
-      selectedTeamFilter === 'Owner' ? team.owner_id === user?.user_id :
-      team.owner_id !== user?.user_id;
-
-    // Then apply the search filter
-    const searchFiltered = searchQuery.trim() === '' ? true :
+  const filteredRecommendations = recommendationsData?.data?.data?.filter((team: Team) => {
+    return searchQuery.trim() === '' ? true :
       team.name.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return roleFiltered && searchFiltered;
   }) || [];
 
   return (
@@ -70,7 +51,7 @@ export default function AllTeamsScreen() {
               styles.searchInput,
               { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }
             ]}
-            placeholder="Search teams..."
+            placeholder="Search recommendations..."
             placeholderTextColor={currentTheme === 'dark' ? ColorsRevised.white + '80' : ColorsRevised.black + '80'}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -83,56 +64,21 @@ export default function AllTeamsScreen() {
         </View>
       </View>
 
-      <View style={styles.filters}>
-        <Text style={{ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, fontFamily: 'MontserratMedium' }}>
-          Filters
-        </Text>
-        <View style={styles.filterButtons}>
-          <TouchableOpacity onPress={() => setSelectedTeamFilter('All')}>
-            <Text style={[
-              styles.filterButton,
-              { color: selectedTeamFilter === 'All' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
-              { backgroundColor: selectedTeamFilter === 'All' ? '#F8B500' : 'transparent' }
-            ]}>
-              All
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setSelectedTeamFilter('Owner')}>
-            <Text style={[
-              styles.filterButton,
-              { color: selectedTeamFilter === 'Owner' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
-              { backgroundColor: selectedTeamFilter === 'Owner' ? '#F8B500' : 'transparent' }
-            ]}>
-              Owner
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setSelectedTeamFilter('Member')}>
-            <Text style={[
-              styles.filterButton,
-              { color: selectedTeamFilter === 'Member' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
-              { backgroundColor: selectedTeamFilter === 'Member' ? '#F8B500' : 'transparent' }
-            ]}>
-              Member
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
       <ScrollView style={styles.content}>
-        {isTeamsLoading ? (
+        {isRecommendationsLoading ? (
           <View style={styles.loaderContainer}>
             <ActivityIndicator size="large" color={currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black} />
           </View>
-        ) : isTeamsError ? (
+        ) : isRecommendationsError ? (
           <View style={styles.loaderContainer}>
             {icon.xCircle({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
             <Text style={{ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium' }}>
-              Error loading teams
+              Error loading recommendations
             </Text>
           </View>
-        ) : filteredTeams.length > 0 ? (
-          <View style={styles.teamsGrid}>
-            {filteredTeams.map((team: Team) => (
+        ) : filteredRecommendations.length > 0 ? (
+          <View style={styles.recommendationsGrid}>
+            {filteredRecommendations.map((team: Team) => (
               <TeamCard
                 key={team._id}
                 team={team}
@@ -140,7 +86,7 @@ export default function AllTeamsScreen() {
                   width: ITEM_WIDTH,
                   marginBottom: 15
                 }}
-                screen='all-teams'
+                screen='all-recommendations'
               />
             ))}
           </View>
@@ -150,7 +96,10 @@ export default function AllTeamsScreen() {
               {icon.smile({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, size: 50 })}
             </View>
             <Text style={[styles.emptyStateText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
-              No teams found
+              No recommendations found
+            </Text>
+            <Text style={[styles.emptyStateSubText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
+              Edit your profile with your interests to get recommendations
             </Text>
           </View>
         )}
@@ -193,27 +142,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'MontserratRegular',
   },
-  filters: {
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  filterButtons: {
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 10,
-  },
-  filterButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 2,
-    fontFamily: 'MontserratMedium',
-    fontSize: 12,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 20,
   },
-  teamsGrid: {
+  recommendationsGrid: {
     gap: 15,
   },
   loaderContainer: {
@@ -232,5 +165,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'MontserratMedium',
     textAlign: 'center',
+  },
+  emptyStateSubText: {
+    fontSize: 14,
+    fontFamily: 'MontserratRegular',
+    textAlign: 'center',
+    opacity: 0.8,
   },
 }); 
