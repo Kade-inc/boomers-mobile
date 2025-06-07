@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ThemeContext } from '@/src/context/ThemeContext';
@@ -95,6 +95,23 @@ export default function HomeScreen() {
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [filteredChallenges, setFilteredChallenges] = useState<Challenge[]>([])
   const [allTeams, setAllTeams] = useState<Team[]>([])
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        refetchUserTeams(),
+        refetchRecommendations(),
+        refetchChallenges()
+      ]);
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetchUserTeams, refetchRecommendations, refetchChallenges]);
+
   useEffect(() => {
     if (userTeamsData?.data) {
       setAllTeams(userTeamsData.data.data)
@@ -194,7 +211,16 @@ export default function HomeScreen() {
                 {icon.send({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})}
               </View>
             </View>
-        <ScrollView style={styles.scrollView}>
+        <ScrollView 
+          style={styles.scrollView}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black}
+            />
+          }
+        >
           <View style={[styles.display]}>
 
             <View style={styles.headerBottomView}>
