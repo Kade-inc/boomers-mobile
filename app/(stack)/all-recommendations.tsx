@@ -11,6 +11,7 @@ import TeamCard from '@/components/ui/TeamCard';
 import { router, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import CustomButton from '@/components/ui/CustomButton';
 
 const { width } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20 * 2;
@@ -101,6 +102,7 @@ export default function AllRecommendationsScreen() {
             <Text style={[styles.emptyStateSubText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
               Edit your profile with your interests to get recommendations
             </Text>
+            <CustomButton title='Edit Profile' handlePress={() => console.log("Edit profile coming soon")} containerStyles={{width: '100%', backgroundColor: '#F8B500'}} textStyles={{fontSize: 14, color: ColorsRevised.black}}/>
           </View>
         )}
       </ScrollView>
