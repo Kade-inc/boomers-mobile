@@ -1,17 +1,19 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { View, TextInput, StyleSheet, Text } from 'react-native';
 import { Control, Controller, FieldValues } from 'react-hook-form';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
+import { ColorsRevised } from '@/constants/ColorsRevised';
+import { ThemeContext } from '@/src/context/ThemeContext';
 
 interface VerificationCodeInputProps {
     control: Control<FieldValues>;
     name: string;
     errors?: any;
-    title: string;
+    currentTheme: string;
 }
 
-const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({ control, name, errors, title }) => {
+const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({ control, name, errors, currentTheme }) => {
     const [code, setCode] = useState(['', '', '', '', '', '']);
     const inputRefs = useRef<Array<TextInput | null>>([]);
     const colorScheme = useColorScheme();
@@ -53,8 +55,8 @@ const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({ control, 
                                 style={[
                                     styles.input,
                                     {
-                                        color: Colors[colorScheme ?? 'light'].text,
-                                        borderColor: Colors[colorScheme ?? 'light'].text
+                                        color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black,
+                                        borderColor: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black
                                     }
                                 ]}
                                 maxLength={1}

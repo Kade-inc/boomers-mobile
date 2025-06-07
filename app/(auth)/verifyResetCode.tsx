@@ -2,11 +2,11 @@ import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { router, useLocalSearchParams } from "expo-router";
 import { images } from "@/constants";
-import Toast from "react-native-toast-message";
+import Toast, { ToastPosition } from "react-native-toast-message";
 import { verifyResetCodeSchema } from "@/constants/schemas/verifyResetCodeSchema";
 import { useAuth } from "@/src/hooks/queries/useAuth";
 import { Link } from "expo-router";
@@ -60,14 +60,14 @@ export default function VerifyResetCodeScreen() {
         marginTop: 20
     };
 
-    const showToast = (message: string) => {
+    const showToast = (type: string, title: string, message: string, position: ToastPosition, visibilityTime: number) => {
         Toast.show({
-            type: 'error',
-            text1: 'Error',
+            type: type,
+            text1: title,
             text2: message,
             autoHide: false,
-            visibilityTime: 10000,
-            position: 'bottom',
+            visibilityTime: visibilityTime,
+            position: position,
             swipeable: true
         });
     };
@@ -94,10 +94,10 @@ export default function VerifyResetCodeScreen() {
                     params: { userId: response.userId, token: data.verificationCode }
                 });
             } else {
-                showToast('Failed to verify code');
+                showToast('error', 'Error', 'Failed to verify code', 'bottom', 5000);
             }
         } catch (error) {
-            showToast(error instanceof Error ? error.message : 'Failed to verify code');
+            showToast('error', 'Error', error instanceof Error ? error.message : 'Failed to verify code', 'bottom', 5000);
         } finally {
             setIsLoading(false);
             setIsNavigating(false);
@@ -114,20 +114,14 @@ export default function VerifyResetCodeScreen() {
             });
 
             if (response?.message) {
-                Toast.show({
-                    type: 'success',
-                    text1: 'Success',
-                    text2: 'Verification code has been resent to your email',
-                    position: 'bottom',
-                    visibilityTime: 3000
-                });
+                showToast('custom', 'Success', 'Verification code has been resent to your email 🎉', 'bottom', 5000);
                 setResendTimer(30);
                 setCanResend(false);
             } else {
-                showToast('Failed to resend verification code');
+                showToast('error', 'Error', 'Failed to resend verification code', 'bottom', 5000);
             }
         } catch (error) {
-            showToast(error instanceof Error ? error.message : 'Failed to resend verification code');
+            showToast('error', 'Error', error instanceof Error ? error.message : 'Failed to resend verification code', 'bottom', 5000);
         } finally {
             setIsResending(false);
         }
@@ -171,7 +165,7 @@ export default function VerifyResetCodeScreen() {
                         control={control as any}
                         name="verificationCode"
                         errors={errors}
-                        title="Verification Code"
+                        currentTheme={currentTheme}
                     />
                 </View>
                 <CustomButton 

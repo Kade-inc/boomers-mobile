@@ -72,7 +72,7 @@ const FormInputController = <T extends FieldValues>({
                     </View>
                 )}
             />
-            {errors && errors[name] && <Text style={[styles.textError, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>{String(errors[name]?.message)}</Text>}
+            {errors && errors[name] && <Text style={[styles.textError, { color: ColorsRevised.white }]}>{String(errors[name]?.message)}</Text>}
         </View>
     );
 };

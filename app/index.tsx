@@ -1,6 +1,6 @@
 
 
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import { images } from '@/constants';
 import { Link, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';

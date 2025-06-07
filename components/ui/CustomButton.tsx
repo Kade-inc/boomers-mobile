@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     customButton: {
        backgroundColor: '#F8B500',
        borderRadius: 6,
-       minHeight: 50,
+       minHeight: 45,
        justifyContent: 'center',
        alignItems: 'center'
     },

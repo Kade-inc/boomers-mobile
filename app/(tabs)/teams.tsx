@@ -1,12 +1,10 @@
-import { StyleSheet } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { StyleSheet, View, Text } from 'react-native';
 
 export default function TeamsScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">Teams</ThemedText>
-    </ThemedView>
+   <View>
+    <Text>Teams</Text> 
+   </View>
   );
 }
 

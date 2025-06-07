@@ -1,7 +1,28 @@
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+import { router } from 'expo-router';
+import { UserProfile } from '@/entities/User';
+import { Team, TeamsResponse, RecommendationsResponse } from '../entities/Team';
+import { Challenge, ChallengesResponse } from '../entities/Challenge';
+import { AdviceResponse } from '../entities/Advice';
+import { 
+  ApiResponse, 
+  RegisterResponse, 
+  RegisterRequest, 
+  VerifyRequest, 
+  LoginRequest, 
+  AuthResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  VerifyResetTokenRequest,
+  VerifyResetTokenResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
+  LogoutRequest
+} from '../entities/Auth';
 
-const BASE_URL = 'http://192.168.100.49:5001/api';
+const BASE_URL = 'http://192.168.20.94:5001/api';
 
 // Create axios instance with default config
 export const api = axios.create({
@@ -40,10 +61,35 @@ api.interceptors.response.use(
       // Handle specific error cases
       switch (error.response.status) {
         case 401:
-          // Unauthorized - clear token and redirect to login
-          await AsyncStorage.removeItem('token');
-          // You might want to trigger a navigation to login screen here
-          break;
+          const originalRequest = error.config;
+  
+          if (!originalRequest._retry) {
+            originalRequest._retry = true; // Prevent infinite loop
+            try {
+              const refresh_token = await AsyncStorage.getItem("refreshToken");
+              if (!refresh_token) {
+                throw new Error("No refresh token found");
+              }
+  
+              const response = await api.post(
+                "/users/refresh-token",
+                {
+                  refreshToken: refresh_token,
+                }
+              );
+  
+              const { accessToken, refreshToken } = response.data;
+              
+              await AsyncStorage.setItem('token', accessToken);
+              await AsyncStorage.setItem('refreshToken', refreshToken);
+              originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+              return api.request(originalRequest);
+            } catch (error) {
+              await AsyncStorage.removeItem('token');
+              await AsyncStorage.removeItem('refreshToken');
+              router.replace('/(auth)/signin');
+            }
+          }
         case 403:
           // Forbidden
           console.error('Access forbidden');
@@ -79,81 +125,24 @@ export const endpoints = {
     resetPassword: '/users/reset-password',
     verify: '/users/verify',
     verifyResetToken: '/users/verify-reset-token',
-    logout: '/users/logout'
+    logout: '/users/logout',
+    getUserProfile: '/users'
   },
+  team: {
+    getUserTeams: '/teams',
+    getRecommendations: '/teams/recommendations',
+  },
+  challenge: {
+    getChallenges: '/challenges'
+  },
+  user: {
+    getProfile: '/users'
+  },
+  advice: {
+    getAdvice: '/advice'
+  }
   // Add more endpoint categories as needed
 } as const;
-
-// Types for API responses
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
-
-// Types for auth responses
-export interface RegisterResponse {
-  successful: boolean;
-  verificationCode?: string;
-}
-
-// Types for auth requests
-export interface RegisterRequest {
-  email: string;
-  username: string;
-  password: string;
-  source: 'web' | 'mobile';
-}
-
-export interface VerifyRequest {
-  accountId: string;
-  verificationCode: string;
-}
-
-export interface LoginRequest {
-  accountId: string;
-  password: string;
-}
-
-// Types for auth responses
-export interface AuthResponse {
-  message: string;
-  accessToken: string;
-  refreshToken: string;
-}
-
-export interface ForgotPasswordRequest {
-  email: string;
-  source?: 'mobile' | 'web';
-}
-
-export interface ForgotPasswordResponse {
-  message: string;
-  verificationCode?: string;
-}
-
-export interface VerifyResetTokenRequest {
-  email: string;
-  verificationCode: string;
-}
-
-export interface VerifyResetTokenResponse {
-  userId: string;
-}
-
-export interface ResetPasswordRequest {
-  userId: string;
-  token: string;
-  password: string;
-}
-
-export interface ResetPasswordResponse {
-  message: string;
-}
-
-export interface LogoutRequest {
-  token: string;
-}
 
 // Auth service functions
 export const authService = {
@@ -202,16 +191,21 @@ export const authService = {
   login: async (data: LoginRequest): Promise<ApiResponse<AuthResponse>> => {
     try {
       const response = await api.post(endpoints.auth.login, data);
-      
-      // Store tokens
+ 
       await AsyncStorage.setItem('token', response.data.accessToken);
       await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
-      
+
+      const decodedToken = await decodeToken();
+      if (decodedToken?.aud) {
+        await AsyncStorage.setItem('userId', decodedToken.aud);
+      }
+
       return {
         success: true,
         data: response.data,
       };
     } catch (error) {
+      console.log("ERROR: ", error)
       if (axios.isAxiosError(error)) {
         return {
           success: false,
@@ -326,9 +320,156 @@ export const authService = {
       };
     }
   },
+
+  getUserProfile: async (userId: string): Promise<ApiResponse<UserProfile>> => {
+    try {
+      console.log("ENDPOINT: ", `${endpoints.auth.getUserProfile}/${userId}/profile`)
+      const response = await api.get(`${endpoints.auth.getUserProfile}/${userId}/profile`);
+      console.log("RESPONSE: ", response);
+      return {
+        success: true,
+        data: response.data.profile
+      };
+    } catch (error) {
+      console.log("ERROR DETAILS: ", error);
+      if (axios.isAxiosError(error)) {
+        console.log("AXIOS ERROR RESPONSE: ", error.response?.data);
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch user profile'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  }
 };
 
-// Add these functions after the authService object
+export const teamService = {
+  getUserTeams: async (userId: string): Promise<ApiResponse<TeamsResponse>> => {
+    try {
+      const response = await api.get(endpoints.team.getUserTeams, {
+        params: {
+          userId
+        }
+      });
+          return {
+            success: true,
+            data: response.data
+          };
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            return {
+              success: false,
+              error: error.response?.data?.message || 'Failed to fetch user teams'
+            };
+          }
+          return {
+            success: false,
+            error: 'An unexpected error occurred'
+          };
+        }
+      },
+  getRecommendations: async (): Promise<ApiResponse<RecommendationsResponse>> => {
+    try {
+      const response = await api.get(endpoints.team.getRecommendations);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch recommendations'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  }
+}
+
+export const challengeService = {
+  getChallenges: async (userId: string, valid: boolean): Promise<ApiResponse<ChallengesResponse>> => {
+    try {
+      const response = await api.get(endpoints.challenge.getChallenges, {
+        params: {
+          userId,
+          valid
+        }
+      });
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch challenges'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  }
+}
+
+export const userService = {
+  getUserProfile: async (userId: string): Promise<ApiResponse<any>> => {
+    try {
+      const response = await api.get(`${endpoints.user.getProfile}/${userId}/profile`);
+      console.log("RESPONSEssss: ", response.data.profile);
+      return {
+        success: true,
+        data: response.data.profile
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch user profile'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  }
+};
+
+export const adviceService = {
+  getAdvice: async (): Promise<ApiResponse<AdviceResponse>> => {
+    try {
+      const response = await api.get(endpoints.advice.getAdvice);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch advice'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  }
+};
+
+// Token management functions
 export const getStoredTokens = async () => {
   try {
     const accessToken = await AsyncStorage.getItem('token');
@@ -344,7 +485,6 @@ export const isTokenValid = (token: string | null): boolean => {
   if (!token) return false;
   
   try {
-    // Decode the JWT token
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
@@ -364,4 +504,20 @@ export const isTokenValid = (token: string | null): boolean => {
 export const checkAuthStatus = async (): Promise<boolean> => {
   const { accessToken } = await getStoredTokens();
   return isTokenValid(accessToken);
-}; 
+};
+
+const decodeToken = async (): Promise<any> => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) {
+      console.log("No token found");
+      return null;
+    }
+    const decoded = jwtDecode(token);
+    console.log("DECODED: ", decoded);
+    return decoded;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
+};
