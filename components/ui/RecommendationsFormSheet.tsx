@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import React, { useContext } from 'react';
 import { Team } from '@/src/services/api';
 import { ColorsRevised } from '@/constants/ColorsRevised';
@@ -35,79 +35,88 @@ const RecommendationsFormSheet = ({ isVisible, onClose, team }: RecommendationsF
     .split(', ')
     .map(color => color.trim()) as [ColorValue, ColorValue] || ['#000000', '#000000']
 
-  if (!isVisible) return null;
-
   return (
-    <>
-      <TouchableOpacity 
-        style={styles.overlay} 
-        activeOpacity={1} 
-        onPress={onClose}
-      />
-      <View style={[styles.container, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.gray  }]}>
-        <View style={styles.handle} />
-        <ScrollView style={styles.content}>
-          <LinearGradient
-            colors={colors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={styles.header}
-          >
-            <View style={styles.headerContent}>
-              <Text style={styles.teamName}>{team.name}</Text>
-              <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                {icon.xCircle({ color: ColorsRevised.white })}
-              </TouchableOpacity>
-            </View>
-          </LinearGradient>
+    <Modal
+      visible={isVisible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalContainer}>
+        <TouchableOpacity 
+          style={styles.overlay} 
+          activeOpacity={1} 
+          onPress={onClose}
+        />
+        <View style={[styles.container, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.gray }]}>
+          <View style={styles.handle} />
+          <ScrollView style={styles.content}>
+            <LinearGradient
+              colors={colors}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.header}
+            >
+              <View style={styles.headerContent}>
+                <Text style={styles.teamName}>{team.name}</Text>
+                <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                  {icon.xCircle({ color: ColorsRevised.white })}
+                </TouchableOpacity>
+              </View>
+            </LinearGradient>
 
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>Owner</Text>
-            <View style={styles.ownerInfo}>
-              {icon.profile({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, size: 24 })}
-              <Text style={[styles.ownerName, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{team.owner_id || 'Unknown'}</Text>
-            </View>
-          </View>
-
-          {team.members && team.members.length > 0 && (
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>House Mates</Text>
-              <View style={styles.membersList}>
-                {team.members.slice(1).map((member: TeamMember, index: number) => (
-                  <View key={index} style={styles.memberItem}>
-                    {icon.profile({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, size: 20 })}
-                    <Text style={[styles.memberName, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{member.username}</Text>
-                  </View>
+              <Text style={[styles.sectionTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>Owner</Text>
+              <View style={styles.ownerInfo}>
+                {icon.profile({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, size: 24 })}
+                <Text style={[styles.ownerName, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{team.owner_id || 'Unknown'}</Text>
+              </View>
+            </View>
+
+            {team.members && team.members.length > 0 && (
+              <View style={styles.section}>
+                <Text style={[styles.sectionTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>House Mates</Text>
+                <View style={styles.membersList}>
+                  {team.members.slice(1).map((member: TeamMember, index: number) => (
+                    <View key={index} style={styles.memberItem}>
+                      {icon.profile({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, size: 20 })}
+                      <Text style={[styles.memberName, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{member.username}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            <View style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>Specialities</Text>
+              <View style={styles.specialities}>
+                <Text style={[styles.specialityText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{team.domain}</Text>
+                <View style={[styles.dot, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]} />
+                <Text style={[styles.specialityText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{team.subdomain}</Text>
+                {team.subdomainTopics?.map((topic: string, index: number) => (
+                  <React.Fragment key={index}>
+                    <View style={[styles.dot, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]} />
+                    <Text style={[styles.specialityText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{topic}</Text>
+                  </React.Fragment>
                 ))}
               </View>
             </View>
-          )}
 
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>Specialities</Text>
-            <View style={styles.specialities}>
-              <Text style={[styles.specialityText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{team.domain}</Text>
-              <View style={[styles.dot, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]} />
-              <Text style={[styles.specialityText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{team.subdomain}</Text>
-              {team.subdomainTopics?.map((topic: string, index: number) => (
-                <React.Fragment key={index}>
-                  <View style={[styles.dot, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]} />
-                  <Text style={[styles.specialityText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{topic}</Text>
-                </React.Fragment>
-              ))}
-            </View>
-          </View>
-
-          <TouchableOpacity style={styles.requestButton}>
-            <Text style={styles.requestButtonText}>Request to join</Text>
-          </TouchableOpacity>
-        </ScrollView>
+            <TouchableOpacity style={styles.requestButton}>
+              <Text style={styles.requestButtonText}>Request to join</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
       </View>
-    </>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
   overlay: {
     position: 'absolute',
     top: 0,
@@ -117,10 +126,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   container: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: ColorsRevised.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Challenge, Team } from '@/src/services/api';
 import ChallengeCard from '@/components/ui/ChallengeCard';
 import { useRouter } from 'expo-router';
+import RecommendationsFormSheet from '@/components/ui/RecommendationsFormSheet';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
@@ -28,6 +29,8 @@ export default function HomeScreen() {
   const { currentTheme } = useContext(ThemeContext);
   const { user } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [isFormSheetVisible, setIsFormSheetVisible] = useState(false);
   const router = useRouter();
 
   const sliderData = [
@@ -167,6 +170,16 @@ export default function HomeScreen() {
     if (selectedTeamFilter === 'Member') return team.owner_id !== user?.user_id;
     return true;
   })
+
+  const handleTeamCardPress = (team: Team) => {
+    setSelectedTeam(team);
+    setIsFormSheetVisible(true);
+  };
+
+  const handleCloseFormSheet = () => {
+    setIsFormSheetVisible(false);
+    setSelectedTeam(null);
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -461,6 +474,7 @@ export default function HomeScreen() {
                                   marginHorizontal: 0
                                 }} 
                                 screen='dashboard'
+                                onPress={() => handleTeamCardPress(team)}
                               />
                             ))}
                           </ScrollView>
@@ -538,6 +552,14 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
       </Modal>
+
+      {selectedTeam && (
+        <RecommendationsFormSheet
+          isVisible={isFormSheetVisible}
+          onClose={handleCloseFormSheet}
+          team={selectedTeam}
+        />
+      )}
     </GestureHandlerRootView>
   );
 }
