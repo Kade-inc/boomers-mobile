@@ -12,6 +12,7 @@ import { router, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import CustomButton from '@/components/ui/CustomButton';
+import RecommendationsFormSheet from '@/components/ui/RecommendationsFormSheet';
 
 const { width } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20 * 2;
@@ -22,12 +23,24 @@ export default function AllRecommendationsScreen() {
   const { currentTheme } = useContext(ThemeContext);
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [isFormSheetVisible, setIsFormSheetVisible] = useState(false);
   const { data: recommendationsData, isPending: isRecommendationsLoading, isError: isRecommendationsError } = useRecommendations();
 
   const filteredRecommendations = recommendationsData?.data?.data?.filter((team: Team) => {
     return searchQuery.trim() === '' ? true :
       team.name.toLowerCase().includes(searchQuery.toLowerCase());
   }) || [];
+
+  const handleTeamCardPress = (team: Team) => {
+    setSelectedTeam(team);
+    setIsFormSheetVisible(true);
+  };
+
+  const handleCloseFormSheet = () => {
+    setIsFormSheetVisible(false);
+    setSelectedTeam(null);
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.gray }]}>
@@ -88,6 +101,7 @@ export default function AllRecommendationsScreen() {
                   marginBottom: 15
                 }}
                 screen='all-recommendations'
+                onPress={() => handleTeamCardPress(team)}
               />
             ))}
           </View>
@@ -106,6 +120,14 @@ export default function AllRecommendationsScreen() {
           </View>
         )}
       </ScrollView>
+
+      {selectedTeam && (
+        <RecommendationsFormSheet
+          isVisible={isFormSheetVisible}
+          onClose={handleCloseFormSheet}
+          team={selectedTeam}
+        />
+      )}
     </SafeAreaView>
   );
 }
