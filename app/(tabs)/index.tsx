@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions, ActivityIndicator, RefreshControl } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions, ActivityIndicator, RefreshControl, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ThemeContext } from '@/src/context/ThemeContext';
@@ -200,6 +200,10 @@ export default function HomeScreen() {
   const handleCloseFormSheet = () => {
     setIsFormSheetVisible(false);
     setSelectedTeam(null);
+  };
+
+  const handleAdviceLinkPress = () => {
+    Linking.openURL('https://api.adviceslip.com/');
   };
 
   return (
@@ -580,7 +584,11 @@ export default function HomeScreen() {
                 ) : (
                   <>
                     <Text style={styles.modalText}>{adviceData?.data}</Text>
-                    <Text style={styles.modalSubText}>With ❤️ from Advice slip JSON API</Text>
+                    <TouchableOpacity onPress={handleAdviceLinkPress}>
+                      <Text style={[styles.modalSubText]}>
+                        With ❤️ from Advice slip JSON API
+                      </Text>
+                    </TouchableOpacity>
                   </>
                 )}
               </View>
