@@ -65,7 +65,7 @@ export default function AllRecommendationsScreen() {
         </View>
       </View>
 
-      <ScrollView style={styles.content}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.content}>
         {isRecommendationsLoading ? (
           <View style={styles.loaderContainer}>
             <ActivityIndicator size="large" color={currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black} />
