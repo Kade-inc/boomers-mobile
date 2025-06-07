@@ -1,5 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { ApiResponse, teamService, TeamsResponse } from "../../services/api";
+import { teamService } from "../../services/api";
+import { ApiResponse } from "../../entities/Auth";
+import { TeamsResponse } from "../../entities/Team";
 
 const useGetUserTeams = (
     userId: string,

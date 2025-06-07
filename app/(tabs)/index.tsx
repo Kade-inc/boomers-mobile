@@ -20,6 +20,7 @@ import { Team } from '@/src/entities/Team';
 import ChallengeCard from '@/components/ui/ChallengeCard';
 import { useRouter } from 'expo-router';
 import RecommendationsFormSheet from '@/components/ui/RecommendationsFormSheet';
+import useGetAdvice from '@/src/hooks/queries/useGetAdvice';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
@@ -96,6 +97,7 @@ export default function HomeScreen() {
   const [filteredChallenges, setFilteredChallenges] = useState<Challenge[]>([])
   const [allTeams, setAllTeams] = useState<Team[]>([])
   const [refreshing, setRefreshing] = useState(false);
+  const { data: adviceData, isLoading: isAdviceLoading, refetch: refetchAdvice } = useGetAdvice();
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -103,14 +105,15 @@ export default function HomeScreen() {
       await Promise.all([
         refetchUserTeams(),
         refetchRecommendations(),
-        refetchChallenges()
+        refetchChallenges(),
+        refetchAdvice()
       ]);
     } catch (error) {
       console.error('Error refreshing data:', error);
     } finally {
       setRefreshing(false);
     }
-  }, [refetchUserTeams, refetchRecommendations, refetchChallenges]);
+  }, [refetchUserTeams, refetchRecommendations, refetchChallenges, refetchAdvice]);
 
   useEffect(() => {
     if (userTeamsData?.data) {
@@ -572,8 +575,14 @@ export default function HomeScreen() {
               <View style={styles.modalHandle} />
               <View style={styles.modalBody}>
                 {icon.smile({color: ColorsRevised.black, size: 60})}
-                <Text style={styles.modalText}>You will always be rewarded for the work you do but not the work you show. Keep pushing forward and strive for greatness.</Text>
-                <Text style={styles.modalSubText}>With ❤️ from Advice slip JSON API</Text>
+                {isAdviceLoading ? (
+                  <ActivityIndicator size="large" color="#F8B500" />
+                ) : (
+                  <>
+                    <Text style={styles.modalText}>{adviceData?.data}</Text>
+                    <Text style={styles.modalSubText}>With ❤️ from Advice slip JSON API</Text>
+                  </>
+                )}
               </View>
             </View>
           </TouchableOpacity>

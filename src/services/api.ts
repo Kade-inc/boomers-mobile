@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { UserProfile } from '@/entities/User';
 import { Team, TeamsResponse, RecommendationsResponse } from '../entities/Team';
 import { Challenge, ChallengesResponse } from '../entities/Challenge';
+import { AdviceResponse } from '../entities/Advice';
 import { 
   ApiResponse, 
   RegisterResponse, 
@@ -136,6 +137,9 @@ export const endpoints = {
   },
   user: {
     getProfile: '/users'
+  },
+  advice: {
+    getAdvice: '/advice'
   }
   // Add more endpoint categories as needed
 } as const;
@@ -432,6 +436,29 @@ export const userService = {
         return {
           success: false,
           error: error.response?.data?.message || 'Failed to fetch user profile'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  }
+};
+
+export const adviceService = {
+  getAdvice: async (): Promise<ApiResponse<AdviceResponse>> => {
+    try {
+      const response = await api.get(endpoints.advice.getAdvice);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch advice'
         };
       }
       return {

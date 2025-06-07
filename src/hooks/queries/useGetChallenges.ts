@@ -1,5 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { ApiResponse, challengeService, ChallengesResponse } from "../../services/api";
+import { challengeService } from "../../services/api";
+import { ApiResponse } from "../../entities/Auth";
+import { ChallengesResponse } from "../../entities/Challenge";
 
 const useGetChallenges = (
     userId: string = "",
