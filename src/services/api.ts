@@ -3,6 +3,23 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { router } from 'expo-router';
 import { UserProfile } from '@/entities/User';
+import { Team, TeamsResponse, RecommendationsResponse } from '../entities/Team';
+import { Challenge, ChallengesResponse } from '../entities/Challenge';
+import { 
+  ApiResponse, 
+  RegisterResponse, 
+  RegisterRequest, 
+  VerifyRequest, 
+  LoginRequest, 
+  AuthResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  VerifyResetTokenRequest,
+  VerifyResetTokenResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
+  LogoutRequest
+} from '../entities/Auth';
 
 const BASE_URL = 'http://192.168.20.94:5001/api';
 
@@ -122,77 +139,6 @@ export const endpoints = {
   }
   // Add more endpoint categories as needed
 } as const;
-
-// Types for API responses
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
-
-// Types for auth responses
-export interface RegisterResponse {
-  successful: boolean;
-  verificationCode?: string;
-}
-
-// Types for auth requests
-export interface RegisterRequest {
-  email: string;
-  username: string;
-  password: string;
-  source: 'web' | 'mobile';
-}
-
-export interface VerifyRequest {
-  accountId: string;
-  verificationCode: string;
-}
-
-export interface LoginRequest {
-  accountId: string;
-  password: string;
-}
-
-// Types for auth responses
-export interface AuthResponse {
-  message: string;
-  accessToken: string;
-  refreshToken: string;
-}
-
-export interface ForgotPasswordRequest {
-  email: string;
-  source?: 'mobile' | 'web';
-}
-
-export interface ForgotPasswordResponse {
-  message: string;
-  verificationCode?: string;
-}
-
-export interface VerifyResetTokenRequest {
-  email: string;
-  verificationCode: string;
-}
-
-export interface VerifyResetTokenResponse {
-  userId: string;
-}
-
-export interface ResetPasswordRequest {
-  userId: string;
-  token: string;
-  password: string;
-}
-
-export interface ResetPasswordResponse {
-  message: string;
-}
-
-export interface LogoutRequest {
-  token: string;
-}
 
 // Auth service functions
 export const authService = {
@@ -496,7 +442,7 @@ export const userService = {
   }
 };
 
-// Add these functions after the authService object
+// Token management functions
 export const getStoredTokens = async () => {
   try {
     const accessToken = await AsyncStorage.getItem('token');
@@ -512,7 +458,6 @@ export const isTokenValid = (token: string | null): boolean => {
   if (!token) return false;
   
   try {
-    // Decode the JWT token
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
@@ -549,50 +494,3 @@ const decodeToken = async (): Promise<any> => {
     return null;
   }
 };
-
-export interface Team {
-  _id: string;
-  owner_id: string;
-  name: string;
-  teamUsername: string;
-  domain: string;
-  subdomain: string;
-  subdomainTopics: string[];
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  teamColor?: string;
-}
-
-export interface TeamsResponse {
-  message: string;
-  currentPage: number;
-  perPage: number;
-  totalPages: number;
-  totalCount: number;
-  data: Team[];
-} 
-
-export interface RecommendationsResponse {  
-  data: Team[];
-}
-
-export interface Challenge {
-  _id: string;
-  owner_id: string;
-  team_id: string;
-  comments: any[];
-  valid: boolean;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  challenge_name: string;
-  difficulty: number;
-  due_date: string;
-  description: string;
-}
-
-export interface ChallengesResponse {
-  message: string;
-  data: Challenge[];
-}

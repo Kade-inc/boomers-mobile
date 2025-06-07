@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ViewStyle, StyleProp, ColorValue, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { Team } from '@/src/services/api'
+import { Team } from '@/src/entities/Team'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useAuth } from '@/src/context/AuthContext'
 

@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import React, { useContext } from 'react';
-import { Team } from '@/src/services/api';
-import { ColorsRevised } from '@/constants/ColorsRevised';
-import { icon } from '@/constants/icon';
+import { Team } from '@/src/entities/Team';
+import { ColorsRevised } from '../../constants/ColorsRevised';
+import { icon } from '../../constants/icon';
 import { useAuth } from '@/src/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ColorValue } from 'react-native';

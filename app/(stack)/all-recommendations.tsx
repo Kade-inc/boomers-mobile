@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { icon } from '@/constants/icon';
 import { useAuth } from '@/src/context/AuthContext';
 import useRecommendations from '@/src/hooks/queries/useRecommendations';
-import { Team } from '@/src/services/api';
+import { Team } from '@/src/entities/Team';
 import TeamCard from '@/components/ui/TeamCard';
 import { router, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';

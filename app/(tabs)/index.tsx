@@ -15,7 +15,8 @@ import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
 import useRecommendations from '@/src/hooks/queries/useRecommendations';
 import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Challenge, Team } from '@/src/services/api';
+import { Challenge } from '@/src/entities/Challenge';
+import { Team } from '@/src/entities/Team';
 import ChallengeCard from '@/components/ui/ChallengeCard';
 import { useRouter } from 'expo-router';
 import RecommendationsFormSheet from '@/components/ui/RecommendationsFormSheet';
@@ -105,13 +106,13 @@ export default function HomeScreen() {
     if (challengesData?.data?.data) {
       const challenges = challengesData.data.data
       const freshChallenges = challenges
-        .filter((challenge) => {
+        .filter((challenge: Challenge) => {
           if (!challenge.due_date) return false;
           const dueDate = new Date(challenge.due_date);
           const now = new Date();
           return dueDate > now;
         })
-        .sort((a, b) => {
+        .sort((a: Challenge, b: Challenge) => {
           const dateA = new Date(a.due_date!);
           const dateB = new Date(b.due_date!);
           return dateA.getTime() - dateB.getTime();
