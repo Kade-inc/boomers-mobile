@@ -11,6 +11,7 @@ import { useAuth } from '@/src/context/AuthContext';
 import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
 import { Team } from '@/src/entities/Team';
 import TeamCard from '@/components/ui/TeamCard';
+import { router } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
@@ -76,7 +77,13 @@ export default function ProfileScreen() {
                 {user?.job && <Text style={[styles.job, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>{user?.job}</Text>}
               </View>
             <View style={styles.headerContentRight}>
-              <TouchableOpacity style={styles.editProfileButton}>
+              <TouchableOpacity 
+                style={styles.editProfileButton} 
+                onPress={() => {
+                  console.log('Edit Profile');
+                  router.push('/(stack)/edit-profile');
+                }}
+              >
                 <Text style={styles.editProfileButtonText}>Edit Profile</Text>
               </TouchableOpacity>
             </View>
@@ -269,9 +276,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 68,
     left: 20,
-    right: 0,
-    bottom: 0,
-    zIndex: 100,
+    width: 100,
+    height: 100,
+    zIndex: 1,
   },
   headerImageUser: {
     width: 60,

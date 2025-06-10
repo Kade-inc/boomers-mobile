@@ -30,7 +30,7 @@ const ITEM_WIDTH = width - HORIZONTAL_PADDING;
 export default function HomeScreen() {
   const { currentTheme } = useContext(ThemeContext);
   const { user } = useAuth();
-  console.log("S: ", user);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [isFormSheetVisible, setIsFormSheetVisible] = useState(false);
