@@ -250,33 +250,35 @@ const EditProfileScreen = () => {
 
 <View>
 <Text style={[styles.title, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>City</Text>
-<SelectDropdown
+{selectedCountry && (
+    <SelectDropdown
+        key={selectedCountry}
         data={cities.map((city) => city.name)}
         defaultValue={selectedCity}
         onSelect={(selectedItem, index) => {
-          handleCityChange(selectedItem);
+            handleCityChange(selectedItem);
         }}
         renderButton={(selectedItem, isOpen) => {
-          return (
-            <View style={[styles.dropdownButtonStyle, {
-                backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white,
-                borderColor: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
-              <Text style={[styles.dropdownButtonTxtStyle, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
-                {selectedItem || 'Select your city'}
-              </Text>
-            </View>
-          );
+            return (
+                <View style={[styles.dropdownButtonStyle, {
+                    backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white,
+                    borderColor: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+                    <Text style={[styles.dropdownButtonTxtStyle, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+                        {selectedItem || 'Select your city'}
+                    </Text>
+                </View>
+            );
         }}
         renderItem={(item, index, isSelected) => {
-          return (
-            <View
-              style={{
-            ...styles.dropdownItemStyle,
-                ...(isSelected && {backgroundColor: '#D2D9DF'}),
-              }}>
-              <Text style={styles.dropdownItemTxtStyle}>{item}</Text>
-            </View>
-          );
+            return (
+                <View
+                    style={{
+                        ...styles.dropdownItemStyle,
+                        ...(isSelected && {backgroundColor: '#D2D9DF'}),
+                    }}>
+                    <Text style={styles.dropdownItemTxtStyle}>{item}</Text>
+                </View>
+            );
         }}
         dropdownStyle={styles.dropdownMenuStyle}
         search
@@ -285,10 +287,11 @@ const EditProfileScreen = () => {
         searchPlaceHolder={'Search here'}
         searchPlaceHolderColor={'#72808D'}
         renderSearchInputLeftIcon={() => {
-          return <FontAwesome name={'search'} color={'#72808D'} size={18} />;
+            return <FontAwesome name={'search'} color={'#72808D'} size={18} />;
         }}
-      />
-      </View>
+    />
+)}
+</View>
           </View>
         </ScrollView>
         {updateUserProfile.isPending && (
