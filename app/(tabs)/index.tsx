@@ -658,6 +658,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
     padding: 20,
     shadowColor: '#000',
     shadowOffset: {
@@ -667,6 +669,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    marginBottom: 40,
+    marginHorizontal: 20,
   },
   modalHandle: {
     width: 40,
