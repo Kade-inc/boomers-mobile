@@ -1,4 +1,4 @@
-import { Feather, AntDesign, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { Feather, AntDesign, MaterialCommunityIcons, Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
 
 interface IconProps {
   color?: string;
@@ -24,4 +24,6 @@ export const icon = {
     arrowLeft: ({ color, size = 24, ...props }: IconProps) => (
         <Feather name="arrow-left" size={size} color={color} {...props} />
     ),
+    user: (props: any) => <FontAwesome name="user" size={24} {...props} />, 
+    pin: (props:any) => <Entypo name="location-pin" size={24} {...props} />,
 }

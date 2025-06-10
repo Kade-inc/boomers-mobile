@@ -7,5 +7,6 @@ export const ColorsRevised = {
     black: '#171617',
     white: '#fefeff',
     gray: '#f2f2f4',
-    yellow: '#F8B500'
+    yellow: '#F8B500',
+    darkgray: '#393E46'
 }

@@ -30,6 +30,7 @@ const ITEM_WIDTH = width - HORIZONTAL_PADDING;
 export default function HomeScreen() {
   const { currentTheme } = useContext(ThemeContext);
   const { user } = useAuth();
+  console.log("S: ", user);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [isFormSheetVisible, setIsFormSheetVisible] = useState(false);
@@ -161,16 +162,11 @@ export default function HomeScreen() {
   }
 
   useEffect(() => {
-    console.log("Recommendations data received:", recommendationsData?.data?.data)
     if (recommendationsData?.data?.data) {
-      console.log("Setting recommendations to:", recommendationsData.data.data)
       setRecommendations(recommendationsData.data.data)
     }
   }, [recommendationsData])
 
-  useEffect(() => {
-    console.log("Recommendations state updated:", recommendations)
-  }, [recommendations])
 
   useEffect(() => {
     const getUserId = async () => {

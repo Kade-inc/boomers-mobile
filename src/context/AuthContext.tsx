@@ -1,40 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { checkAuthStatus, getStoredTokens, userService } from '../services/api';
+import { checkAuthStatus, userService } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-interface UserProfile {
-  _id: string;
-  user_id: string;
-  email: string;
-  phoneNumber: string;
-  firstName: string;
-  lastName: string;
-  bio: string;
-  username: string;
-  gender: null;
-  profile_picture: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  job: string;
-  location: string;
-  city: string | null;
-  country: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  locationGeo?: {
-    type: "Point";
-    coordinates: [number, number]; // [longitude, latitude]
-  };
-  interests: Interests;
-}
-
-interface Interests {
-  domain: string[];
-  subdomain: string[];
-  domainTopics: string[];
-}
+import { UserProfile } from '@/entities/User';
 
 interface AuthContextType {
   isAuthenticated: boolean | null;
@@ -56,14 +23,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchUserProfile = async () => {
     try {
       const userId = await AsyncStorage.getItem('userId');
-      console.log("FETCHING PROFILE FOR USER ID: ", userId);
       if (!userId) return;
 
       const response = await userService.getUserProfile(userId);
-      console.log("PROFILE RESPONSE: ", response);
+
       if (response.success && response.data) {
+        console.log("WONDER: ", response.data);
+        console.log("GOT: ", response.data);
         setUser(response.data);
-        // Store in AsyncStorage for persistence
         await AsyncStorage.setItem('userProfile', JSON.stringify(response.data));
       }
     } catch (error) {
