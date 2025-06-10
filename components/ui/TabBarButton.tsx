@@ -1,11 +1,12 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Image } from 'react-native'
 import React, { useEffect } from 'react'
 import { icon } from '@/constants/icon'
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 import { PlatformPressable } from '@react-navigation/elements'
+import { useAuth } from '@/src/context/AuthContext'
 
-const TabBarButton = ({onPress, onLongPress,  isFocused, routeName, color, label}: any) => {
-
+const TabBarButton = ({onPress, onLongPress, isFocused, routeName, color, label}: any) => {
+    const { user } = useAuth();
     const scale = useSharedValue(0)
 
     useEffect(() => {
@@ -16,8 +17,9 @@ const TabBarButton = ({onPress, onLongPress,  isFocused, routeName, color, label
 
     const animatedIconStyle = useAnimatedStyle(() => {
         const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2])
-
-        const top = interpolate(scale.value, [0, 1], [0, 9])
+        const top = routeName === 'profile' && user?.profile_picture 
+            ? 0  // Keep profile image centered
+            : interpolate(scale.value, [0, 1], [0, 9])  // Animate other icons
         return {
             transform: [{
                 scale: scaleValue,
@@ -33,24 +35,35 @@ const TabBarButton = ({onPress, onLongPress,  isFocused, routeName, color, label
         }
     })
 
-  return (
-    <PlatformPressable
-    onPress={onPress}
-    onLongPress={onLongPress}
-    style={styles.tabBarItem}
-  >
-    <Animated.View style={animatedIconStyle}>
-    {icon[routeName as keyof typeof icon]({
-      color
-    })}
-        </Animated.View>
-    
-    <Animated.Text style={[{ color, fontSize: 12 }, animatedTextStyle]}>
-      {label}
-    </Animated.Text>
+    const renderIcon = () => {
+        if (routeName === 'profile' && user?.profile_picture) {
+            return (
+                <Image 
+                    source={{ uri: user.profile_picture }} 
+                    style={styles.profileImage}
+                />
+            );
+        }
+        return icon[routeName as keyof typeof icon]({ color });
+    }
 
-  </PlatformPressable>
-  )
+    return (
+        <PlatformPressable
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={styles.tabBarItem}
+        >
+            <Animated.View style={animatedIconStyle}>
+                {renderIcon()}
+            </Animated.View>
+            
+            {!(routeName === 'profile' && user?.profile_picture) && (
+                <Animated.Text style={[{ color, fontSize: 12 }, animatedTextStyle]}>
+                    {label}
+                </Animated.Text>
+            )}
+        </PlatformPressable>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -59,8 +72,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 5,
-      },
+    },
+    profileImage: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+    },
 });
-
 
 export default TabBarButton
