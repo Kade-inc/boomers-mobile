@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icon } from '@/constants/icon'
 import { ColorsRevised } from '@/constants/ColorsRevised'
@@ -17,15 +17,23 @@ import { useUpdateUserProfile } from '@/src/hooks/queries/useUpdateUserProfile'
 import Toast from "react-native-toast-message";
 import { UserProfile } from '@/entities/User'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import {Country, City} from 'country-state-city';
+import SelectDropdown from 'react-native-select-dropdown';
+import FontAwesome from '@expo/vector-icons/build/FontAwesome'
 
 const EditProfileScreen = () => {
     const { currentTheme } = useContext(ThemeContext);
     const router = useRouter();
     const { user, setUser } = useAuth();
+    const [selectedCountry, setSelectedCountry] = useState<string>(
+        user?.country || "",
+      );
+      const [selectedCity, setSelectedCity] = useState<string>(user?.city || "");
     const updateUserProfile = useUpdateUserProfile(user?.user_id || '');
     const {
         control,
         handleSubmit,
+        setValue,
         formState: {
           errors
         }
@@ -35,9 +43,11 @@ const EditProfileScreen = () => {
           firstName: user?.firstName || '',
           lastName: user?.lastName || '',
           job: user?.job || '',
-          city: user?.city || '',
-          country: user?.country || '',
-          bio: user?.bio || ''
+          city: selectedCity,
+          country: selectedCountry,
+          bio: user?.bio || '',
+          email: user?.email || '',
+          username: user?.username || ''
         }
       })
 
@@ -47,8 +57,33 @@ const EditProfileScreen = () => {
       }
 
       const inputStyle = {
-        marginTop: 10,
+        // marginTop: 10,
       }
+
+       // Get all countries
+  const countries = Country.getAllCountries();
+
+//   console.log("COUNTRIES: ", countries)
+
+  // Get cities for selected country
+  const cities = selectedCountry
+    ? City.getCitiesOfCountry(
+        countries.find((c) => c.name === selectedCountry)?.isoCode || "",
+      ) || []
+    : [];
+
+    const handleCountryChange = (countryName: string) => {
+        console.log("COUNTRY NAME: ", countryName)
+        setValue('country', countryName);
+        setSelectedCountry(countryName);
+        setSelectedCity(""); // Reset city when country changes
+        setValue('city', ''); // Reset city form value
+    };
+    
+    const handleCityChange = (cityName: string) => {
+        setValue('city', cityName);
+        setSelectedCity(cityName);
+    };
 
       const submit = async (data: Partial<UserProfile>) => {
         try {
@@ -111,6 +146,26 @@ const EditProfileScreen = () => {
             </View>
           </View>
           <View style={styles.formInputs}>
+          <FormInputController 
+              control={control as any} 
+              name={'email'} 
+              placeholder={'Enter your email'} 
+              title={'Email'} 
+              errors={errors}
+              inputContainerStyles={inputContainerStyles}
+              inputStyle={inputStyle}
+              disabled={true}
+            />
+             <FormInputController 
+              control={control as any} 
+              name={'username'} 
+              placeholder={'Enter your username'} 
+              title={'Username'} 
+              errors={errors}
+              inputContainerStyles={inputContainerStyles}
+              inputStyle={inputStyle}
+              disabled={true}
+            />
             <FormInputController 
               control={control as any} 
               name={'firstName'} 
@@ -138,24 +193,10 @@ const EditProfileScreen = () => {
               inputContainerStyles={inputContainerStyles}
               inputStyle={inputStyle}
             />
-            <FormInputController 
-              control={control as any} 
-              name={'city'} 
-              placeholder={'Enter your city'} 
-              title={'City'} 
-              errors={errors}
-              inputContainerStyles={inputContainerStyles}
-              inputStyle={inputStyle}
-            />
-            <FormInputController 
-              control={control as any} 
-              name={'country'} 
-              placeholder={'Enter your country'} 
-              title={'Country'} 
-              errors={errors}
-              inputContainerStyles={inputContainerStyles}
-              inputStyle={inputStyle}
-            /> 
+
+
+        
+         
             <FormInputController 
               control={control as any} 
               name={'bio'} 
@@ -165,6 +206,89 @@ const EditProfileScreen = () => {
               inputContainerStyles={inputContainerStyles}
               inputStyle={inputStyle}
             />
+            <View style={{marginBottom: 20}}>
+            <Text style={[styles.title, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Country</Text>
+<SelectDropdown
+        data={countries.map((country) => country.name)}
+        defaultValue={user?.country || ''}
+        onSelect={(selectedItem, index) => {
+          handleCountryChange(selectedItem);
+        }}
+        renderButton={(selectedItem, isOpen) => {
+          return (
+            <View style={[styles.dropdownButtonStyle, {
+                backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white,
+                borderColor: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+              <Text style={[styles.dropdownButtonTxtStyle, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+                {selectedItem || 'Select your country'}
+              </Text>
+            </View>
+          );
+        }}
+        renderItem={(item, index, isSelected) => {
+          return (
+            <View
+              style={{
+                ...styles.dropdownItemStyle,
+                ...(isSelected && {backgroundColor: '#D2D9DF'}),
+              }}>
+              <Text style={styles.dropdownItemTxtStyle}>{item}</Text>
+            </View>
+          );
+        }}
+        dropdownStyle={styles.dropdownMenuStyle}
+        search
+        searchInputStyle={styles.dropdownSearchInputStyle}
+        searchInputTxtColor={'#151E26'}
+        searchPlaceHolder={'Search here'}
+        searchPlaceHolderColor={'#72808D'}
+        renderSearchInputLeftIcon={() => {
+          return <FontAwesome name={'search'} color={'#72808D'} size={18} />;
+        }}
+      />
+      </View>
+
+<View>
+<Text style={[styles.title, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>City</Text>
+<SelectDropdown
+        data={cities.map((city) => city.name)}
+        defaultValue={selectedCity}
+        onSelect={(selectedItem, index) => {
+          handleCityChange(selectedItem);
+        }}
+        renderButton={(selectedItem, isOpen) => {
+          return (
+            <View style={[styles.dropdownButtonStyle, {
+                backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white,
+                borderColor: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+              <Text style={[styles.dropdownButtonTxtStyle, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+                {selectedItem || 'Select your city'}
+              </Text>
+            </View>
+          );
+        }}
+        renderItem={(item, index, isSelected) => {
+          return (
+            <View
+              style={{
+            ...styles.dropdownItemStyle,
+                ...(isSelected && {backgroundColor: '#D2D9DF'}),
+              }}>
+              <Text style={styles.dropdownItemTxtStyle}>{item}</Text>
+            </View>
+          );
+        }}
+        dropdownStyle={styles.dropdownMenuStyle}
+        search
+        searchInputStyle={styles.dropdownSearchInputStyle}
+        searchInputTxtColor={'#151E26'}
+        searchPlaceHolder={'Search here'}
+        searchPlaceHolderColor={'#72808D'}
+        renderSearchInputLeftIcon={() => {
+          return <FontAwesome name={'search'} color={'#72808D'} size={18} />;
+        }}
+      />
+      </View>
           </View>
         </ScrollView>
         {updateUserProfile.isPending && (
@@ -278,4 +402,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1000,
   },
+  dropdownButtonStyle: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    height: 50,
+    justifyContent: 'center',
+  },
+  dropdownButtonTxtStyle: {
+    fontSize: 14,
+    fontFamily: 'MontserratMedium',
+  },
+  dropdownItemStyle: {
+    padding: 10,
+        color: 'black'
+  },
+  dropdownItemTxtStyle: {
+    fontSize: 16,
+        color: 'black'
+  },
+  dropdownMenuStyle: {
+    backgroundColor: '#F2F2F2',
+    padding: 10,
+    borderRadius: 5,
+        color: 'black'
+  },
+  dropdownSearchInputStyle: {
+    backgroundColor: '#F2F2F2',
+    padding: 10,
+    borderRadius: 5,
+        color: 'black'
+  },
+   title: {
+        fontFamily: 'MontserratSemiBold',
+        fontSize: 16,
+        marginBottom: 10,
+    },
 });

@@ -13,4 +13,9 @@ export const editProfileFormSchema = yup.object({
             .required("Country is required"),
     bio: yup.string().trim()
             .required("Bio is required"),
+    email: yup.string().trim()
+            .required("Email is required")
+            .email("Invalid email address"),
+    username: yup.string().trim()
+            .required("Username is required"),
   })
