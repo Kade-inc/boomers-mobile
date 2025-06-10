@@ -2,9 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { router } from 'expo-router';
-import { UserProfile } from '@/entities/User';
-import { Team, TeamsResponse, RecommendationsResponse } from '../entities/Team';
-import { Challenge, ChallengesResponse } from '../entities/Challenge';
+import { UserProfileResponse, UserProfile } from '@/entities/User';
+import { TeamsResponse, RecommendationsResponse } from '../entities/Team';
+import {  ChallengesResponse } from '../entities/Challenge';
 import { AdviceResponse } from '../entities/Advice';
 import { 
   ApiResponse, 
@@ -22,7 +22,7 @@ import {
   LogoutRequest
 } from '../entities/Auth';
 
-const BASE_URL = 'http://192.168.20.94:5001/api';
+const BASE_URL = 'http://192.168.100.47:5001/api';
 
 // Create axios instance with default config
 export const api = axios.create({
@@ -44,7 +44,6 @@ api.interceptors.request.use(
       }
       return config;
     } catch (error) {
-      console.error('Error getting token:', error);
       return config;
     }
   },
@@ -92,15 +91,12 @@ api.interceptors.response.use(
           }
         case 403:
           // Forbidden
-          console.error('Access forbidden');
           break;
         case 404:
           // Not found
-          console.error('Resource not found');
           break;
         case 500:
           // Server error
-          console.error('Server error');
           break;
         default:
           console.error('API Error:', error.response.data);
@@ -126,7 +122,6 @@ export const endpoints = {
     verify: '/users/verify',
     verifyResetToken: '/users/verify-reset-token',
     logout: '/users/logout',
-    getUserProfile: '/users'
   },
   team: {
     getUserTeams: '/teams',
@@ -205,7 +200,6 @@ export const authService = {
         data: response.data,
       };
     } catch (error) {
-      console.log("ERROR: ", error)
       if (axios.isAxiosError(error)) {
         return {
           success: false,
@@ -227,7 +221,6 @@ export const authService = {
         data: response.data,
       };
     } catch (error) {
-      console.error('Error during logout:', error);
       return {
         success: false,
         error: 'An unexpected error occurred',
@@ -320,31 +313,6 @@ export const authService = {
       };
     }
   },
-
-  getUserProfile: async (userId: string): Promise<ApiResponse<UserProfile>> => {
-    try {
-      console.log("ENDPOINT: ", `${endpoints.auth.getUserProfile}/${userId}/profile`)
-      const response = await api.get(`${endpoints.auth.getUserProfile}/${userId}/profile`);
-      console.log("RESPONSE: ", response);
-      return {
-        success: true,
-        data: response.data.profile
-      };
-    } catch (error) {
-      console.log("ERROR DETAILS: ", error);
-      if (axios.isAxiosError(error)) {
-        console.log("AXIOS ERROR RESPONSE: ", error.response?.data);
-        return {
-          success: false,
-          error: error.response?.data?.message || 'Failed to fetch user profile'
-        };
-      }
-      return {
-        success: false,
-        error: 'An unexpected error occurred'
-      };
-    }
-  }
 };
 
 export const teamService = {
@@ -423,10 +391,9 @@ export const challengeService = {
 }
 
 export const userService = {
-  getUserProfile: async (userId: string): Promise<ApiResponse<any>> => {
+  getUserProfile: async (userId: string): Promise<ApiResponse<UserProfile>> => {
     try {
       const response = await api.get(`${endpoints.user.getProfile}/${userId}/profile`);
-      console.log("RESPONSEssss: ", response.data.profile);
       return {
         success: true,
         data: response.data.profile
@@ -476,7 +443,6 @@ export const getStoredTokens = async () => {
     const refreshToken = await AsyncStorage.getItem('refreshToken');
     return { accessToken, refreshToken };
   } catch (error) {
-    console.error('Error getting stored tokens:', error);
     return { accessToken: null, refreshToken: null };
   }
 };
@@ -496,7 +462,6 @@ export const isTokenValid = (token: string | null): boolean => {
 
     return exp > currentTime;
   } catch (error) {
-    console.error('Error validating token:', error);
     return false;
   }
 };
@@ -510,14 +475,11 @@ const decodeToken = async (): Promise<any> => {
   try {
     const token = await AsyncStorage.getItem("token");
     if (!token) {
-      console.log("No token found");
       return null;
     }
     const decoded = jwtDecode(token);
-    console.log("DECODED: ", decoded);
     return decoded;
   } catch (error) {
-    console.error("Error decoding token:", error);
     return null;
   }
 };
