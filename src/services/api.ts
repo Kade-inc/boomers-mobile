@@ -131,7 +131,8 @@ export const endpoints = {
     getChallenges: '/challenges'
   },
   user: {
-    getProfile: '/users'
+    getProfile: '/users',
+    updateProfile: '/users'
   },
   advice: {
     getAdvice: '/advice'
@@ -408,6 +409,21 @@ export const userService = {
       return {
         success: false,
         error: 'An unexpected error occurred'
+      };
+    }
+  },
+  updateUserProfile: async (userId: string, data: Partial<UserProfile>): Promise<ApiResponse<UserProfile>> => {
+    try {
+
+      const response = await api.put(`${endpoints.user.updateProfile}/${userId}/profile`, data);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: `An unexpected error occurred: ${error}`
       };
     }
   }

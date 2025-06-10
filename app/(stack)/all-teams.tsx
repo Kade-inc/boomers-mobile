@@ -7,11 +7,11 @@ import { icon } from '@/constants/icon';
 import { useAuth } from '@/src/context/AuthContext';
 import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Team } from '@/src/services/api';
 import TeamCard from '@/components/ui/TeamCard';
 import { router, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { Team } from '@/src/entities/Team';
 
 const { width } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20 * 2;
