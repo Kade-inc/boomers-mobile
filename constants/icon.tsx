@@ -26,4 +26,5 @@ export const icon = {
     ),
     user: (props: any) => <FontAwesome name="user" size={24} {...props} />, 
     pin: (props:any) => <Entypo name="location-pin" size={24} {...props} />,
+    sad: (props:any) => <Entypo name="emoji-sad" size={24} {...props} />,
 }
