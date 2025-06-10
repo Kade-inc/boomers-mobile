@@ -28,8 +28,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await userService.getUserProfile(userId);
 
       if (response.success && response.data) {
-        console.log("WONDER: ", response.data);
-        console.log("GOT: ", response.data);
         setUser(response.data);
         await AsyncStorage.setItem('userProfile', JSON.stringify(response.data));
       }
