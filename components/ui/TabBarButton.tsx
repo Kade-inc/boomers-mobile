@@ -1,8 +1,7 @@
-import { StyleSheet, Image } from 'react-native'
+import { StyleSheet, Image, Pressable } from 'react-native'
 import React, { useEffect } from 'react'
 import { icon } from '@/constants/icon'
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
-import { PlatformPressable } from '@react-navigation/elements'
 import { useAuth } from '@/src/context/AuthContext'
 
 const TabBarButton = ({onPress, onLongPress, isFocused, routeName, color, label}: any) => {
@@ -48,7 +47,7 @@ const TabBarButton = ({onPress, onLongPress, isFocused, routeName, color, label}
     }
 
     return (
-        <PlatformPressable
+        <Pressable
             onPress={onPress}
             onLongPress={onLongPress}
             style={styles.tabBarItem}
@@ -62,7 +61,7 @@ const TabBarButton = ({onPress, onLongPress, isFocused, routeName, color, label}
                     {label}
                 </Animated.Text>
             )}
-        </PlatformPressable>
+        </Pressable>
     )
 }
 
