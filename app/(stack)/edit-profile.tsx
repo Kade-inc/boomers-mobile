@@ -400,14 +400,14 @@ const EditProfileScreen = () => {
         <View style={{flexDirection: 'column', gap: 16}}>
           <TouchableOpacity>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-          {icon.photoLibrary({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 26})}
-            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Choose from library</Text>
+          {icon.photoLibrary({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 26})}
+            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Choose from library</Text>
           </View>
           </TouchableOpacity>
           <TouchableOpacity>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
-          {icon.camera({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 24})}
-            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Take Photo</Text>
+          {icon.camera({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 24})}
+            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Take Photo</Text>
           </View>
           </TouchableOpacity>
           <TouchableOpacity>
