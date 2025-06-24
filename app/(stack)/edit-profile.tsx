@@ -485,13 +485,7 @@ const EditProfileScreen = () => {
             <Text style={[styles.headerTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
               Edit Profile
             </Text>
-            <TouchableOpacity onPress={() => {
-              if (cameraPermission.granted) {
-                openCamera();
-              } else {
-                requestCameraPermission();
-              }
-            }}>
+            <TouchableOpacity onPress={handleSubmit(submit)}>
               <Text style={[styles.saveButton, {color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black}]}>Save</Text>
             </TouchableOpacity>
           </View>
