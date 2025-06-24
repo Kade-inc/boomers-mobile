@@ -1,4 +1,4 @@
-import { Feather, AntDesign, MaterialCommunityIcons, Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
+import { Feather, AntDesign, MaterialCommunityIcons, Ionicons, FontAwesome, Entypo, MaterialIcons, Octicons } from '@expo/vector-icons';
 
 interface IconProps {
   color?: string;
@@ -28,4 +28,6 @@ export const icon = {
     pin: (props:any) => <Entypo name="location-pin" size={24} {...props} />,
     sad: (props:any) => <Entypo name="emoji-sad" size={24} {...props} />,
     camera: (props:any) => <Feather name="camera" size={24} {...props} />,
+    photoLibrary: (props:any) => <MaterialIcons name="photo-library" size={24} {...props} />,
+    delete: (props:any) => <Octicons name="trash" size={24} {...props} />
 }

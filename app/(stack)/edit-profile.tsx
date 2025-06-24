@@ -28,7 +28,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-function BottomSheet({ isOpen, toggleSheet, duration = 500, children }: { isOpen: any, toggleSheet: any, duration?: number, children: any }) {
+function BottomSheet({ isOpen, toggleSheet, duration = 400, children }: { isOpen:any, toggleSheet: () => void, duration?: number, children: any }) {
   const { currentTheme } = useContext(ThemeContext);
   const height = useSharedValue(0);
   const progress = useDerivedValue(() =>
@@ -68,18 +68,21 @@ function BottomSheet({ isOpen, toggleSheet, duration = 500, children }: { isOpen
 
 const sheetStyles = StyleSheet.create({
   sheet: {
-    padding: 16,
+    paddingTop: 30,
     paddingRight: 20,
     paddingLeft: 20,
-    height: 150,
-    width: '100%',
+    height: 230,
+    width: '95%',
     position: 'absolute',
-    bottom: 0,
+    bottom: 30,
+    marginHorizontal: 10,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
     zIndex: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
@@ -383,18 +386,38 @@ const EditProfileScreen = () => {
           </View>
         )}
               <BottomSheet isOpen={isOpen} toggleSheet={toggleSheet}>
-        <Animated.Text style={contentStyle}>
-          Discover the indispensable convenience of a bottom sheet in mobile
-          app. Seamlessly integrated, it provides quick access to supplementary
-          features and refined details.
-        </Animated.Text>
-        <View style={styles.buttonContainer}>
-          <Pressable style={[styles.bottomSheetButton]}>
-            <Text style={[styles.bottomSheetButtonText, contentStyle]}>
-              Read more
-            </Text>
-          </Pressable>
+                <TouchableOpacity onPress={toggleSheet} style={{position: 'absolute', top: 10, right: 20}}>  
+                {icon.xCircle({color: '#EB4335', size: 24})}
+                </TouchableOpacity>
+                <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 20, width: '100%'}}>
+                <View style={styles.headerImage}>
+                {user?.profile_picture ? 
+                  <Image source={{uri: user.profile_picture}} style={{width: 50, height: 50, borderRadius: 50}} /> : 
+                  icon.user({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 60})
+                }
+              </View>
+                </View>
+        <View style={{flexDirection: 'column', gap: 16}}>
+          <TouchableOpacity>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+          {icon.photoLibrary({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 26})}
+            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Choose from library</Text>
+          </View>
+          </TouchableOpacity>
+          <TouchableOpacity>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
+          {icon.camera({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 24})}
+            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Take Photo</Text>
+          </View>
+          </TouchableOpacity>
+          <TouchableOpacity>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 14, paddingLeft: 4}}>
+          {icon.delete({color: '#EB4335', size: 24})}
+            <Text style={{color: '#EB4335', fontFamily: 'MontserratMedium', fontSize: 13}}>Delete</Text>
+          </View>
+          </TouchableOpacity>
         </View>
+        
       </BottomSheet>
     </SafeAreaView>
   )
