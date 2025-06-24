@@ -131,8 +131,7 @@ export const endpoints = {
     getChallenges: '/challenges'
   },
   user: {
-    getProfile: '/users',
-    updateProfile: '/users'
+    profile: '/users',
   },
   advice: {
     getAdvice: '/advice'
@@ -394,7 +393,7 @@ export const challengeService = {
 export const userService = {
   getUserProfile: async (userId: string): Promise<ApiResponse<UserProfile>> => {
     try {
-      const response = await api.get(`${endpoints.user.getProfile}/${userId}/profile`);
+      const response = await api.get(`${endpoints.user.profile}/${userId}/profile`);
       return {
         success: true,
         data: response.data.profile
@@ -415,7 +414,7 @@ export const userService = {
   updateUserProfile: async (userId: string, data: Partial<UserProfile>): Promise<ApiResponse<UserProfile>> => {
     try {
 
-      const response = await api.put(`${endpoints.user.updateProfile}/${userId}/profile`, data);
+      const response = await api.put(`${endpoints.user.profile}/${userId}/profile`, data);
       return {
         success: true,
         data: response.data
@@ -424,6 +423,66 @@ export const userService = {
       return {
         success: false,
         error: `An unexpected error occurred: ${error}`
+      };
+    }
+  },
+  uploadProfilePicture: async (userId: string, imageUri: string): Promise<ApiResponse<UserProfile>> => {
+    try {
+      // Create FormData
+      const formData = new FormData();
+      
+      // Get file name from URI
+      const fileName = imageUri.split('/').pop() || 'profile.jpg';
+      const fileExtension = fileName.split('.').pop() || 'jpg';
+      
+      // Append the image file to FormData
+      formData.append('image', {
+        uri: imageUri,
+        type: `image/${fileExtension}`,
+        name: fileName,
+      } as any);
+
+      // Make the request with FormData
+      const response = await api.put(`${endpoints.user.profile}/${userId}/profile`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to upload profile picture'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
+  },
+  deleteProfilePicture: async (userId: string): Promise<ApiResponse<void>> => {
+    try {
+      const response = await api.delete(`${endpoints.user.profile}/${userId}/profile-picture`);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to delete profile picture'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
       };
     }
   }

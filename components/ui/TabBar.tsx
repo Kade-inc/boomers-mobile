@@ -5,6 +5,7 @@ import { useContext, useState } from 'react';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { ThemeContext } from '@/src/context/ThemeContext';
+import { useAuth } from '@/src/context/AuthContext';
     
 
 
@@ -12,6 +13,7 @@ import { ThemeContext } from '@/src/context/ThemeContext';
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     const [dimensions, setDimensions] = useState({ width: 100, height: 20 });
     const { currentTheme } = useContext(ThemeContext);
+    const { user } = useAuth();
     const buttonWidth = dimensions.width / state.routes.length;
 
     const onTabBarLayout = (event: LayoutChangeEvent) => {
@@ -26,16 +28,29 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         }
     })
 
+    // Check if we should show the background color
+    const shouldShowBackground = () => {
+        const currentRoute = state.routes[state.index];
+        if (currentRoute.name === 'profile') {
+            // Only show background if user doesn't have a profile picture
+            return !user?.profile_picture;
+        }
+        // Show background for all other routes
+        return true;
+    };
+
   return (
     <View style={[styles.tabBar, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark : ColorsRevised.white}]} onLayout={onTabBarLayout}>
-        <Animated.View style={[animatedStyle, {
-            position: 'absolute',
-            backgroundColor: '#F8B500',
-            borderRadius: 30,
-            marginHorizontal: 12,
-            height: dimensions.height - 15,
-            width: buttonWidth - 25
-        }]} />
+        {shouldShowBackground() && (
+          <Animated.View style={[animatedStyle, {
+              position: 'absolute',
+              backgroundColor: '#F8B500',
+              borderRadius: 30,
+              marginHorizontal: 12,
+              height: dimensions.height - 15,
+              width: buttonWidth - 25
+          }]} />
+        )}
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
