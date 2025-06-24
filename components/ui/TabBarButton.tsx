@@ -57,7 +57,7 @@ const TabBarButton = ({onPress, onLongPress, isFocused, routeName, color, label}
             </Animated.View>
             
             {!(routeName === 'profile' && user?.profile_picture) && (
-                <Animated.Text style={[{ color, fontSize: 12 }, animatedTextStyle]}>
+                <Animated.Text style={[{ color, fontSize: 12, fontFamily: 'MontserratMedium' }, animatedTextStyle]}>
                     {label}
                 </Animated.Text>
             )}
