@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Pressable } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, ActivityIndicator,Platform, Linking, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icon } from '@/constants/icon'
@@ -27,6 +27,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
+import * as ImagePicker from 'expo-image-picker';
 
 function BottomSheet({ isOpen, toggleSheet, duration = 400, children }: { isOpen:any, toggleSheet: () => void, duration?: number, children: any }) {
   const { currentTheme } = useContext(ThemeContext);
@@ -182,9 +183,57 @@ const EditProfileScreen = () => {
         }
       }
 
-      const contentStyle = {
-        color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black,
-        textDecorationColor: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black,
+      const [image, setImage] = useState<string | null>(null)
+      const [status, requestPermission] = ImagePicker.useCameraPermissions()
+
+      const pickImage = async () => {
+        try {
+          // check for the permission
+    
+          if (Platform.OS !== 'web') {
+            console.log(status)
+            // const {statline} = await ImagePicker.requestCameraPermissionsAsync()
+            if (status?.status !== 'granted') {
+    
+              const permissionResponse = await requestPermission();
+              console.log({permissionResponse})
+              if (permissionResponse.status !== 'granted') {
+                Alert.alert("Permission not granted",
+                   "You need to grant photo library permission to select an image from the library",
+                  [
+                    {
+                      text: "Cancel"
+                    },
+                    {
+                    text: 'Open Settings',
+                    onPress: () => {
+                      Platform.OS === 'ios' ? 
+                      Linking.openURL('app-settings:') :
+                       Linking.openSettings();
+                    }
+                  }])
+                  return
+              }
+            }
+          }
+              // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: 'images',
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+          base64: true,
+        });
+    
+        console.log(result);
+    
+        if (!result.canceled) {
+          setImage(result.assets[0].uri);
+        }
+        } catch(error) {
+          console.log(error)
+        }
+    
       };
 
   return (
@@ -398,7 +447,7 @@ const EditProfileScreen = () => {
               </View>
                 </View>
         <View style={{flexDirection: 'column', gap: 16}}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={pickImage}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
           {icon.photoLibrary({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 26})}
             <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Choose from library</Text>
