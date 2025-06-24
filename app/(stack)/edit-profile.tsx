@@ -701,7 +701,6 @@ const EditProfileScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity disabled={uploadProfilePicture.isPending || deleteProfilePicture.isPending} onPress={() => {
             if (cameraPermission.granted) {
-              console.log("TAKING PICTURE")
               openCamera();
             } else {
               requestCameraPermission();
