@@ -29,5 +29,8 @@ export const icon = {
     sad: (props:any) => <Entypo name="emoji-sad" size={24} {...props} />,
     camera: (props:any) => <Feather name="camera" size={24} {...props} />,
     photoLibrary: (props:any) => <MaterialIcons name="photo-library" size={24} {...props} />,
-    delete: (props:any) => <Octicons name="trash" size={24} {...props} />
+    delete: (props:any) => <Octicons name="trash" size={24} {...props} />,
+    flashOutline: (props:any) => <Ionicons name="flash-outline" size={24} {...props} />,
+    flashFilled: (props:any) => <Ionicons name="flash-sharp" size={24} {...props} />,
+    refresh: (props: any) => <Feather name="refresh-ccw" size={24} {...props} />
 }

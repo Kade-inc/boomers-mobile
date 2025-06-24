@@ -1,5 +1,5 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, ActivityIndicator,Platform, Linking, Alert } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, ActivityIndicator,Platform, Linking, Alert, Pressable } from 'react-native'
+import React, { useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icon } from '@/constants/icon'
 import { ColorsRevised } from '@/constants/ColorsRevised'
@@ -28,6 +28,14 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as ImagePicker from 'expo-image-picker';
+import {
+  CameraMode,
+  CameraType,
+  CameraView,
+  FlashMode,
+  useCameraPermissions,
+} from "expo-camera";
+import CustomButton from '@/components/ui/CustomButton'
 
 function BottomSheet({ isOpen, toggleSheet, duration = 400, children }: { isOpen:any, toggleSheet: () => void, duration?: number, children: any }) {
   const { currentTheme } = useContext(ThemeContext);
@@ -104,7 +112,13 @@ const EditProfileScreen = () => {
     const uploadProfilePicture = useUploadProfilePicture(user?.user_id || '');
     const deleteProfilePicture = useDeleteProfilePicture(user?.user_id || '');
     const isOpen = useSharedValue(false);
-
+    const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+    const ref = useRef<CameraView>(null);
+    const [uri, setUri] = useState<string | null>(null);
+    const [mode, setMode] = useState<CameraMode>("picture");
+    const [facing, setFacing] = useState<CameraType>("back");
+    const [isTakingPicture, setIsTakingPicture] = useState(false);
+    const [flash, setFlash] = useState<FlashMode>("off");
     const toggleSheet = () => {
       isOpen.value = !isOpen.value;
     };
@@ -249,6 +263,11 @@ const EditProfileScreen = () => {
             return;
           }
 
+          if (isTakingPicture) {
+            setIsTakingPicture(false);
+            setUri(null)
+          }
+
           const updatedProfile = await uploadProfilePicture.mutateAsync(uriToUpload);
           
           // Update the local user state with the new profile data
@@ -259,7 +278,6 @@ const EditProfileScreen = () => {
             type: 'success',
             text1: 'Profile picture updated successfully!',
           });
-          
           // Close the bottom sheet
           toggleSheet();
         } catch (error) {
@@ -268,6 +286,11 @@ const EditProfileScreen = () => {
             text1: 'Failed to update profile picture',
             text2: `${error}`
           });
+          setIsTakingPicture(true);
+          setUri(imageUri || null)
+        } finally {
+          setIsTakingPicture(false);
+          setUri(null)
         }
       }
 
@@ -296,9 +319,164 @@ const EditProfileScreen = () => {
         }
       }
 
+      if (!cameraPermission) {
+        return null;
+      }
+    
+      if (!cameraPermission.granted) {
+        Alert.alert("Permission not granted",
+          "You need to grant camera permission to take a photo",
+         [
+           {
+             text: "Cancel"
+           },
+           {
+           text: 'Open Settings',
+           onPress: () => {
+             Platform.OS === 'ios' ? 
+             Linking.openURL('app-settings:') :
+              Linking.openSettings();
+           }
+         }])
+         return
+        
+      }
+
+      const openCamera = () => {
+        setIsTakingPicture(true);
+      }
+
+      const takePicture = async () => {
+        // setIsTakingPicture(true);
+        const photo = await ref.current?.takePictureAsync();
+        setIsTakingPicture(false);
+        setUri(photo?.uri || null);
+      };
+
+      const toggleFacing = () => {
+        setFacing((prev) => (prev === "back" ? "front" : "back"));
+      };
+
+      const toggleFlash = () => {
+        setFlash((prev) => (prev === "off" ? "on" : "off"));
+      };
+      const dynamicTextStyles = {
+        fontSize: 16,
+        color: ColorsRevised.darkgray
+    };
+
+    const dynamicContainerStyles = {
+        marginTop: 20
+    };
+
+    const takeAnotherPictureStyles = {
+      marginTop: 20,
+      backgroundColor: '#00CEC8'
+    }
+
+    const takeAnotherPictureTextStyles = {
+      fontSize: 16,
+      color: ColorsRevised.white
+  };
+
+      const renderPicture = () => {
+        return (
+          <SafeAreaView style={{flex: 1, backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.white}}>
+              {uploadProfilePicture.isPending && (
+                <View style={{  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  minHeight: 200,
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 1000,
+                  backgroundColor: 'rgba(0, 0, 0, 0.3)'}}>
+                <ActivityIndicator size="large" color={ColorsRevised.white} />
+              </View>
+            )}
+              <TouchableOpacity style={{position: 'absolute', top: 10, left: 20}} onPress={() => {
+              setUri(null);
+              setIsTakingPicture(false);
+            }}>
+            {icon.xCircle({color: '#EB4335', size: 24})}
+            </TouchableOpacity>
+              <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+                <Image
+                  source={{ uri: uri || '' }}
+                  style={{ width: 300, aspectRatio: 1, borderRadius: 250, marginBottom: 20, alignSelf: 'center' }}
+                />
+                  <CustomButton title='Take another picture'
+                textStyles={takeAnotherPictureTextStyles}
+                containerStyles={[takeAnotherPictureStyles, {width: '80%'}]}
+                handlePress={() => {
+                  setUri(null);
+                  openCamera();
+                }} />
+                <CustomButton title='Save Picture'
+                textStyles={dynamicTextStyles}
+                containerStyles={[dynamicContainerStyles, {width: '80%'}]}
+                handlePress={() => {
+                  uri ? handleUpdateProfilePicture(uri) : Alert.alert('Please take a picture first');
+                }} />
+              </View>
+          </SafeAreaView>
+        );
+      };
+
+      const renderCamera = () => {
+        return (
+          <CameraView
+            style={styles.camera}
+            ref={ref}
+            mode={mode}
+            facing={facing}
+            mute={false}
+            flash={flash}
+            responsiveOrientationWhenOrientationLocked
+          >
+            <View style={styles.shutterContainer}>
+              <Pressable onPress={toggleFlash}>
+                {flash === "off" ? icon.flashOutline({color: ColorsRevised.white, size: 32}) : icon.flashFilled({color: ColorsRevised.white, size: 32})}
+              </Pressable>
+              <Pressable onPress={takePicture}>
+                {({ pressed }) => (
+                  <View
+                    style={[
+                      styles.shutterBtn,
+                      {
+                        opacity: pressed ? 0.5 : 1,
+                      },
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.shutterBtnInner,
+                        {
+                          backgroundColor: mode === "picture" ? "white" : "red",
+                        },
+                      ]}
+                    />
+                  </View>
+                )}
+              </Pressable>
+              <Pressable onPress={toggleFacing}>
+                {icon.refresh({color: ColorsRevised.white, size: 32})}
+              </Pressable>
+            </View>
+          </CameraView>
+        );
+      };
+    
+
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.white}]}>
         <StatusBar style={currentTheme === 'dark' ? 'light' : 'dark'} />
+        {!isTakingPicture && !uri && (
+
+      <>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             {icon.arrowLeft({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
@@ -307,7 +485,13 @@ const EditProfileScreen = () => {
             <Text style={[styles.headerTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
               Edit Profile
             </Text>
-            <TouchableOpacity onPress={handleSubmit(submit)} >
+            <TouchableOpacity onPress={() => {
+              if (cameraPermission.granted) {
+                openCamera();
+              } else {
+                requestCameraPermission();
+              }
+            }}>
               <Text style={[styles.saveButton, {color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black}]}>Save</Text>
             </TouchableOpacity>
           </View>
@@ -515,7 +699,14 @@ const EditProfileScreen = () => {
             </Text>
           </View>
           </TouchableOpacity>
-          <TouchableOpacity disabled={uploadProfilePicture.isPending || deleteProfilePicture.isPending}>
+          <TouchableOpacity disabled={uploadProfilePicture.isPending || deleteProfilePicture.isPending} onPress={() => {
+            if (cameraPermission.granted) {
+              console.log("TAKING PICTURE")
+              openCamera();
+            } else {
+              requestCameraPermission();
+            }
+          }}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
           {icon.camera({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 24})}
             <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Take Photo</Text>
@@ -532,6 +723,10 @@ const EditProfileScreen = () => {
         </View>
         
       </BottomSheet>
+      </>
+        )}
+      {isTakingPicture && !uri && renderCamera()}
+      {uri && renderPicture()}
     </SafeAreaView>
   )
 }
@@ -692,5 +887,34 @@ const styles = StyleSheet.create({
     bottomSheetButtonText: {
       fontWeight: 600,
       textDecorationLine: 'underline',
+    },
+    camera: {
+      flex: 1,
+      width: "100%",
+    },
+    shutterContainer: {
+      position: "absolute",
+      bottom: 44,
+      left: 0,
+      width: "100%",
+      alignItems: "center",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingHorizontal: 30,
+    },
+    shutterBtn: {
+      backgroundColor: "transparent",
+      borderWidth: 5,
+      borderColor: "white",
+      width: 85,
+      height: 85,
+      borderRadius: 45,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    shutterBtnInner: {
+      width: 70,
+      height: 70,
+      borderRadius: 50,
     },
 });
