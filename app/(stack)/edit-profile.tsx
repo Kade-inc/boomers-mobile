@@ -13,7 +13,7 @@ import FormInputController from '@/components/controllers/FormInputController';
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { editProfileFormSchema } from '@/constants/schemas/editProfileSchema'
-import { useUpdateUserProfile } from '@/src/hooks/queries/useUpdateUserProfile'
+import { useUpdateUserProfile, useUploadProfilePicture, useDeleteProfilePicture } from '@/src/hooks/queries/useUpdateUserProfile'
 import Toast from "react-native-toast-message";
 import { UserProfile } from '@/entities/User'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -101,6 +101,8 @@ const EditProfileScreen = () => {
       );
       const [selectedCity, setSelectedCity] = useState<string>(user?.city || "");
     const updateUserProfile = useUpdateUserProfile(user?.user_id || '');
+    const uploadProfilePicture = useUploadProfilePicture(user?.user_id || '');
+    const deleteProfilePicture = useDeleteProfilePicture(user?.user_id || '');
     const isOpen = useSharedValue(false);
 
     const toggleSheet = () => {
@@ -140,8 +142,6 @@ const EditProfileScreen = () => {
        // Get all countries
   const countries = Country.getAllCountries();
 
-//   console.log("COUNTRIES: ", countries)
-
   // Get cities for selected country
   const cities = selectedCountry
     ? City.getCitiesOfCountry(
@@ -150,7 +150,6 @@ const EditProfileScreen = () => {
     : [];
 
     const handleCountryChange = (countryName: string) => {
-        console.log("COUNTRY NAME: ", countryName)
         setValue('country', countryName);
         setSelectedCountry(countryName);
         setSelectedCity(""); // Reset city when country changes
@@ -191,12 +190,10 @@ const EditProfileScreen = () => {
           // check for the permission
     
           if (Platform.OS !== 'web') {
-            console.log(status)
             // const {statline} = await ImagePicker.requestCameraPermissionsAsync()
             if (status?.status !== 'granted') {
     
               const permissionResponse = await requestPermission();
-              console.log({permissionResponse})
               if (permissionResponse.status !== 'granted') {
                 Alert.alert("Permission not granted",
                    "You need to grant photo library permission to select an image from the library",
@@ -225,16 +222,79 @@ const EditProfileScreen = () => {
           base64: true,
         });
     
-        console.log(result);
-    
         if (!result.canceled) {
           setImage(result.assets[0].uri);
+          // Automatically upload the selected image
+
+          await handleUpdateProfilePicture(result.assets[0].uri);
         }
         } catch(error) {
-          console.log(error)
+          Toast.show({
+            type: 'error',
+            text1: 'Failed to update profile picture',
+            text2: `${error}`
+          });
         }
     
       };
+
+      const handleUpdateProfilePicture = async (imageUri?: string) => {
+        try {
+          const uriToUpload = imageUri || image;
+          if (!uriToUpload) {
+            Toast.show({
+              type: 'error',
+              text1: 'No image selected',
+            });
+            return;
+          }
+
+          const updatedProfile = await uploadProfilePicture.mutateAsync(uriToUpload);
+          
+          // Update the local user state with the new profile data
+          setUser(updatedProfile);
+          await AsyncStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+          
+          Toast.show({
+            type: 'success',
+            text1: 'Profile picture updated successfully!',
+          });
+          
+          // Close the bottom sheet
+          toggleSheet();
+        } catch (error) {
+          Toast.show({
+            type: 'error',
+            text1: 'Failed to update profile picture',
+            text2: `${error}`
+          });
+        }
+      }
+
+      const handleDeleteProfilePicture = async () => {
+        try {
+          await deleteProfilePicture.mutateAsync();
+          
+          // Update the local user state by removing the profile picture
+          if (user) {
+            const updatedUser = { ...user, profile_picture: null } as UserProfile;
+            setUser(updatedUser);
+            await AsyncStorage.setItem('userProfile', JSON.stringify(updatedUser));
+          }
+          
+          Toast.show({
+            type: 'success',
+            text1: 'Profile picture deleted successfully!',
+          });
+          toggleSheet();
+        } catch (error) { 
+          Toast.show({
+            type: 'error',
+            text1: 'Failed to delete profile picture',
+            text2: `${error}`
+          });
+        }
+      }
 
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.white}]}>
@@ -252,7 +312,7 @@ const EditProfileScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.headerContainer}>
             <View>
               <LinearGradient
@@ -426,7 +486,7 @@ const EditProfileScreen = () => {
 </View>
           </View>
         </ScrollView>
-        {updateUserProfile.isPending && (
+        {(updateUserProfile.isPending || uploadProfilePicture.isPending || deleteProfilePicture.isPending) && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator
               size="large"
@@ -447,22 +507,26 @@ const EditProfileScreen = () => {
               </View>
                 </View>
         <View style={{flexDirection: 'column', gap: 16}}>
-          <TouchableOpacity onPress={pickImage}>
+          <TouchableOpacity onPress={pickImage} disabled={uploadProfilePicture.isPending || deleteProfilePicture.isPending}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
           {icon.photoLibrary({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 26})}
-            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Choose from library</Text>
+            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>
+              {uploadProfilePicture.isPending ? 'Uploading...' : 'Choose from library'}
+            </Text>
           </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity disabled={uploadProfilePicture.isPending || deleteProfilePicture.isPending}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
           {icon.camera({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 24})}
             <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontFamily: 'MontserratMedium', fontSize: 13}}>Take Photo</Text>
           </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleDeleteProfilePicture} disabled={uploadProfilePicture.isPending || deleteProfilePicture.isPending}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 14, paddingLeft: 4}}>
           {icon.delete({color: '#EB4335', size: 24})}
-            <Text style={{color: '#EB4335', fontFamily: 'MontserratMedium', fontSize: 13}}>Delete</Text>
+            <Text style={{color: '#EB4335', fontFamily: 'MontserratMedium', fontSize: 13}}>
+              {deleteProfilePicture.isPending ? 'Deleting...' : 'Delete'}
+            </Text>
           </View>
           </TouchableOpacity>
         </View>

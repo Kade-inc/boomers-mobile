@@ -6,11 +6,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { icon } from '@/constants/icon';
 import { useAuth } from '@/src/context/AuthContext';
 import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
-import { Challenge } from '@/src/services/api';
 import ChallengeCard from '@/components/ui/ChallengeCard';
 import { router, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { Challenge } from '@/src/entities/Challenge';
 
 const { width } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20 * 2;
