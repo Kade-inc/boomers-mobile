@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Pressable } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icon } from '@/constants/icon'
@@ -20,6 +20,73 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import {Country, City} from 'country-state-city';
 import SelectDropdown from 'react-native-select-dropdown';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome'
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useDerivedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
+
+function BottomSheet({ isOpen, toggleSheet, duration = 500, children }: { isOpen: any, toggleSheet: any, duration?: number, children: any }) {
+  const { currentTheme } = useContext(ThemeContext);
+  const height = useSharedValue(0);
+  const progress = useDerivedValue(() =>
+    withTiming(isOpen.value ? 0 : 1, { duration })
+  );
+
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: progress.value * 2 * height.value }],
+  }));
+
+  const backgroundColorSheetStyle = {
+    backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.white,
+  };
+
+  const backdropStyle = useAnimatedStyle(() => ({
+    opacity: 1 - progress.value,
+    zIndex: isOpen.value
+      ? 1
+      : withDelay(duration, withTiming(-1, { duration: 0 })),
+  }));
+
+  return (
+    <>
+      <Animated.View style={[sheetStyles.backdrop, backdropStyle]}>
+        <TouchableOpacity style={styles.flex} onPress={toggleSheet} />
+      </Animated.View>
+      <Animated.View
+        onLayout={(e) => {
+          height.value = e.nativeEvent.layout.height;
+        }}
+        style={[sheetStyles.sheet, sheetStyle, backgroundColorSheetStyle]}>
+        {children}
+      </Animated.View>
+    </>
+  );
+}
+
+const sheetStyles = StyleSheet.create({
+  sheet: {
+    padding: 16,
+    paddingRight: 20,
+    paddingLeft: 20,
+    height: 150,
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    zIndex: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+});
+
 
 const EditProfileScreen = () => {
     const { currentTheme } = useContext(ThemeContext);
@@ -30,6 +97,12 @@ const EditProfileScreen = () => {
       );
       const [selectedCity, setSelectedCity] = useState<string>(user?.city || "");
     const updateUserProfile = useUpdateUserProfile(user?.user_id || '');
+    const isOpen = useSharedValue(false);
+
+    const toggleSheet = () => {
+      isOpen.value = !isOpen.value;
+    };
+
     const {
         control,
         handleSubmit,
@@ -106,6 +179,11 @@ const EditProfileScreen = () => {
         }
       }
 
+      const contentStyle = {
+        color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black,
+        textDecorationColor: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black,
+      };
+
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.white}]}>
         <StatusBar style={currentTheme === 'dark' ? 'light' : 'dark'} />
@@ -133,6 +211,7 @@ const EditProfileScreen = () => {
               />
             </View>
             <View style={styles.headerImageContainer}>
+              <TouchableOpacity onPress={toggleSheet}>
               <View style={styles.headerImage}>
                 {user?.profile_picture ? 
                   <Image source={{uri: user.profile_picture}} style={styles.headerImageUser} /> : 
@@ -143,6 +222,7 @@ const EditProfileScreen = () => {
               <View style={styles.headerImagePlaceholder}>
                 {icon.camera({color: ColorsRevised.white, size: 35})}
               </View>
+              </TouchableOpacity>
             </View>
           </View>
           <View style={styles.formInputs}>
@@ -302,6 +382,20 @@ const EditProfileScreen = () => {
             />
           </View>
         )}
+              <BottomSheet isOpen={isOpen} toggleSheet={toggleSheet}>
+        <Animated.Text style={contentStyle}>
+          Discover the indispensable convenience of a bottom sheet in mobile
+          app. Seamlessly integrated, it provides quick access to supplementary
+          features and refined details.
+        </Animated.Text>
+        <View style={styles.buttonContainer}>
+          <Pressable style={[styles.bottomSheetButton]}>
+            <Text style={[styles.bottomSheetButtonText, contentStyle]}>
+              Read more
+            </Text>
+          </Pressable>
+        </View>
+      </BottomSheet>
     </SafeAreaView>
   )
 }
@@ -441,5 +535,26 @@ const styles = StyleSheet.create({
         fontFamily: 'MontserratSemiBold',
         fontSize: 16,
         marginBottom: 10,
+    },
+    flex: {
+      flex: 1,
+    },
+    buttonContainer: {
+      marginTop: 16,
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+      justifyContent: 'space-around',
+    },
+    bottomSheetButton: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingBottom: 2,
+    },
+    bottomSheetButtonText: {
+      fontWeight: 600,
+      textDecorationLine: 'underline',
     },
 });

@@ -22,7 +22,7 @@ import {
   LogoutRequest
 } from '../entities/Auth';
 
-const BASE_URL = 'http://192.168.31.94:5001/api';
+const BASE_URL = 'http://192.168.100.47:5001/api';
 
 // Create axios instance with default config
 export const api = axios.create({
