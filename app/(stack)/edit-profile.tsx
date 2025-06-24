@@ -438,7 +438,7 @@ const EditProfileScreen = () => {
             responsiveOrientationWhenOrientationLocked
           >
             <View style={styles.shutterContainer}>
-              <Pressable onPress={toggleFlash}>
+              <Pressable onPress={toggleFlash} disabled={facing === "front"} style={{opacity: facing === "front" ? 0.5 : 1}}>
                 {flash === "off" ? icon.flashOutline({color: ColorsRevised.white, size: 32}) : icon.flashFilled({color: ColorsRevised.white, size: 32})}
               </Pressable>
               <Pressable onPress={takePicture}>
