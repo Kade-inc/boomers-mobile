@@ -258,72 +258,94 @@ export default function ProfileScreen() {
       transparent={true}
       animationType="fade"
     >
-      <TouchableOpacity style={styles.closeModalButton} onPress={() => {
-        setShowBlurOverlay(false);
-        setImageLoading(false);
-        setImageError(false);
-        setImageLoaded(false);
-      }}>
-        {icon.close({color: 'white', size: 24})}
-      </TouchableOpacity>
-      <BlurView intensity={100} style={styles.blurContainer}>
-        {modalImage ? (
-          <View style={styles.modalImageContainer}>
-            <Image 
-              source={{uri: modalImage}} 
-              style={styles.modalImage}
-              onLoadStart={() => {
-                if (showBlurOverlay && !imageLoaded) {
-                  setTimeout(() => {
+      {/* <TouchableOpacity 
+        style={styles.closeModalButton} 
+        onPress={() => {
+          setShowBlurOverlay(false);
+          setImageLoading(false);
+          setImageError(false);
+          setImageLoaded(false);
+        }}
+      >
+        {icon.xCircle({color: 'red', size: 24})}
+      </TouchableOpacity> */}
+      <TouchableOpacity 
+        style={styles.blurContainer} 
+        activeOpacity={1}
+        onPress={() => {
+          setShowBlurOverlay(false);
+          setImageLoading(false);
+          setImageError(false);
+          setImageLoaded(false);
+        }}
+      >
+        <BlurView intensity={20} style={styles.blurViewContent} experimentalBlurMethod="dimezisBlurView">
+          <TouchableOpacity 
+            activeOpacity={1}
+            onPress={(e) => {
+              // Prevent closing when tapping on the image content
+              e.stopPropagation();
+            }}
+          >
+            {modalImage ? (
+              <View style={styles.modalImageContainer}>
+                <Image 
+                  source={{uri: modalImage}} 
+                  style={styles.modalImage}
+                  onLoadStart={() => {
                     if (showBlurOverlay && !imageLoaded) {
-                      setImageLoading(true);
+                      setTimeout(() => {
+                        if (showBlurOverlay && !imageLoaded) {
+                          setImageLoading(true);
+                        }
+                      }, 100);
                     }
-                  }, 100);
-                }
-              }}
-              onLoadEnd={() => {
-                if (showBlurOverlay) {
-                  setImageLoading(false);
-                  setImageLoaded(true);
-                }
-              }}
-              onError={() => {
-                if (showBlurOverlay) {
-                  setImageError(true);
-                  setImageLoading(false);
-                  setImageLoaded(false);
-                }
-              }}
-              resizeMode="cover"
-              fadeDuration={300}
-            />
-            {imageLoading && !imageLoaded && (
-              <View style={styles.modalImageLoadingOverlay}>
-                <ActivityIndicator size="large" color={ColorsRevised.yellow} />
-              </View>
-            )}
-            {imageError && (
-              <View style={styles.modalImageErrorOverlay}>
-                <Text style={{color: 'white', textAlign: 'center', fontSize: 14, fontFamily: 'MontserratSemiBold'}}>Failed to load image</Text>
-                <TouchableOpacity 
-                  style={{marginTop: 10, padding: 8, backgroundColor: ColorsRevised.yellow, borderRadius: 5}}
-                  onPress={() => {
-                    setImageError(false);
-                    setImageLoading(true);
-                    setImageLoaded(false);
-                    // Force reload by adding a timestamp
-                    setModalImage(`${user?.profile_picture}?t=${Date.now()}`);
                   }}
-                >
-                  <Text style={{color: ColorsRevised.darkgray, fontSize: 14, fontFamily: 'MontserratSemiBold'}}>Retry</Text>
-                </TouchableOpacity>
+                  onLoadEnd={() => {
+                    if (showBlurOverlay) {
+                      setImageLoading(false);
+                      setImageLoaded(true);
+                    }
+                  }}
+                  onError={() => {
+                    if (showBlurOverlay) {
+                      setImageError(true);
+                      setImageLoading(false);
+                      setImageLoaded(false);
+                    }
+                  }}
+                  resizeMode="cover"
+                  fadeDuration={300}
+                />
+                {imageLoading && !imageLoaded && (
+                  <View style={styles.modalImageLoadingOverlay}>
+                    <ActivityIndicator size="large" color={ColorsRevised.yellow} />
+                  </View>
+                )}
+                {imageError && (
+                  <View style={styles.modalImageErrorOverlay}>
+                    <Text style={{color: 'white', textAlign: 'center', fontSize: 14, fontFamily: 'MontserratSemiBold'}}>Failed to load image</Text>
+                    <TouchableOpacity 
+                      style={{marginTop: 10, padding: 8, backgroundColor: ColorsRevised.yellow, borderRadius: 5}}
+                      onPress={() => {
+                        setImageError(false);
+                        setImageLoading(true);
+                        setImageLoaded(false);
+                        // Force reload by adding a timestamp
+                        setModalImage(`${user?.profile_picture}?t=${Date.now()}`);
+                      }}
+                    >
+                      <Text style={{color: ColorsRevised.darkgray, fontSize: 14, fontFamily: 'MontserratSemiBold'}}>Retry</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
+            ) : (
+              <Text style={{color: 'white', fontSize: 18}}>No image available</Text>
             )}
-          </View>
-        ) : (
-          <Text style={{color: 'white', fontSize: 18}}>No image available</Text>
-        )}
-      </BlurView>
+          </TouchableOpacity>
+        </BlurView>
+      </TouchableOpacity>
     </Modal>
     </>
   );
@@ -536,9 +558,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   modalImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 150,
+    width: 250,
+    height: 250,
+    borderRadius: 200,
   },
   modalImageLoadingOverlay: {
     position: 'absolute',
@@ -579,5 +601,12 @@ const styles = StyleSheet.create({
     top: 50,
     left: 20,
     zIndex: 10,
+  },
+  blurViewContent: {
+    flex: 1,
+    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
 });
