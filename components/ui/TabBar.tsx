@@ -108,7 +108,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFF',
-    marginHorizontal: 30,
+    // marginHorizontal: 30, Return to this value when we have 4 items on the tab bar
+    marginHorizontal: 70,
     paddingVertical: 15,
     borderRadius: 45,
     shadowColor: '#000',
