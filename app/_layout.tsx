@@ -41,8 +41,6 @@ SplashScreen.setOptions({
 function RootLayoutNav() {
   const { isAuthenticated, isLoading } = useAuth();
 
-  console.log('isAuthenticated', isAuthenticated);
-
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {

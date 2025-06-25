@@ -124,6 +124,14 @@ export default function ProfileScreen() {
               >
                 <Text style={styles.editProfileButtonText}>Edit Profile</Text>
               </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.settingsButton, {borderColor: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]} 
+                onPress={() => {
+                  router.push('/(stack)/settings');
+                }}
+              >
+                <Text style={[styles.settingsButtonText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>Settings</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -352,6 +360,20 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     alignItems: 'center',
     justifyContent: 'center',
+    width: 110,
+  },
+  settingsButton: {
+    borderWidth: 1,
+    borderRadius: 3,
+    paddingHorizontal: 20,
+    paddingVertical: 7,
+    width: 110,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  settingsButtonText: {
+    fontSize: 12,
+    fontFamily: 'MontserratSemiBold',
   },
   editProfileButtonText: {
     color: ColorsRevised.darkgray,
@@ -366,6 +388,7 @@ const styles = StyleSheet.create({
     width: '35%',
     alignItems: 'flex-end',
     height: 100,
+    gap: 10,
   },
   fullName: {
     fontSize: 20,

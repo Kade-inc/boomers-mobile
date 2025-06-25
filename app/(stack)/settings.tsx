@@ -8,8 +8,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router} from 'expo-router';
 import { useAuth } from '@/src/hooks/queries/useAuth';
 import Toast from 'react-native-toast-message';
+import { icon } from '@/constants/icon';
 
-export default function SearchScreen() {
+export default function SettingsScreen() {
   const { currentTheme, toggleTheme, useSystemTheme, isSystemTheme } = useContext(ThemeContext);
   const { logout } = useAuth();
 
@@ -39,7 +40,18 @@ export default function SearchScreen() {
   }
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
+      <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            {icon.arrowLeft({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
+          </TouchableOpacity>
+          <View style={styles.headerTitleContainer}>
+            <Text style={[styles.headerTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
+              Settings
+            </Text>
+          </View>
+        </View>
       <View style={styles.subContainer}>
+
       <Text style={[styles.title, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>Theme Switch</Text>
       <TouchableOpacity style={[styles.button, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark: ColorsRevised.white}]} onPress={() => {}}>
         <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}}>Dark Mode</Text>
@@ -89,5 +101,22 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
-  }
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 20,
+  },
+  backButton: {
+    paddingRight: 10,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: 'MontserratSemiBold',
+  },
+  headerTitleContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
 });
