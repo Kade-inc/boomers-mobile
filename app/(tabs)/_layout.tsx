@@ -30,13 +30,6 @@ export default function TabLayout() {
             
           }}
         />
-         <Tabs.Screen
-          name="search"
-          options={{
-            title: 'Search',
-   
-          }}
-        />
 
          <Tabs.Screen
           name="profile"

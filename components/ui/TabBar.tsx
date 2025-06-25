@@ -31,10 +31,10 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     // Check if we should show the background color
     const shouldShowBackground = () => {
         const currentRoute = state.routes[state.index];
-        if (currentRoute.name === 'profile') {
-            // Only show background if user doesn't have a profile picture
-            return !user?.profile_picture;
-        }
+        // if (currentRoute.name === 'profile') {
+        //     // Only show background if user doesn't have a profile picture
+        //     return !user?.profile_picture;
+        // }
         // Show background for all other routes
         return true;
     };
@@ -108,7 +108,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFF',
-    marginHorizontal: 30,
+    // marginHorizontal: 30, Return to this value when we have 4 items on the tab bar
+    marginHorizontal: 70,
     paddingVertical: 15,
     borderRadius: 45,
     shadowColor: '#000',
