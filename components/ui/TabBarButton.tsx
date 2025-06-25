@@ -16,9 +16,10 @@ const TabBarButton = ({onPress, onLongPress, isFocused, routeName, color, label}
 
     const animatedIconStyle = useAnimatedStyle(() => {
         const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2])
-        const top = routeName === 'profile' && user?.profile_picture 
-            ? 0  // Keep profile image centered
-            : interpolate(scale.value, [0, 1], [0, 9])  // Animate other icons
+        // const top = routeName === 'profile' && user?.profile_picture 
+        //     ? 0  // Keep profile image centered
+        //     : interpolate(scale.value, [0, 1], [0, 9])  // Animate other icons
+        const top = interpolate(scale.value, [0, 1], [0, 9])  // Animate other icons
         return {
             transform: [{
                 scale: scaleValue,
@@ -35,14 +36,14 @@ const TabBarButton = ({onPress, onLongPress, isFocused, routeName, color, label}
     })
 
     const renderIcon = () => {
-        if (routeName === 'profile' && user?.profile_picture) {
-            return (
-                <Image 
-                    source={{ uri: user.profile_picture }} 
-                    style={styles.profileImage}
-                />
-            );
-        }
+        // if (routeName === 'profile' && user?.profile_picture) {
+        //     return (
+        //         <Image 
+        //             source={{ uri: user.profile_picture }} 
+        //             style={styles.profileImage}
+        //         />
+        //     );
+        // }
         return icon[routeName as keyof typeof icon]({ color });
     }
 
@@ -56,11 +57,15 @@ const TabBarButton = ({onPress, onLongPress, isFocused, routeName, color, label}
                 {renderIcon()}
             </Animated.View>
             
-            {!(routeName === 'profile' && user?.profile_picture) && (
+            {/* {!(routeName === 'profile' && user?.profile_picture) && (
                 <Animated.Text style={[{ color, fontSize: 12, fontFamily: 'MontserratMedium' }, animatedTextStyle]}>
                     {label}
                 </Animated.Text>
-            )}
+            )} */}
+                <Animated.Text style={[{ color, fontSize: 12, fontFamily: 'MontserratMedium' }, animatedTextStyle]}>
+                    {label}
+                </Animated.Text>
+  
         </Pressable>
     )
 }
