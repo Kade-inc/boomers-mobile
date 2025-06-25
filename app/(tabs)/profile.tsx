@@ -571,8 +571,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 200,
-    borderRadius: 150,
+    width: 250,
+    borderRadius: 200,
   },
   modalImageErrorOverlay: {
     position: 'absolute',
