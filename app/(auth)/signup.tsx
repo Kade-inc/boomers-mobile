@@ -195,7 +195,7 @@ export default function SignupScreen() {
                 <Text style={[styles.additionalText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                   Already have an account?{" "}
                 </Text>
-                <Link href="/signin" style={styles.signInLink}>
+                <Link href="/signin" style={[styles.signInLink, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                   Sign In
                 </Link>
               </View>
