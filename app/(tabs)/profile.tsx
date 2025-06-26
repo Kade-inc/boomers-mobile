@@ -68,6 +68,7 @@ export default function ProfileScreen() {
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.headerContainer}>
           <View>
