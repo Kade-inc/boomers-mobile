@@ -101,7 +101,7 @@ export default function ProfileScreen() {
                   </View>
                 )}
               </TouchableOpacity> : 
-                icon.user({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 60})
+                icon.userCircle({color: currentTheme === 'dark' ? ColorsRevised.yellow: ColorsRevised.darkgray, size: 60})
             }
           </View>
           <View style={[styles.headerContent, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}]}>

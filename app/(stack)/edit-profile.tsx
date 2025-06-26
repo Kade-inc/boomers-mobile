@@ -49,7 +49,7 @@ function BottomSheet({ isOpen, toggleSheet, duration = 400, children }: { isOpen
   }));
 
   const backgroundColorSheetStyle = {
-    backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark : ColorsRevised.white,
+    backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground : ColorsRevised.white,
   };
 
   const backdropStyle = useAnimatedStyle(() => ({
@@ -502,16 +502,25 @@ const EditProfileScreen = () => {
             </View>
             <View style={styles.headerImageContainer}>
               <TouchableOpacity onPress={toggleSheet}>
-              <View style={styles.headerImage}>
-                {user?.profile_picture ? 
-                  <Image source={{uri: user.profile_picture}} style={styles.headerImageUser} /> : 
-                  icon.user({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 60})
-                }
-              </View>
+                <View style={styles.headerImage}>
+                  {user?.profile_picture ? 
+                    <Image source={{uri: user.profile_picture}} style={styles.headerImageUser} /> : 
+                    icon.user({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 60})
+                  }
+                </View>
+              {user?.profile_picture && <>
               <View style={styles.headerImageOverlay} />
+              <View style={styles.headerProfilePlaceholder}>
+                {icon.camera({color: ColorsRevised.white, size: 35})}
+              </View>
+              </>}
+              {!user?.profile_picture && <>
+              <View style={styles.headerPlaceholderOverlay} />
               <View style={styles.headerImagePlaceholder}>
                 {icon.camera({color: ColorsRevised.white, size: 35})}
               </View>
+              </>}
+             
               </TouchableOpacity>
             </View>
           </View>
@@ -680,7 +689,7 @@ const EditProfileScreen = () => {
                 <View style={styles.headerImage}>
                 {user?.profile_picture ? 
                   <Image source={{uri: user.profile_picture}} style={{width: 50, height: 50, borderRadius: 50}} /> : 
-                  icon.user({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 60})
+                  icon.userCircle({color: currentTheme === 'dark' ? ColorsRevised.yellow: ColorsRevised.darkgray, size: 60})
                 }
               </View>
                 </View>
@@ -798,7 +807,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     zIndex: 1,
   },
-  headerImagePlaceholder: {
+  headerProfilePlaceholder: {
     position: 'absolute',
     top: '50%',
     left: '50%',
@@ -808,6 +817,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
+  },
+  headerImagePlaceholder: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -35 }, { translateY: -16 }],
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2,
+  },
+  headerPlaceholderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: -15,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 150,
+    width: 70,
+    height: 70,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
   },
   formInputs: {
     marginTop: 50,

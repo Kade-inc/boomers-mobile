@@ -33,5 +33,6 @@ export const icon = {
     flashOutline: (props:any) => <Ionicons name="flash-outline" size={24} {...props} />,
     flashFilled: (props:any) => <Ionicons name="flash-sharp" size={24} {...props} />,
     refresh: (props: any) => <Feather name="refresh-ccw" size={24} {...props} />,
-    close: (props: any) => <AntDesign name="close" size={24} {...props} />
+    close: (props: any) => <AntDesign name="close" size={24} {...props} />,
+    userCircle: (props: any) => <FontAwesome name="user-circle" size={24} {...props} />
 }
