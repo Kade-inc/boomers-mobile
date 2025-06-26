@@ -40,7 +40,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     };
 
   return (
-    <View style={[styles.tabBar, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark : ColorsRevised.white}]} onLayout={onTabBarLayout}>
+    <View style={[styles.tabBar, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.black : ColorsRevised.white}]} onLayout={onTabBarLayout}>
         {shouldShowBackground() && (
           <Animated.View style={[animatedStyle, {
               position: 'absolute',

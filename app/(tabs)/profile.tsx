@@ -104,7 +104,7 @@ export default function ProfileScreen() {
                 icon.user({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.darkgray, size: 60})
             }
           </View>
-          <View style={[styles.headerContent, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgray: ColorsRevised.white}]}>
+          <View style={[styles.headerContent, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}]}>
               <View style={styles.headerContentLeft}>
                 {user?.firstName && user?.lastName && <Text style={[styles.fullName, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>{user?.firstName} {user?.lastName}</Text>}
                 <Text style={[styles.username, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>@{user?.username}</Text>
@@ -135,7 +135,7 @@ export default function ProfileScreen() {
             </View>
           </View>
         </View>
-        <View style={[styles.bioContainer, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgray: ColorsRevised.white}]}>
+        <View style={[styles.bioContainer, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}]}>
           <Text style={[styles.bioTextTitle, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>Bio</Text>
           {user?.bio && <Text style={[styles.bioText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>{user?.bio}</Text>}
           {!user?.bio && <View style={styles.emptyStateTextContainer}>
@@ -144,7 +144,7 @@ export default function ProfileScreen() {
           </View>
 }
         </View>
-        <View style={[styles.interestsContainer, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgray: ColorsRevised.white}]}>
+        <View style={[styles.interestsContainer, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}]}>
           <Text style={[styles.interestsTextTitle, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>Interests</Text>
           <View style={styles.interestsTextContainer}>
             {!domains && !subdomains && !domainTopics && <View style={styles.emptyStateTextContainer}>
@@ -162,7 +162,7 @@ export default function ProfileScreen() {
             ))}
           </View>
         </View>
-        <View style={[styles.teamsContainer, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgray: ColorsRevised.white}]}>
+        <View style={[styles.teamsContainer, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}]}>
           <Text style={[styles.teamsTextTitle, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>Teams</Text>
           <View>
             {isTeamsLoading && <View style={styles.loaderContainer}>
@@ -542,6 +542,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   emptyStateTextContainer: {
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,

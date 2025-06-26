@@ -53,7 +53,7 @@ export default function SettingsScreen() {
       <View style={styles.subContainer}>
 
       <Text style={[styles.title, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>Theme Switch</Text>
-      <TouchableOpacity style={[styles.button, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark: ColorsRevised.white}]} onPress={() => {}}>
+      <TouchableOpacity style={[styles.button, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}]} onPress={() => {}}>
         <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}}>Dark Mode</Text>
         <Switch 
           value={currentTheme === 'dark'} 
@@ -67,7 +67,7 @@ export default function SettingsScreen() {
       <SettingsButton title="Light" icon="lightbulb-on" onPress={() => {toggleTheme('light')}} isActive={!isSystemTheme && currentTheme === 'light'}/>
       <SettingsButton title="Dark" icon="weather-night" onPress={() => {toggleTheme('dark')}} isActive={!isSystemTheme && currentTheme === 'dark'}/>
       <SettingsButton title="System" icon="theme-light-dark" onPress={() => {useSystemTheme()}} isActive={isSystemTheme}/>
-      <TouchableOpacity style={[styles.button, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark: ColorsRevised.white}]} onPress={handleLogOut} disabled={logout.isPending}>
+      <TouchableOpacity style={[styles.button, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}]} onPress={handleLogOut} disabled={logout.isPending}>
         <Text style={{color: 'red'}}>
           {logout.isPending ? 'Logging Out...' : 'Log Out'}
         </Text>

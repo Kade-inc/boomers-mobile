@@ -16,7 +16,7 @@ const SettingsButton = ({ title, icon, onPress, isActive }: SettingsButtonProps)
   const { currentTheme } = useContext(ThemeContext);
     return (
     <TouchableOpacity 
-      style={[styles.settingButton, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.btnDark: ColorsRevised.white}]}
+      style={[styles.settingButton, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}]}
       onPress={onPress}>
         <View style={styles.titleWrapper}>
         <MaterialCommunityIcons name={icon} size={20} color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black} />
