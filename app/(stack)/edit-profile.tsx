@@ -206,7 +206,6 @@ const EditProfileScreen = () => {
           if (Platform.OS !== 'web') {
             // const {statline} = await ImagePicker.requestCameraPermissionsAsync()
             if (status?.status !== 'granted') {
-    
               const permissionResponse = await requestPermission();
               if (permissionResponse.status !== 'granted') {
                 Alert.alert("Permission not granted",
@@ -319,30 +318,27 @@ const EditProfileScreen = () => {
         }
       }
 
-      if (!cameraPermission) {
-        return null;
-      }
-    
-      if (!cameraPermission.granted) {
-        Alert.alert("Permission not granted",
-          "You need to grant camera permission to take a photo",
-         [
-           {
-             text: "Cancel"
-           },
-           {
-           text: 'Open Settings',
-           onPress: () => {
-             Platform.OS === 'ios' ? 
-             Linking.openURL('app-settings:') :
-              Linking.openSettings();
-           }
-         }])
-         return
-        
-      }
-
-      const openCamera = () => {
+      const openCamera = async () => {
+        if (!cameraPermission?.granted) {
+          const permission = await requestCameraPermission();
+          if (!permission.granted) {
+            Alert.alert("Permission not granted",
+              "You need to grant camera permission to take a photo",
+             [
+               {
+                 text: "Cancel"
+               },
+               {
+               text: 'Open Settings',
+               onPress: () => {
+                 Platform.OS === 'ios' ? 
+                 Linking.openURL('app-settings:') :
+                  Linking.openSettings();
+               }
+             }]);
+            return;
+          }
+        }
         setIsTakingPicture(true);
       }
 
@@ -427,6 +423,10 @@ const EditProfileScreen = () => {
       };
 
       const renderCamera = () => {
+        if (!cameraPermission?.granted) {
+          return null;
+        }
+        
         return (
           <CameraView
             style={styles.camera}
@@ -702,11 +702,14 @@ const EditProfileScreen = () => {
             </Text>
           </View>
           </TouchableOpacity>
-          <TouchableOpacity disabled={uploadProfilePicture.isPending || deleteProfilePicture.isPending} onPress={() => {
-            if (cameraPermission.granted) {
+          <TouchableOpacity disabled={uploadProfilePicture.isPending || deleteProfilePicture.isPending} onPress={async () => {
+            if (cameraPermission?.granted) {
               openCamera();
             } else {
-              requestCameraPermission();
+              const permission = await requestCameraPermission();
+              if (permission.granted) {
+                openCamera();
+              }
             }
           }}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
