@@ -354,7 +354,26 @@ const EditProfileScreen = () => {
       };
 
       const toggleFlash = () => {
-        setFlash((prev) => (prev === "off" ? "on" : "off"));
+        console.log('Flash before toggle:', flash);
+        setFlash((prev) => {
+          // Cycle through off -> auto -> on -> off
+          let newFlash: FlashMode;
+          switch (prev) {
+            case "off":
+              newFlash = "auto";
+              break;
+            case "auto":
+              newFlash = "on";
+              break;
+            case "on":
+              newFlash = "off";
+              break;
+            default:
+              newFlash = "off";
+          }
+          console.log('Flash after toggle:', newFlash);
+          return newFlash;
+        });
       };
       const dynamicTextStyles = {
         fontSize: 16,
@@ -439,7 +458,17 @@ const EditProfileScreen = () => {
           >
             <View style={styles.shutterContainer}>
               <Pressable onPress={toggleFlash} disabled={facing === "front"} style={{opacity: facing === "front" ? 0.5 : 1}}>
-                {flash === "off" ? icon.flashOutline({color: ColorsRevised.white, size: 32}) : icon.flashFilled({color: ColorsRevised.white, size: 32})}
+                <View style={{alignItems: 'center'}}>
+                  {flash === "off" ? 
+                    icon.flashOutline({color: ColorsRevised.white, size: 32}) : 
+                    flash === "auto" ? 
+                      icon.flashOutline({color: ColorsRevised.yellow, size: 32}) :
+                      icon.flashFilled({color: ColorsRevised.white, size: 32})
+                  }
+                  <Text style={{color: ColorsRevised.white, fontSize: 10, marginTop: 2}}>
+                    {flash.toUpperCase()}
+                  </Text>
+                </View>
               </Pressable>
               <Pressable onPress={takePicture}>
                 {({ pressed }) => (
