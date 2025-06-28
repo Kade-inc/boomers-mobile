@@ -10,52 +10,65 @@ import TeamCard from '@/components/ui/TeamCard';
 import { useTabBar } from '@/src/context/TabBarContext';
 import CustomButton from '@/components/ui/CustomButton';
 
-    export default function TeamsScreen() {
-        const { currentTheme } = useContext(ThemeContext);
-        const { data: teamsData, isLoading, isError, fetchNextPage, refetch, isRefetching } = useGetAllTeams(1);  
+// Custom RefreshControl component
+const CustomRefreshControl = ({ refreshing, onRefresh, currentTheme }: { refreshing: boolean; onRefresh: () => void; currentTheme: string }) => {
+  return (
+    <RefreshControl
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      tintColor={ColorsRevised.yellow}
+      colors={[ColorsRevised.yellow]}
+      progressBackgroundColor={currentTheme === 'dark' ? ColorsRevised.darkgrayBackground : ColorsRevised.white}
+    />
+  );
+};
 
-        // Flatten the pages data from infinite query
-        const teams = teamsData?.pages?.flatMap((page) => page.data?.data || []) || [];
+export default function TeamsScreen() {
+    const { currentTheme } = useContext(ThemeContext);
+    const { data: teamsData, isLoading, isError, fetchNextPage, refetch, isRefetching } = useGetAllTeams(1);  
+
+    // Flatten the pages data from infinite query
+    const teams = teamsData?.pages?.flatMap((page) => page.data?.data || []) || [];
+    
+    const { setIsVisible } = useTabBar();
+    const scrollY = useRef(0);
+    const isScrollingUp = useRef(false);
+
+    // console.log("TEAMS:",teams?.data);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleScroll = (event: any) => {
+        const currentScrollY = event.nativeEvent.contentOffset.y;
+        const previousScrollY = scrollY.current;
         
-        const { setIsVisible } = useTabBar();
-        const scrollY = useRef(0);
-        const isScrollingUp = useRef(false);
-
-        // console.log("TEAMS:",teams?.data);
-        const [searchQuery, setSearchQuery] = useState('');
-
-        const handleScroll = (event: any) => {
-            const currentScrollY = event.nativeEvent.contentOffset.y;
-            const previousScrollY = scrollY.current;
-            
-            // Always show tab bar when at the top
-            if (currentScrollY <= 0) {
+        // Always show tab bar when at the top
+        if (currentScrollY <= 0) {
+            setIsVisible(true);
+            isScrollingUp.current = true;
+            scrollY.current = currentScrollY;
+            return;
+        }
+        
+        // Determine scroll direction with a small threshold to prevent flickering
+        const scrollThreshold = 5;
+        const scrollDifference = currentScrollY - previousScrollY;
+        
+        if (scrollDifference > scrollThreshold) {
+            // Scrolling down
+            if (isScrollingUp.current) {
+                setIsVisible(false);
+                isScrollingUp.current = false;
+            }
+        } else if (scrollDifference < -scrollThreshold) {
+            // Scrolling up
+            if (!isScrollingUp.current) {
                 setIsVisible(true);
                 isScrollingUp.current = true;
-                scrollY.current = currentScrollY;
-                return;
             }
-            
-            // Determine scroll direction with a small threshold to prevent flickering
-            const scrollThreshold = 5;
-            const scrollDifference = currentScrollY - previousScrollY;
-            
-            if (scrollDifference > scrollThreshold) {
-                // Scrolling down
-                if (isScrollingUp.current) {
-                    setIsVisible(false);
-                    isScrollingUp.current = false;
-                }
-            } else if (scrollDifference < -scrollThreshold) {
-                // Scrolling up
-                if (!isScrollingUp.current) {
-                    setIsVisible(true);
-                    isScrollingUp.current = true;
-                }
-            }
-            
-            scrollY.current = currentScrollY;
-        };
+        }
+        
+        scrollY.current = currentScrollY;
+    };
 
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
@@ -88,10 +101,10 @@ import CustomButton from '@/components/ui/CustomButton';
                 {icon.filter({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
             </View>
       </View>
-      {(isLoading || isRefetching)  && (
+      {(isLoading)  && (
         <ActivityIndicator size="large" color={ColorsRevised.yellow} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} />
       ) } 
-      {!isLoading && !isRefetching && !isError && (
+      {!isLoading && !isError && (
       <FlatList
         data={teams}
         renderItem={({item, index}) => <TeamCard team={item} cardStyles={{}} screen="all-teams" key={item._id} />}
@@ -107,7 +120,7 @@ import CustomButton from '@/components/ui/CustomButton';
             <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratRegular', textAlign: 'center'}}>No teams found</Text>
           </View>
         )}
-        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
+        refreshControl={<CustomRefreshControl refreshing={isRefetching} onRefresh={refetch} currentTheme={currentTheme} />}
       />
       )}
       {(!isLoading || !isRefetching) && isError && (
