@@ -8,10 +8,15 @@ import { icon } from '@/constants/icon';
 import useGetAllTeams from '@/src/hooks/queries/useGetAllTeams';
 import TeamCard from '@/components/ui/TeamCard';
 import { useTabBar } from '@/src/context/TabBarContext';
+import CustomButton from '@/components/ui/CustomButton';
 
     export default function TeamsScreen() {
         const { currentTheme } = useContext(ThemeContext);
-        const { data: teams, isLoading } = useGetAllTeams(1, 10);  
+        const { data: teamsData, isLoading, isError, fetchNextPage, refetch, isRefetching } = useGetAllTeams(1);  
+
+        // Flatten the pages data from infinite query
+        const teams = teamsData?.pages?.flatMap((page) => page.data?.data || []) || [];
+        
         const { setIsVisible } = useTabBar();
         const scrollY = useRef(0);
         const isScrollingUp = useRef(false);
@@ -83,17 +88,33 @@ import { useTabBar } from '@/src/context/TabBarContext';
                 {icon.filter({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
             </View>
       </View>
-      {isLoading ? (
+      {(isLoading || isRefetching)  && (
         <ActivityIndicator size="large" color={ColorsRevised.yellow} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} />
-      ) : (
+      ) } 
+      {!isLoading && !isRefetching && !isError && (
       <FlatList
-        data={teams?.data?.data}
+        data={teams}
         renderItem={({item, index}) => <TeamCard team={item} cardStyles={{}} screen="all-teams" key={item._id} />}
         keyExtractor={(item) => item._id}
         contentContainerStyle={{ width: '90%', alignSelf: 'center', gap: 20, paddingBottom: 20 }}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        onEndReached={() => fetchNextPage()}
+        onEndReachedThreshold={0.5}
       />
+      )}
+      {(!isLoading || !isRefetching) && isError && (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            {icon.messages({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
+          <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratRegular', textAlign: 'center'}}>Error fetching teams</Text>
+          <CustomButton 
+          title="Retry" 
+          handlePress={() => refetch()} 
+          containerStyles={{width: '70%'}} 
+          textStyles={{fontSize: 16, fontFamily: 'MontserratMedium', color: ColorsRevised.darkgray}}
+          isLoading={isRefetching}
+          />
+        </View>
       )}
    </SafeAreaView>
   );

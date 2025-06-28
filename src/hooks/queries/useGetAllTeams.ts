@@ -1,15 +1,15 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { teamService } from "../../services/api";
-import { ApiResponse } from "@/src/entities/ApiResponse";
-import { TeamsResponse } from "@/src/entities/Team";
 
-const useGetAllTeams = (page: number, limit: number): UseQueryResult<ApiResponse<TeamsResponse>, Error> => {
-    return useQuery({
+const useGetAllTeams = (page: number) => {
+    return useInfiniteQuery({
         queryKey: ['teams'],
-        queryFn: async () => {
-            const response = await teamService.getAllTeams(page, limit);
+        queryFn: async ({ pageParam }) => {
+            const response = await teamService.getAllTeams(pageParam);
             return response;
         },
+        initialPageParam: page,
+        getNextPageParam: (lastPage, pages) => pages.length + 1
     });
 };
 

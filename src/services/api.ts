@@ -361,12 +361,12 @@ export const teamService = {
     }
   },
 
-  getAllTeams: async (page: number, limit: number): Promise<ApiResponse<TeamsResponse>> => {
+  getAllTeams: async (page: number): Promise<ApiResponse<TeamsResponse>> => {
     try {
       const response = await api.get(endpoints.team.getUserTeams, {
         params: {
           page,
-          limit
+          limit: 10
         }
       });
       return {
