@@ -67,7 +67,7 @@ import CustomButton from '@/components/ui/CustomButton';
             styles.searchBar,
             { backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground : ColorsRevised.white }
             ]}>
-            {icon.search({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black + '80' })}
+            {icon.search({ color: currentTheme === 'dark' ? ColorsRevised.white + '90' : ColorsRevised.black + '80' })}
             <TextInput
                 style={[
                 styles.searchInput,
