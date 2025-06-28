@@ -7,7 +7,6 @@ import { TeamsResponse, RecommendationsResponse } from '../entities/Team';
 import {  ChallengesResponse } from '../entities/Challenge';
 import { AdviceResponse } from '../entities/Advice';
 import { 
-  ApiResponse, 
   RegisterResponse, 
   RegisterRequest, 
   VerifyRequest, 
@@ -21,6 +20,7 @@ import {
   ResetPasswordResponse,
   LogoutRequest
 } from '../entities/Auth';
+import { ApiResponse } from '../entities/ApiResponse';
 
 const BASE_URL = 'http://192.168.100.47:5001/api';
 
@@ -359,8 +359,34 @@ export const teamService = {
         error: 'An unexpected error occurred'
       };
     }
+  },
+
+  getAllTeams: async (page: number, limit: number): Promise<ApiResponse<TeamsResponse>> => {
+    try {
+      const response = await api.get(endpoints.team.getUserTeams, {
+        params: {
+          page,
+          limit
+        }
+      });
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error: error.response?.data?.message || 'Failed to fetch all teams'
+        };
+      }
+      return {
+        success: false,
+        error: 'An unexpected error occurred'
+      };
+    }
   }
-}
+  }
 
 export const challengeService = {
   getChallenges: async (userId: string, valid: boolean): Promise<ApiResponse<ChallengesResponse>> => {
@@ -494,7 +520,7 @@ export const adviceService = {
       const response = await api.get(endpoints.advice.getAdvice);
       return {
         success: true,
-        data: response.data
+        data: response.data,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {

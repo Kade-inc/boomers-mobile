@@ -5,10 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '@/src/context/ThemeContext';
 import { useContext, useState } from 'react';
 import { icon } from '@/constants/icon';
+import useGetAllTeams from '@/src/hooks/queries/useGetAllTeams';
 
     export default function TeamsScreen() {
         const { currentTheme } = useContext(ThemeContext);
+        const { data: teams, isLoading } = useGetAllTeams(1, 10);  
 
+        console.log("TEAMS:",teams?.data);
         const [searchQuery, setSearchQuery] = useState('');
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>

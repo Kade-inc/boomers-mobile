@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { teamService } from "../../services/api";
-import { ApiResponse } from "../../entities/Auth";
-import { RecommendationsResponse } from "../../entities/Team";
+import { ApiResponse } from "@/src/entities/ApiResponse";
+import { RecommendationsResponse } from "@/src/entities/Team";
 
 const useRecommendations = (): UseQueryResult<ApiResponse<RecommendationsResponse>, Error> => {
     return useQuery({

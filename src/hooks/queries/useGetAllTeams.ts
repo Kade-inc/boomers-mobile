@@ -3,17 +3,14 @@ import { teamService } from "../../services/api";
 import { ApiResponse } from "@/src/entities/ApiResponse";
 import { TeamsResponse } from "@/src/entities/Team";
 
-const useGetUserTeams = (
-    userId: string,
-): UseQueryResult<ApiResponse<TeamsResponse>, Error> => {
+const useGetAllTeams = (page: number, limit: number): UseQueryResult<ApiResponse<TeamsResponse>, Error> => {
     return useQuery({
-        queryKey: ['user-teams', userId],
+        queryKey: ['teams'],
         queryFn: async () => {
-            const response = await teamService.getUserTeams(userId);
+            const response = await teamService.getAllTeams(page, limit);
             return response;
         },
-        enabled: !!userId,
     });
 };
 
-export default useGetUserTeams;
+export default useGetAllTeams;
