@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, ViewStyle, StyleProp, ColorValue } from 'react-native'
 import React from 'react'
-import { Challenge, Team } from '@/src/services/api'
+import { Challenge } from '@/entities/Challenge'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useAuth } from '@/src/context/AuthContext'
+import { useAuth } from '@/context/AuthContext'
 import { icon } from '@/constants/icon'
 
 type ChallengeCardProps = {

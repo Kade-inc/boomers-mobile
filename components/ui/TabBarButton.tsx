@@ -1,11 +1,11 @@
-import { StyleSheet, Image, Pressable } from 'react-native'
+import { StyleSheet, Pressable } from 'react-native'
 import React, { useEffect } from 'react'
 import { icon } from '@/constants/icon'
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
-import { useAuth } from '@/src/context/AuthContext'
+// import { useAuth } from '@/context/AuthContext'
 
 const TabBarButton = ({onPress, onLongPress, isFocused, routeName, color, label}: any) => {
-    const { user } = useAuth();
+    // const { user } = useAuth();
     const scale = useSharedValue(0)
 
     useEffect(() => {

@@ -1,17 +1,17 @@
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { icon } from '@/constants/icon';
-import { useAuth } from '@/src/context/AuthContext';
-import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
+import { useAuth } from '@/context/AuthContext';
+import useGetUserTeams from '@/hooks/queries/useGetUserTeams';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TeamCard from '@/components/ui/TeamCard';
 import { router, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Team } from '@/src/entities/Team';
+import { Team } from '@/entities/Team';
 
 const { width } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20 * 2;

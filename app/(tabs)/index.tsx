@@ -1,26 +1,24 @@
 import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions, ActivityIndicator, RefreshControl, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { icon } from '@/constants/icon';
-import Slider from '@/components/ui/Slider';
-import { SliderData } from '@/data/SliderData';
 import CustomButton from '@/components/ui/CustomButton';
 import TeamCard from '@/components/ui/TeamCard';
-import { useAuth } from '@/src/context/AuthContext';
-import useGetUserTeams from '@/src/hooks/queries/useGetUserTeams';
-import useRecommendations from '@/src/hooks/queries/useRecommendations';
-import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
+import { useAuth } from '@/context/AuthContext';
+import useGetUserTeams from '@/hooks/queries/useGetUserTeams';
+import useRecommendations from '@/hooks/queries/useRecommendations';
+import useGetChallenges from '@/hooks/queries/useGetChallenges';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Challenge } from '@/src/entities/Challenge';
-import { Team } from '@/src/entities/Team';
+import { Challenge } from '@/entities/Challenge';
+import { Team } from '@/entities/Team';
 import ChallengeCard from '@/components/ui/ChallengeCard';
 import { useRouter } from 'expo-router';
 import RecommendationsFormSheet from '@/components/ui/RecommendationsFormSheet';
-import useGetAdvice from '@/src/hooks/queries/useGetAdvice';
+import useGetAdvice from '@/hooks/queries/useGetAdvice';
 
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding

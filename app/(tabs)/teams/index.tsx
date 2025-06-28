@@ -2,12 +2,12 @@ import { ColorsRevised } from '@/constants/ColorsRevised';
 import { router } from 'expo-router';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { useContext, useState, useRef } from 'react';
 import { icon } from '@/constants/icon';
-import useGetAllTeams from '@/src/hooks/queries/useGetAllTeams';
+import useGetAllTeams from '@/hooks/queries/useGetAllTeams';
 import TeamCard from '@/components/ui/TeamCard';
-import { useTabBar } from '@/src/context/TabBarContext';
+import { useTabBar } from '@/context/TabBarContext';
 import CustomButton from '@/components/ui/CustomButton';
 
 // Custom RefreshControl component

@@ -4,9 +4,9 @@ import TabBarButton from './TabBarButton';
 import { useContext, useState } from 'react';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { ColorsRevised } from '@/constants/ColorsRevised';
-import { ThemeContext } from '@/src/context/ThemeContext';
-import { useAuth } from '@/src/context/AuthContext';
-import { useTabBar } from '@/src/context/TabBarContext';
+import { ThemeContext } from '@/context/ThemeContext';
+import { useAuth } from '@/context/AuthContext';
+import { useTabBar } from '@/context/TabBarContext';
     
 
 

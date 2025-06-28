@@ -8,10 +8,10 @@ import { router, useLocalSearchParams } from "expo-router";
 import { images } from "@/constants";
 import Toast, { ToastPosition } from "react-native-toast-message";
 import { verifyResetCodeSchema } from "@/constants/schemas/verifyResetCodeSchema";
-import { useAuth } from "@/src/hooks/queries/useAuth";
+import { useAuth } from "@/hooks/queries/useAuth";
 import { Link } from "expo-router";
 import VerificationCodeInput from '@/components/VerificationCodeInput';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface VerifyResetCodeFormData {

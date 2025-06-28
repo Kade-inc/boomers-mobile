@@ -9,8 +9,8 @@ import { useState, useCallback, useContext } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
-import { useAuth } from "@/src/hooks/queries/useAuth";
-import { ThemeContext } from "@/src/context/ThemeContext";
+import { useAuth } from "@/hooks/queries/useAuth";
+import { ThemeContext } from "@/context/ThemeContext";
 import { ColorsRevised } from "@/constants/ColorsRevised";
 
 export default function ForgotPasswordScreen() {

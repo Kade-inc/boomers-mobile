@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import React, { useContext } from 'react';
-import { Team } from '@/src/entities/Team';
+import { Team } from '@/entities/Team';
 import { ColorsRevised } from '../../constants/ColorsRevised';
 import { icon } from '../../constants/icon';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ColorValue } from 'react-native';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 
 type TeamMember = {
   _id: string;
