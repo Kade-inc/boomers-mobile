@@ -114,6 +114,7 @@ export default function TeamsScreen() {
         scrollEventThrottle={16}
         onEndReached={() => fetchNextPage()}
         onEndReachedThreshold={0.5}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
           <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             {icon.teams({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
@@ -121,6 +122,7 @@ export default function TeamsScreen() {
           </View>
         )}
         refreshControl={<CustomRefreshControl refreshing={isRefetching} onRefresh={refetch} currentTheme={currentTheme} />}
+        refreshing={isRefetching}
       />
       )}
       {(!isLoading || !isRefetching) && isError && (
