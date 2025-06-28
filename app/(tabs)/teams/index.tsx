@@ -115,9 +115,18 @@ export default function TeamsScreen() {
         onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            {icon.teams({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
-            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratRegular', textAlign: 'center'}}>
+          <View style={{
+            flex: 1, 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            minHeight: 400,
+            paddingVertical: 40
+          }}>
+            {icon.teams({ 
+              color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray,
+              size: 80,
+            })}
+            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratRegular', textAlign: 'center', marginTop: 24}}>
               {debouncedSearchQuery ? `No teams found for "${debouncedSearchQuery}"` : 'No teams found'}
             </Text>
           </View>
