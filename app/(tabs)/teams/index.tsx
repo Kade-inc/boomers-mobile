@@ -101,6 +101,12 @@ import CustomButton from '@/components/ui/CustomButton';
         scrollEventThrottle={16}
         onEndReached={() => fetchNextPage()}
         onEndReachedThreshold={0.5}
+        ListEmptyComponent={() => (
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            {icon.teams({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
+            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratRegular', textAlign: 'center'}}>No teams found</Text>
+          </View>
+        )}
       />
       )}
       {(!isLoading || !isRefetching) && isError && (
