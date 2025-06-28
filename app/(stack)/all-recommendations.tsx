@@ -1,14 +1,13 @@
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { icon } from '@/constants/icon';
-import { useAuth } from '@/context/AuthContext';
 import useRecommendations from '@/hooks/queries/useRecommendations';
 import { Team } from '@/entities/Team';
 import TeamCard from '@/components/ui/TeamCard';
-import { router, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import CustomButton from '@/components/ui/CustomButton';
@@ -21,7 +20,6 @@ const ITEM_WIDTH = width - HORIZONTAL_PADDING;
 export default function AllRecommendationsScreen() {
   const router = useRouter();
   const { currentTheme } = useContext(ThemeContext);
-  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [isFormSheetVisible, setIsFormSheetVisible] = useState(false);
