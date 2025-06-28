@@ -1,16 +1,16 @@
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { icon } from '@/constants/icon';
-import { useAuth } from '@/src/context/AuthContext';
-import useGetChallenges from '@/src/hooks/queries/useGetChallenges';
+import { useAuth } from '@/context/AuthContext';
+import useGetChallenges from '@/hooks/queries/useGetChallenges';
 import ChallengeCard from '@/components/ui/ChallengeCard';
 import { router, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Challenge } from '@/src/entities/Challenge';
+import { Challenge } from '@/entities/Challenge';
 
 const { width } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20 * 2;

@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '@/components/ui/CustomButton';
 import { router } from 'expo-router';
 import { images } from '@/constants';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 
 export default function VerificationSuccessScreen() { 

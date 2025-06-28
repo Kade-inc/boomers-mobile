@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle, TextStyle, ActivityIndicator } from 'react-native'
+import { Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle, TextStyle, ActivityIndicator } from 'react-native'
 import React from 'react'
 
 

@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { StyleSheet } from 'react-native'
 import { ColorsRevised } from '@/constants/ColorsRevised'
-import { ThemeContext } from '@/src/context/ThemeContext'
+import { ThemeContext } from '@/context/ThemeContext'
 
 type SettingsButtonProps = {
     title: string;

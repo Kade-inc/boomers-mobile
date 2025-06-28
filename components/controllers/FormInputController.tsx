@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { Control, Controller, FieldErrors, FieldValues, Path } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface FormInputControllerProps<T extends FieldValues> {

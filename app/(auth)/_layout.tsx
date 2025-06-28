@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { ColorsRevised } from '@/constants/ColorsRevised'
-import { ThemeContext } from '@/src/context/ThemeContext'
+import { ThemeContext } from '@/context/ThemeContext'
 
 const AuthLayout = () => {
   const { currentTheme } = useContext(ThemeContext);

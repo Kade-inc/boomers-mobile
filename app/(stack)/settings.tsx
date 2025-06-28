@@ -3,10 +3,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useContext } from 'react';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import SettingsButton from '@/components/ui/SettingsButton';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router} from 'expo-router';
-import { useAuth } from '@/src/hooks/queries/useAuth';
+import { useAuth } from '@/hooks/queries/useAuth';
 import Toast from 'react-native-toast-message';
 import { icon } from '@/constants/icon';
 

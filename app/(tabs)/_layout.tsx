@@ -1,11 +1,11 @@
 import { Tabs } from 'expo-router';
 import React, { useContext } from 'react';
-import { ProtectedRoute } from '../../src/components/ProtectedRoute';
+import { ProtectedRoute } from '../../components/ProtectedRoute';
 
 import { TabBar } from '@/components/ui/TabBar';
 import { StatusBar } from 'expo-status-bar';
-import { ThemeContext } from '@/src/context/ThemeContext';
-import { TabBarProvider } from '@/src/context/TabBarContext';
+import { ThemeContext } from '@/context/ThemeContext';
+import { TabBarProvider } from '@/context/TabBarContext';
 
 export default function TabLayout() {
   const { currentTheme } = useContext(ThemeContext);  

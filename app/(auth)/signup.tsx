@@ -9,9 +9,9 @@ import { signUpFormSchema } from "@/constants/schemas/authSchemas";
 import { Link, router, useFocusEffect } from "expo-router";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
-import { useAuth } from "@/src/hooks/queries/useAuth";
+import { useAuth } from "@/hooks/queries/useAuth";
 import { Feather } from '@expo/vector-icons';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface SignUpFormData {

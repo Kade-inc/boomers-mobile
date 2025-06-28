@@ -5,15 +5,15 @@ import { icon } from '@/constants/icon'
 import { ColorsRevised } from '@/constants/ColorsRevised'
 import { useRouter } from 'expo-router'
 import { useContext } from 'react'
-import { ThemeContext } from '@/src/context/ThemeContext'
+import { ThemeContext } from '@/context/ThemeContext'
 import { StatusBar } from 'expo-status-bar';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import FormInputController from '@/components/controllers/FormInputController';
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { editProfileFormSchema } from '@/constants/schemas/editProfileSchema'
-import { useUpdateUserProfile, useUploadProfilePicture, useDeleteProfilePicture } from '@/src/hooks/queries/useUpdateUserProfile'
+import { useUpdateUserProfile, useUploadProfilePicture, useDeleteProfilePicture } from '@/hooks/queries/useUpdateUserProfile'
 import Toast from "react-native-toast-message";
 import { UserProfile } from '@/entities/User'
 import AsyncStorage from '@react-native-async-storage/async-storage'

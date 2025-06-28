@@ -9,10 +9,10 @@ import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { resetPasswordFormSchema } from "@/constants/schemas/resetPasswordSchema";
-import { useAuth } from "@/src/hooks/queries/useAuth";
+import { useAuth } from "@/hooks/queries/useAuth";
 import { Link } from "expo-router";
 import { Feather } from '@expo/vector-icons';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface ResetPasswordFormData {

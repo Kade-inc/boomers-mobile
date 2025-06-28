@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { adviceService } from '@/src/services/api';
+import { adviceService } from '@/services/api';
 
 export default function useGetAdvice() {
   return useQuery({

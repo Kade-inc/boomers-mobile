@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import Toast, { BaseToast, ErrorToast, ToastConfigParams }  from 'react-native-toast-message';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider, useAuth } from '../src/context/AuthContext';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { View, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Text } from 'react-native';
@@ -17,7 +17,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { StyleSheet } from 'react-native';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 
-import ThemeProvider from '@/src/context/ThemeContext';
+import ThemeProvider from '@/context/ThemeContext';
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
