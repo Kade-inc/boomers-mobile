@@ -1,6 +1,6 @@
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { router } from 'expo-router';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '@/src/context/ThemeContext';
 import { useContext, useState, useRef } from 'react';
@@ -107,6 +107,7 @@ import CustomButton from '@/components/ui/CustomButton';
             <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratRegular', textAlign: 'center'}}>No teams found</Text>
           </View>
         )}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
       />
       )}
       {(!isLoading || !isRefetching) && isError && (
