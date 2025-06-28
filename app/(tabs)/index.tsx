@@ -569,17 +569,18 @@ export default function HomeScreen() {
               style={[
                 styles.modalContent, 
                 { height: '50%' },
-                { position: 'absolute', bottom: 0, left: 0, right: 0 }
+                { position: 'absolute', bottom: 0, left: 0, right: 0 },
+                {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}
               ]}
             >
               <View style={styles.modalHandle} />
               <View style={styles.modalBody}>
-                {icon.smile({color: ColorsRevised.black, size: 60})}
+                {icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 60})}
                 {isAdviceLoading ? (
                   <ActivityIndicator size="large" color="#F8B500" />
                 ) : (
                   <>
-                    <Text style={styles.modalText}>{adviceData?.data}</Text>
+                    <Text style={[styles.modalText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>{adviceData?.data}</Text>
                     <TouchableOpacity onPress={handleAdviceLinkPress}>
                       <Text style={[styles.modalSubText]}>
                         With ❤️ from Advice slip JSON API

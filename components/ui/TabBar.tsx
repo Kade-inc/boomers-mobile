@@ -2,10 +2,11 @@ import { View,  StyleSheet, LayoutChangeEvent } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import TabBarButton from './TabBarButton';
 import { useContext, useState } from 'react';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { ThemeContext } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
+import { useTabBar } from '@/src/context/TabBarContext';
     
 
 
@@ -14,6 +15,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     const [dimensions, setDimensions] = useState({ width: 100, height: 20 });
     const { currentTheme } = useContext(ThemeContext);
     const { user } = useAuth();
+    const { isVisible } = useTabBar();
     const buttonWidth = dimensions.width / state.routes.length;
 
     const onTabBarLayout = (event: LayoutChangeEvent) => {
@@ -21,10 +23,22 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     }
 
     const tabPositionX = useSharedValue(0);
+    const translateY = useSharedValue(0);
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
             transform: [{ translateX: tabPositionX.value }]
+        }
+    })
+
+    const tabBarAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ 
+                translateY: withTiming(isVisible ? 0 : 100, { 
+                    duration: 300 
+                }) 
+            }],
+            opacity: withTiming(isVisible ? 1 : 0, { duration: 200 })
         }
     })
 
@@ -40,7 +54,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     };
 
   return (
-    <View style={[styles.tabBar, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.black : ColorsRevised.white}]} onLayout={onTabBarLayout}>
+    <Animated.View style={[styles.tabBar, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.black : ColorsRevised.white}, tabBarAnimatedStyle]} onLayout={onTabBarLayout}>
         {shouldShowBackground() && (
           <Animated.View style={[animatedStyle, {
               position: 'absolute',
@@ -96,7 +110,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             />
         );
       })}
-    </View>
+    </Animated.View>
   );
 }
 

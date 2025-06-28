@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { authService } from "../../services/api";
-import { ApiResponse, AuthResponse, LoginRequest, RegisterRequest, RegisterResponse, ForgotPasswordRequest, ForgotPasswordResponse, ResetPasswordRequest, ResetPasswordResponse, VerifyResetTokenRequest, VerifyResetTokenResponse, LogoutRequest } from "../../entities/Auth";
+import { AuthResponse, LoginRequest, RegisterRequest, RegisterResponse, ForgotPasswordRequest, ForgotPasswordResponse, ResetPasswordRequest, ResetPasswordResponse, VerifyResetTokenRequest, VerifyResetTokenResponse, LogoutRequest } from "../../entities/Auth";
+import { ApiResponse } from "@/src/entities/ApiResponse";
 
 export const useAuth = () => {
     const login = useMutation<AuthResponse, Error, LoginRequest>({
