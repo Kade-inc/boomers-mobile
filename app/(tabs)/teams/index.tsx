@@ -1,17 +1,18 @@
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { router } from 'expo-router';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '@/src/context/ThemeContext';
 import { useContext, useState } from 'react';
 import { icon } from '@/constants/icon';
 import useGetAllTeams from '@/src/hooks/queries/useGetAllTeams';
+import TeamCard from '@/components/ui/TeamCard';
 
     export default function TeamsScreen() {
         const { currentTheme } = useContext(ThemeContext);
         const { data: teams, isLoading } = useGetAllTeams(1, 10);  
 
-        console.log("TEAMS:",teams?.data);
+        // console.log("TEAMS:",teams?.data);
         const [searchQuery, setSearchQuery] = useState('');
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
@@ -44,6 +45,16 @@ import useGetAllTeams from '@/src/hooks/queries/useGetAllTeams';
                 {icon.filter({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
             </View>
       </View>
+      {isLoading ? (
+        <ActivityIndicator size="large" color={ColorsRevised.yellow} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} />
+      ) : (
+      <FlatList
+        data={teams?.data?.data}
+        renderItem={({item, index}) => <TeamCard team={item} cardStyles={{}} screen="all-teams" key={item._id} />}
+        keyExtractor={(item) => item._id}
+        contentContainerStyle={{ width: '90%', alignSelf: 'center', gap: 20, paddingBottom: 20 }}
+      />
+      )}
    </SafeAreaView>
   );
 }
