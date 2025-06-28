@@ -131,8 +131,8 @@ export default function TeamsScreen() {
             </Text>
           </View>
         )}
-        refreshControl={<CustomRefreshControl refreshing={isRefetching} onRefresh={refetch} currentTheme={currentTheme} />}
         refreshing={isRefetching}
+        onRefresh={refetch}
       />
       )}
       {(!isLoading || !isRefetching) && isError && (
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 5,
     borderRadius: 50,
     gap: 10,
     width: '90%',
