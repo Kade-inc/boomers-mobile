@@ -3,17 +3,55 @@ import { router } from 'expo-router';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '@/src/context/ThemeContext';
-import { useContext, useState } from 'react';
+import { useContext, useState, useRef } from 'react';
 import { icon } from '@/constants/icon';
 import useGetAllTeams from '@/src/hooks/queries/useGetAllTeams';
 import TeamCard from '@/components/ui/TeamCard';
+import { useTabBar } from '@/src/context/TabBarContext';
 
     export default function TeamsScreen() {
         const { currentTheme } = useContext(ThemeContext);
         const { data: teams, isLoading } = useGetAllTeams(1, 10);  
+        const { setIsVisible } = useTabBar();
+        const scrollY = useRef(0);
+        const isScrollingUp = useRef(false);
 
         // console.log("TEAMS:",teams?.data);
         const [searchQuery, setSearchQuery] = useState('');
+
+        const handleScroll = (event: any) => {
+            const currentScrollY = event.nativeEvent.contentOffset.y;
+            const previousScrollY = scrollY.current;
+            
+            // Always show tab bar when at the top
+            if (currentScrollY <= 0) {
+                setIsVisible(true);
+                isScrollingUp.current = true;
+                scrollY.current = currentScrollY;
+                return;
+            }
+            
+            // Determine scroll direction with a small threshold to prevent flickering
+            const scrollThreshold = 5;
+            const scrollDifference = currentScrollY - previousScrollY;
+            
+            if (scrollDifference > scrollThreshold) {
+                // Scrolling down
+                if (isScrollingUp.current) {
+                    setIsVisible(false);
+                    isScrollingUp.current = false;
+                }
+            } else if (scrollDifference < -scrollThreshold) {
+                // Scrolling up
+                if (!isScrollingUp.current) {
+                    setIsVisible(true);
+                    isScrollingUp.current = true;
+                }
+            }
+            
+            scrollY.current = currentScrollY;
+        };
+
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
         <View style={styles.headerView}>
@@ -53,6 +91,8 @@ import TeamCard from '@/components/ui/TeamCard';
         renderItem={({item, index}) => <TeamCard team={item} cardStyles={{}} screen="all-teams" key={item._id} />}
         keyExtractor={(item) => item._id}
         contentContainerStyle={{ width: '90%', alignSelf: 'center', gap: 20, paddingBottom: 20 }}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       />
       )}
    </SafeAreaView>
