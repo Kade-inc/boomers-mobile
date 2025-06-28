@@ -1,5 +1,4 @@
 import { ColorsRevised } from '@/constants/ColorsRevised';
-import { router } from 'expo-router';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '@/context/ThemeContext';
@@ -9,6 +8,7 @@ import useGetAllTeams from '@/hooks/queries/useGetAllTeams';
 import TeamCard from '@/components/ui/TeamCard';
 import { useTabBar } from '@/context/TabBarContext';
 import CustomButton from '@/components/ui/CustomButton';
+import { useDebounce } from '@/hooks/useDebounce';
 
 // Custom RefreshControl component
 const CustomRefreshControl = ({ refreshing, onRefresh, currentTheme }: { refreshing: boolean; onRefresh: () => void; currentTheme: string }) => {
@@ -25,7 +25,9 @@ const CustomRefreshControl = ({ refreshing, onRefresh, currentTheme }: { refresh
 
 export default function TeamsScreen() {
     const { currentTheme } = useContext(ThemeContext);
-    const { data: teamsData, isLoading, isError, fetchNextPage, refetch, isRefetching } = useGetAllTeams(1);  
+    const [searchQuery, setSearchQuery] = useState('');
+    const debouncedSearchQuery = useDebounce(searchQuery.trim(), 500);
+    const { data: teamsData, isLoading, isError, fetchNextPage, refetch, isRefetching } = useGetAllTeams(1, debouncedSearchQuery);  
 
     // Flatten the pages data from infinite query
     const teams = teamsData?.pages?.flatMap((page) => page.data?.data || []) || [];
@@ -33,9 +35,6 @@ export default function TeamsScreen() {
     const { setIsVisible } = useTabBar();
     const scrollY = useRef(0);
     const isScrollingUp = useRef(false);
-
-    // console.log("TEAMS:",teams?.data);
-    const [searchQuery, setSearchQuery] = useState('');
 
     const handleScroll = (event: any) => {
         const currentScrollY = event.nativeEvent.contentOffset.y;
@@ -116,9 +115,20 @@ export default function TeamsScreen() {
         onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            {icon.teams({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
-            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratRegular', textAlign: 'center'}}>No teams found</Text>
+          <View style={{
+            flex: 1, 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            minHeight: 400,
+            paddingVertical: 40
+          }}>
+            {icon.teams({ 
+              color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray,
+              size: 80,
+            })}
+            <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratRegular', textAlign: 'center', marginTop: 24}}>
+              {debouncedSearchQuery ? `No teams found for "${debouncedSearchQuery}"` : 'No teams found'}
+            </Text>
           </View>
         )}
         refreshControl={<CustomRefreshControl refreshing={isRefetching} onRefresh={refetch} currentTheme={currentTheme} />}

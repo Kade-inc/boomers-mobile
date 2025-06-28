@@ -2,10 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { router } from 'expo-router';
-import { UserProfileResponse, UserProfile } from '@/entities/User';
-import { TeamsResponse, RecommendationsResponse } from '../entities/Team';
-import {  ChallengesResponse } from '../entities/Challenge';
-import { AdviceResponse } from '../entities/Advice';
+import { UserProfile } from '@/entities/User';
+import { TeamsResponse, RecommendationsResponse } from '@/entities/Team';
+import {  ChallengesResponse } from '@/entities/Challenge';
+import { AdviceResponse } from '@/entities/Advice';
 import { 
   RegisterResponse, 
   RegisterRequest, 
@@ -19,8 +19,8 @@ import {
   ResetPasswordRequest,
   ResetPasswordResponse,
   LogoutRequest
-} from '../entities/Auth';
-import { ApiResponse } from '../entities/ApiResponse';
+} from '@/entities/Auth';
+import { ApiResponse } from '@/entities/ApiResponse';
 
 const BASE_URL = 'http://192.168.100.47:5001/api';
 
@@ -361,12 +361,16 @@ export const teamService = {
     }
   },
 
-  getAllTeams: async (page: number): Promise<ApiResponse<TeamsResponse>> => {
+  getAllTeams: async (page: number, name: string, domain: string, subdomain: string, subdomainTopics: string): Promise<ApiResponse<TeamsResponse>> => {
     try {
       const response = await api.get(endpoints.team.getUserTeams, {
         params: {
           page,
-          limit: 10
+          limit: 10,
+          name,
+          domain,
+          subdomain,
+          subdomainTopics
         }
       });
       return {

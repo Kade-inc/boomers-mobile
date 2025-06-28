@@ -1,11 +1,10 @@
-import { View,  StyleSheet, LayoutChangeEvent } from 'react-native';
+import { StyleSheet, LayoutChangeEvent } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import TabBarButton from './TabBarButton';
 import { useContext, useState } from 'react';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import { ThemeContext } from '@/context/ThemeContext';
-import { useAuth } from '@/context/AuthContext';
 import { useTabBar } from '@/context/TabBarContext';
     
 
@@ -14,7 +13,6 @@ import { useTabBar } from '@/context/TabBarContext';
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     const [dimensions, setDimensions] = useState({ width: 100, height: 20 });
     const { currentTheme } = useContext(ThemeContext);
-    const { user } = useAuth();
     const { isVisible } = useTabBar();
     const buttonWidth = dimensions.width / state.routes.length;
 
@@ -23,7 +21,6 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     }
 
     const tabPositionX = useSharedValue(0);
-    const translateY = useSharedValue(0);
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
