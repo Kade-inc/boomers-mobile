@@ -125,7 +125,7 @@ export const endpoints = {
   },
   team: {
     getUserTeams: '/teams',
-    getRecommendations: '/teams/recommendations',
+    getRecommendations: '/recommendations',
   },
   challenge: {
     getChallenges: '/challenges'
