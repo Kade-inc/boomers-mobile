@@ -2,13 +2,20 @@ import { ColorsRevised } from '@/constants/ColorsRevised';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '@/context/ThemeContext';
-import { useContext, useState, useRef } from 'react';
+import { useContext, useState, useRef, useCallback } from 'react';
 import { icon } from '@/constants/icon';
 import useGetAllTeams from '@/hooks/queries/useGetAllTeams';
 import TeamCard from '@/components/ui/TeamCard';
 import { useTabBar } from '@/context/TabBarContext';
 import CustomButton from '@/components/ui/CustomButton';
 import { useDebounce } from '@/hooks/useDebounce';
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+import React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Custom RefreshControl component
 const CustomRefreshControl = ({ refreshing, onRefresh, currentTheme }: { refreshing: boolean; onRefresh: () => void; currentTheme: string }) => {
@@ -32,7 +39,7 @@ export default function TeamsScreen() {
     // Flatten the pages data from infinite query
     const teams = teamsData?.pages?.flatMap((page) => page.data?.data || []) || [];
     
-    const { setIsVisible } = useTabBar();
+    const { isVisible, setIsVisible } = useTabBar();
     const scrollY = useRef(0);
     const isScrollingUp = useRef(false);
 
@@ -69,7 +76,27 @@ export default function TeamsScreen() {
         scrollY.current = currentScrollY;
     };
 
+      // ref
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    setIsVisible(!isVisible);
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log('handleSheetChanges', index);
+    if (index === -1) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
+  }, []);
+
   return (
+    <GestureHandlerRootView style={styles.container}>
+    <BottomSheetModalProvider>
     <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
         <View style={styles.headerView}>
             <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 24, fontFamily: 'MontserratBold'}}>Teams</Text>
@@ -96,8 +123,10 @@ export default function TeamsScreen() {
                 </TouchableOpacity>
             )}
             </View>
-            <View style={[styles.filterContainer]}>
+            <View style={[styles.filterContainer]} >
+              <TouchableOpacity onPress={handlePresentModalPress}>
                 {icon.filter({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
+              </TouchableOpacity>
             </View>
       </View>
       {(isLoading)  && (
@@ -149,6 +178,17 @@ export default function TeamsScreen() {
         </View>
       )}
    </SafeAreaView>
+    <BottomSheetModal
+    ref={bottomSheetModalRef}
+    onChange={handleSheetChanges}
+    snapPoints={['25%', '50%', '75%']}
+  >
+    <BottomSheetView style={styles.contentContainer}>
+      <Text>Awesome 🎉</Text>
+    </BottomSheetView>
+</BottomSheetModal>
+</BottomSheetModalProvider>
+</GestureHandlerRootView>
   );
 }
 
@@ -189,5 +229,9 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
 
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
 });
