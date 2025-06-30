@@ -30,17 +30,17 @@ export default function HomeScreen() {
     {
       id: 1,
       titleItems: ["Learn", "Grow", "Create"],
-      body: "Connect with experienced developers"
+      body: "Connect with experienced Tech professionals"
     },
     {
       id: 2,
       titleItems: ["Create", "Recruit", "Challenge"],
-      body: "Create a team and mentor others"
+      body: "Create your team and mentor others"
     },
     {
       id: 1,
       titleItems: ["Challenge", "Submit", "Repeat"],
-      body: "Grow by challenging yourself"
+      body: "Create and do great challenges"
     }
   ]
   const [currentIndex, setCurrentIndex] = useState(0);
