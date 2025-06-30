@@ -177,8 +177,9 @@ export default function TeamsScreen() {
           />
         </View>
       )}
+
    </SafeAreaView>
-    <BottomSheetModal
+   <BottomSheetModal
     ref={bottomSheetModalRef}
     onChange={handleSheetChanges}
     snapPoints={['25%', '50%', '75%']}
@@ -233,5 +234,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: 'center',
-  },
+    minHeight: 500,
+ 
+  }
 });
