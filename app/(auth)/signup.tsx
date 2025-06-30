@@ -93,11 +93,11 @@ export default function SignupScreen() {
     }
 
     const inputContainerStyles = {
-      marginBottom: 20
+      // marginBottom: 20
     }
 
     const inputStyle = {
-      marginTop: 10
+      // marginTop: 5
     }
     // 'A user with that email/username exists 🫤'
 

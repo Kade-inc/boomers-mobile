@@ -73,7 +73,7 @@ export default function ForgotPasswordScreen() {
       }
 
       const inputStyle = {
-        marginTop: 10
+        // marginTop: 10
       }
 
       const showToast = (message: string) => {

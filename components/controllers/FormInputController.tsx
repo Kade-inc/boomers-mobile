@@ -54,7 +54,7 @@ const FormInputController = <T extends FieldValues>({
                                             : ColorsRevised.gray
                                         : currentTheme === 'dark' 
                                             ? ColorsRevised.dark 
-                                            : ColorsRevised.white,
+                                            : ColorsRevised.gray,
                                     borderColor: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black,
                                     opacity: disabled ? 0.7 : 1
                                 }
