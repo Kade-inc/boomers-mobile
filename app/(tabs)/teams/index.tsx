@@ -28,6 +28,7 @@ import {
 import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { router } from "expo-router";
+import { Team } from "@/entities/Team";
 
 // Custom RefreshControl component
 const CustomRefreshControl = ({
@@ -70,7 +71,6 @@ export default function TeamsScreen() {
   // Flatten the pages data from infinite query
   const teams =
     teamsData?.pages?.flatMap((page) => page.data?.data || []) || [];
-
   const { isVisible, setIsVisible } = useTabBar();
   const scrollY = useRef(0);
   const isScrollingUp = useRef(false);
@@ -113,10 +113,18 @@ export default function TeamsScreen() {
 
   // callbacks
   const handlePresentModalPress = useCallback(() => {
-    // setIsVisible(!isVisible);
-    // bottomSheetModalRef.current?.present();
-    router.replace("/(tabs)/teams/teamDetails");
+    setIsVisible(!isVisible);
+    bottomSheetModalRef.current?.present();
+    // router.replace("/(tabs)/teams/teamDetails");
   }, []);
+
+  const navigateToTeam = (item: Team) => {
+    // router.replace("/(tabs)/teams/teamDetails");
+    router.push({
+      pathname: "/(tabs)/teams/teamDetails",
+      params: { teamId: item._id },
+    });
+  };
 
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
@@ -246,6 +254,7 @@ export default function TeamsScreen() {
                   cardStyles={{}}
                   screen="all-teams"
                   key={item._id}
+                  onPress={() => navigateToTeam(item)}
                 />
               )}
               keyExtractor={(item) => item._id}
