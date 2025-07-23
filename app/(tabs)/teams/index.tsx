@@ -223,7 +223,7 @@ export default function TeamsScreen() {
                 </TouchableOpacity>
               )}
             </View>
-            <View style={[styles.filterContainer]}>
+            {/* <View style={[styles.filterContainer]}>
               <TouchableOpacity onPress={handlePresentModalPress}>
                 {icon.filter({
                   color:
@@ -232,7 +232,7 @@ export default function TeamsScreen() {
                       : ColorsRevised.darkgray,
                 })}
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
           {isLoading && (
             <ActivityIndicator
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 50,
     gap: 10,
-    width: "90%",
+    width: "100%", // return to 90% when filter is returned
   },
   searchInput: {
     flex: 1,

@@ -3,13 +3,12 @@ import { icon } from "@/constants/icon";
 import { ThemeContext } from "@/context/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   ScrollView,
   FlatList,
   Image,
@@ -17,7 +16,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TabView, SceneMap } from "react-native-tab-view";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import useGetTeamDetails from "@/hooks/queries/useGetTeamDetails";
 import TeamDetails from "@/entities/TeamDetails";
@@ -25,89 +23,13 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 
 const Tab = createMaterialTopTabNavigator();
 
-interface ItemInterface {
-  item: {
-    id: number;
-    img: string;
-    name: string;
-  };
-}
-
-interface Item {
-  id: number;
-  img: string | null;
-  name: string;
-}
-const members: Item[] = [
-  {
-    id: 0,
-    img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=3687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    name: "Paul Dreamer",
-  },
-  {
-    id: 1,
-    img: "https://images.unsplash.com/photo-1679217125041-6f81624038d4?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    name: "Jeames Gloen",
-  },
-  {
-    id: 2,
-    img: "https://images.unsplash.com/photo-1515907467242-93cd67ebc7d6?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    name: "Thref chs",
-  },
-  {
-    id: 3,
-    img: null,
-    name: "Chet Homegren",
-  },
-  {
-    id: 4,
-    img: null,
-    name: "Linkin Park",
-  },
-  {
-    id: 5,
-    img: null,
-    name: "Don Clgove",
-  },
-  {
-    id: 6,
-    img: null,
-    name: "Perry white",
-  },
-  {
-    id: 7,
-    img: null,
-    name: "Pete Ross",
-  },
-];
-
-const MemberCard = ({ item }: ItemInterface) => {
-  return (
-    <View>
-      <Image
-        source={{ uri: item.img }}
-        style={{ width: 200, height: 200, borderRadius: 60 }}
-        resizeMode="cover"
-      />
-      <Text
-        style={{
-          color: ColorsRevised.darkgray,
-          fontFamily: "MontserratSemiBold",
-        }}
-      >
-        {item.name}
-      </Text>
-    </View>
-  );
-};
-
 type MembersRouteParams = {
   Members: {
     team: TeamDetails;
   };
 };
 
-const FirstRoute = () => {
+const MembersRoute = () => {
   const { currentTheme } = useContext(ThemeContext);
 
   const route = useRoute<RouteProp<MembersRouteParams, "Members">>();
@@ -270,7 +192,7 @@ function MyTabs({ currentTheme, team }: TabsProps) {
     >
       <Tab.Screen
         name="Members"
-        component={FirstRoute}
+        component={MembersRoute}
         initialParams={{ team }}
       />
       <Tab.Screen name="Challenges" component={SecondRoute} />
@@ -281,8 +203,6 @@ function MyTabs({ currentTheme, team }: TabsProps) {
 
 export default function TeamDetailsScreen() {
   const { currentTheme } = useContext(ThemeContext);
-  const layout = useWindowDimensions();
-  const [index, setIndex] = useState(0);
 
   const { teamId } = useLocalSearchParams<{ teamId: string }>();
 
