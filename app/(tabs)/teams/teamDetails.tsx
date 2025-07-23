@@ -344,7 +344,9 @@ export default function TeamDetailsScreen() {
             <Text style={styles.interestText}>{team?.data?.domain}</Text>
             <Text style={styles.interestText}>{team?.data?.subdomain}</Text>
             {team?.data?.subdomainTopics.map((topic) => (
-              <Text style={styles.interestText}>{topic}</Text>
+              <Text style={styles.interestText} key={topic}>
+                {topic}
+              </Text>
             ))}
           </View>
         </View>
