@@ -37,7 +37,7 @@ const MembersRoute = () => {
 
   return (
     <FlatList
-      data={team?.members || []}
+      data={team?.members.splice(1) || []}
       renderItem={({ item }) => (
         <View
           style={{
@@ -351,10 +351,17 @@ export default function TeamDetailsScreen() {
           </View>
         </View>
         <View style={styles.rightHeader}>
-          {icon.userCircle({
-            color: ColorsRevised.white,
-            size: 50,
-          })}
+          {owner?.profile_picture ? (
+            <Image
+              source={{ uri: owner.profile_picture }}
+              style={{ width: 70, height: 70, borderRadius: 60 }}
+            />
+          ) : (
+            icon.userCircle({
+              color: ColorsRevised.white,
+              size: 50,
+            })
+          )}
           <View style={styles.rightHeaderText}>
             <Text style={styles.rightHeaderName}>{ownerName}</Text>
 
