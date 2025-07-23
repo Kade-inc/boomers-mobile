@@ -13,10 +13,15 @@ import {
   ScrollView,
   FlatList,
   Image,
+  ColorValue,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TabView, SceneMap } from "react-native-tab-view";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import useGetTeamDetails from "@/hooks/queries/useGetTeamDetails";
+import TeamDetails from "@/entities/TeamDetails";
+import { RouteProp, useRoute } from "@react-navigation/native";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -95,13 +100,23 @@ const MemberCard = ({ item }: ItemInterface) => {
     </View>
   );
 };
+
+type MembersRouteParams = {
+  Members: {
+    team: TeamDetails;
+  };
+};
+
 const FirstRoute = () => {
   const { currentTheme } = useContext(ThemeContext);
 
+  const route = useRoute<RouteProp<MembersRouteParams, "Members">>();
+  const team = route.params.team;
+
   return (
     <FlatList
-      data={members}
-      renderItem={({ item, index }) => (
+      data={team?.members || []}
+      renderItem={({ item }) => (
         <View
           style={{
             width: 150,
@@ -118,11 +133,10 @@ const FirstRoute = () => {
             gap: 10,
           }}
         >
-          {item.img ? (
+          {item.profile_picture ? (
             <Image
-              source={{ uri: item.img }}
-              style={{ width: 100, height: 100, borderRadius: 60 }}
-              resizeMode="cover"
+              source={{ uri: item.profile_picture }}
+              style={{ width: 90, height: 90, borderRadius: 60 }}
             />
           ) : (
             icon.userCircle({
@@ -130,24 +144,37 @@ const FirstRoute = () => {
                 currentTheme === "dark"
                   ? ColorsRevised.white
                   : ColorsRevised.darkgray,
-              size: 100,
+              size: 90,
             })
           )}
-
-          <Text
-            style={{
-              color:
-                currentTheme === "dark"
-                  ? ColorsRevised.white
-                  : ColorsRevised.darkgray,
-              fontFamily: "MontserratSemiBold",
-            }}
-          >
-            {item.name}
-          </Text>
+          {item?.firstName && item?.lastName ? (
+            <Text
+              style={{
+                color:
+                  currentTheme === "dark"
+                    ? ColorsRevised.white
+                    : ColorsRevised.darkgray,
+                fontFamily: "MontserratSemiBold",
+              }}
+            >
+              {item?.firstName + " " + item?.lastName}
+            </Text>
+          ) : (
+            <Text
+              style={{
+                color:
+                  currentTheme === "dark"
+                    ? ColorsRevised.white
+                    : ColorsRevised.darkgray,
+                fontFamily: "MontserratSemiBold",
+              }}
+            >
+              {item?.username}
+            </Text>
+          )}
         </View>
       )}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item) => item._id}
       contentContainerStyle={{
         alignSelf: "center",
         gap: 15,
@@ -157,6 +184,7 @@ const FirstRoute = () => {
           currentTheme == "dark" ? ColorsRevised.dark : ColorsRevised.gray,
         paddingHorizontal: 30,
         width: "100%",
+        minHeight: "100%",
       }}
       columnWrapperStyle={{
         justifyContent: "space-between",
@@ -216,9 +244,10 @@ const ThirdRoute = () => (
 
 interface TabsProps {
   currentTheme: string;
+  team: TeamDetails | undefined;
 }
 
-function MyTabs({ currentTheme }: TabsProps) {
+function MyTabs({ currentTheme, team }: TabsProps) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -239,7 +268,11 @@ function MyTabs({ currentTheme }: TabsProps) {
         tabBarIndicatorStyle: { backgroundColor: "#F8B500" },
       }}
     >
-      <Tab.Screen name="Members" component={FirstRoute} />
+      <Tab.Screen
+        name="Members"
+        component={FirstRoute}
+        initialParams={{ team }}
+      />
       <Tab.Screen name="Challenges" component={SecondRoute} />
       <Tab.Screen name="Requests" component={ThirdRoute} />
     </Tab.Navigator>
@@ -253,6 +286,94 @@ export default function TeamDetailsScreen() {
 
   const { teamId } = useLocalSearchParams<{ teamId: string }>();
 
+  const { data: team, isPending, error } = useGetTeamDetails(teamId!!);
+
+  // Extract colors from the gradient string
+  const colors = (team?.data?.teamColor
+    ?.replace("linear-gradient(0deg, ", "")
+    .replace(")", "")
+    .split(", ")
+    .map((color) => color.trim()) as [ColorValue, ColorValue]) || [
+    "#000000",
+    "#000000",
+  ];
+
+  const owner = team?.data?.members[0];
+  const ownerName =
+    owner?.firstName?.trim() && owner?.lastName?.trim()
+      ? `${owner.firstName} ${owner.lastName}`
+      : owner?.username;
+
+  if (isPending) {
+    return (
+      <SafeAreaView
+        style={[
+          styles.loadingContainer,
+          {
+            backgroundColor:
+              currentTheme === "dark" ? ColorsRevised.dark : ColorsRevised.gray,
+          },
+        ]}
+      >
+        <ActivityIndicator size="large" color="#FFB500" />
+      </SafeAreaView>
+    );
+  }
+  if (error) {
+    return (
+      <SafeAreaView
+        style={[
+          styles.errorContainer,
+          {
+            backgroundColor:
+              currentTheme === "dark" ? ColorsRevised.dark : ColorsRevised.gray,
+          },
+        ]}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => router.replace("/(tabs)/teams")}
+            style={styles.backButton}
+          >
+            {icon.arrowLeft({
+              color:
+                currentTheme === "dark"
+                  ? ColorsRevised.white
+                  : ColorsRevised.black,
+            })}
+          </TouchableOpacity>
+          <View style={styles.headerTitleContainer}>
+            <Text
+              style={[
+                styles.headerTitle,
+                {
+                  color:
+                    currentTheme === "dark"
+                      ? ColorsRevised.white
+                      : ColorsRevised.darkgray,
+                },
+              ]}
+            >
+              Team
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={[
+            styles.errorText,
+            {
+              color:
+                currentTheme === "dark"
+                  ? ColorsRevised.white
+                  : ColorsRevised.darkgray,
+            },
+          ]}
+        >
+          Failed to load team data.
+        </Text>
+      </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView
       style={[
@@ -291,19 +412,20 @@ export default function TeamDetailsScreen() {
           </Text>
         </View>
       </View>
-      {/* <ScrollView style={styles.subContainer}> */}
       <LinearGradient
-        colors={["#313752", "#495D6D"]}
+        colors={colors}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={[styles.teamHeader]}
       >
         <View style={styles.leftHeader}>
-          <Text style={styles.teamName}>Paul and the Funky Bunch</Text>
+          <Text style={styles.teamName}>{team?.data?.name}</Text>
           <View style={styles.interestsContainer}>
-            <Text style={styles.interestText}>Software Engineering</Text>
-            <Text style={styles.interestText}>Full Stack</Text>
-            <Text style={styles.interestText}>React Js</Text>
+            <Text style={styles.interestText}>{team?.data?.domain}</Text>
+            <Text style={styles.interestText}>{team?.data?.subdomain}</Text>
+            {team?.data?.subdomainTopics.map((topic) => (
+              <Text style={styles.interestText}>{topic}</Text>
+            ))}
           </View>
         </View>
         <View style={styles.rightHeader}>
@@ -312,25 +434,13 @@ export default function TeamDetailsScreen() {
             size: 50,
           })}
           <View style={styles.rightHeaderText}>
-            <Text style={styles.rightHeaderName}>Paul Vitalis</Text>
+            <Text style={styles.rightHeaderName}>{ownerName}</Text>
+
             <Text style={styles.rightHeaderOwner}>Owner</Text>
           </View>
         </View>
       </LinearGradient>
-
-      {/* <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: layout.width }}
-          options={{
-            first: {
-              
-            }
-          }}
-        /> */}
-      <MyTabs currentTheme={currentTheme} />
-      {/* </ScrollView> */}
+      <MyTabs currentTheme={currentTheme} team={team?.data} />
     </SafeAreaView>
   );
 }
@@ -364,7 +474,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   teamHeader: {
-    height: 200,
+    minHeight: 200,
     paddingHorizontal: 20,
     paddingVertical: 20,
     flexDirection: "row",
@@ -405,5 +515,19 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratMedium",
     color: "white",
     fontSize: 15,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  errorContainer: {
+    flex: 1,
+  },
+  errorText: {
+    fontFamily: "MontserratMedium",
+    color: "white",
+    fontSize: 15,
+    textAlign: "center",
   },
 });

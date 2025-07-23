@@ -21,6 +21,7 @@ import {
   LogoutRequest,
 } from "@/entities/Auth";
 import { ApiResponse } from "@/entities/ApiResponse";
+import TeamDetails from "@/entities/TeamDetails";
 
 const BASE_URL = "http://192.168.100.50:5001/api";
 
@@ -402,6 +403,30 @@ export const teamService = {
         return {
           success: false,
           error: error.response?.data?.message || "Failed to fetch all teams",
+        };
+      }
+      return {
+        success: false,
+        error: "An unexpected error occurred",
+      };
+    }
+  },
+
+  getTeamDetails: async (teamId: string): Promise<ApiResponse<TeamDetails>> => {
+    try {
+      const response = await api.get(
+        `${endpoints.team.getUserTeams}/${teamId}`
+      );
+      return {
+        success: true,
+        data: response.data.data,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          success: false,
+          error:
+            error.response?.data?.message || "Failed to fetch team details",
         };
       }
       return {
