@@ -48,7 +48,7 @@ export default function AllRecommendationsScreen() {
           {icon.arrowLeft({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
-          Dashboard
+          Recommendations
         </Text>
       </View>
 

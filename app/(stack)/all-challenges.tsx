@@ -66,7 +66,7 @@ export default function AllChallengesScreen() {
           {icon.arrowLeft({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
-          Dashboard
+          Challenges
         </Text>
       </View>
 

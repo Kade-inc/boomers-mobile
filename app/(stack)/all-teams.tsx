@@ -55,7 +55,7 @@ export default function AllTeamsScreen() {
           {icon.arrowLeft({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
-          Dashboard
+          Teams
         </Text>
       </View>
 

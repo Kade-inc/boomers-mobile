@@ -208,7 +208,9 @@ export default function HomeScreen() {
                 <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 24, fontFamily: 'MontserratExtraBold'}}>LOGO</Text>
               </View>
               <View style={styles.headerSubView}>
+                <TouchableOpacity onPress={() => router.navigate('/notifications')}>
                 {icon.bell({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})}
+                </TouchableOpacity>
                 {/* {icon.send({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})} */}
               </View>
             </View>
