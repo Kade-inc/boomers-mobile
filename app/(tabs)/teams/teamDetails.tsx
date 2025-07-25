@@ -195,8 +195,8 @@ function MyTabs({ currentTheme, team }: TabsProps) {
         component={MembersRoute}
         initialParams={{ team }}
       />
-      <Tab.Screen name="Challenges" component={SecondRoute} />
-      <Tab.Screen name="Requests" component={ThirdRoute} />
+      {/* <Tab.Screen name="Challenges" component={SecondRoute} />
+      <Tab.Screen name="Requests" component={ThirdRoute} /> */}
     </Tab.Navigator>
   );
 }
