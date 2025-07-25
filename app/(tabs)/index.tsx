@@ -458,7 +458,6 @@ export default function HomeScreen() {
               </View>
             )}
           </View>
-                {/* <Slider itemList={SliderData}/> */}
               </View>
                 </>
               ) : (<>
@@ -469,14 +468,6 @@ export default function HomeScreen() {
                 </View>
               ) : (
                 <View style={[styles.recommendationsContainer, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white}]}>
-                                  <View style={[styles.recommendationsContainerBody, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white}]}>
-                  <View style={{alignItems: 'center'}}>{icon.teams({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
-                  <Text style={[styles.recommendationsContainerBodyText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>You do not own or belong to any team</Text>
-                  <View style={{gap: 10}}>
-                  <CustomButton title='Create a Team' handlePress={() => {}} containerStyles={{ backgroundColor: '#000000'}} textStyles={{fontSize: 14, color: 'white'}}/>
-                  <CustomButton title='Join a Team' handlePress={() => {}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
-                  </View>
-                </View>
                 <View style={[styles.recommendationsContainerBody, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white}]}>
                   <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Recommendations</Text>
                 {recommendations.length > 0 ? (
