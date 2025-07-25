@@ -514,20 +514,20 @@ export default function HomeScreen() {
                 ) : (
 
                 <>
-                <View style={styles.recommendationsContainerBody}>
+                <View style={[styles.recommendationsContainerBody, {backgroundColor: currentTheme === "dark" ? ColorsRevised.darkgray : ColorsRevised.white}]}>
                   <View style={{alignItems: 'center'}}>{icon.teams({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
-                  <Text style={styles.recommendationsContainerBodyText}>You do not own or belong to any team</Text>
+                  <Text style={[styles.recommendationsContainerBodyText, {color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray }]}>You do not own or belong to any team</Text>
                   <View style={{gap: 10}}>
                   <CustomButton title='Create a Team' handlePress={() => {}} containerStyles={{ backgroundColor: '#000000'}} textStyles={{fontSize: 14, color: 'white'}}/>
                   <CustomButton title='Join a Team' handlePress={() => {}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
                   </View>
                 </View>
 
-                <View style={styles.recommendationsContainerBody}>
-                  <Text style={{fontSize: 14, fontFamily: 'MontserratSemiBold', color: ColorsRevised.black, textAlign: 'center'}}>Team Recommendations</Text>
+                <View style={[styles.recommendationsContainerBody, {backgroundColor: currentTheme === "dark" ? ColorsRevised.darkgray : ColorsRevised.white}]}>
+                  <Text style={[{color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray }, {fontSize: 14, fontFamily: 'MontserratSemiBold', textAlign: 'center'}]}>Team Recommendations</Text>
                   <View style={{alignItems: 'center'}}>{icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
-                  <Text style={styles.recommendationsContainerBodyText}>No Team Recommendations</Text>
-                  <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20, paddingHorizontal: 20}]}>Add interests to get some team recommendations</Text>
+                  <Text style={[styles.recommendationsContainerBodyText, {color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray }]}>No Team Recommendations</Text>
+                  <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20, paddingHorizontal: 20, color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray}]}>Add interests to get some team recommendations</Text>
                   <CustomButton title='Edit Profile' handlePress={() => {getTeams()}} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
                 </View>
                 
@@ -725,7 +725,6 @@ const styles = StyleSheet.create({
   recommendationsContainerBodyText: {
     fontSize: 13,
     fontFamily: 'MontserratMedium',
-    color: ColorsRevised.black,
     textAlign: 'center'
   },
   recommendationsContainerBody: {
