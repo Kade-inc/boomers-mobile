@@ -209,7 +209,7 @@ export default function HomeScreen() {
               </View>
               <View style={styles.headerSubView}>
                 {icon.bell({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})}
-                {icon.send({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})}
+                {/* {icon.send({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})} */}
               </View>
             </View>
         <ScrollView 
@@ -615,11 +615,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   headerSubView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    justifyContent: 'space-between',
-    width: '20%',
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // gap: 10,
+    // justifyContent: 'space-between',
+    // width: '20%',
   },
   headerBottomView: {
     flexDirection: 'row',
