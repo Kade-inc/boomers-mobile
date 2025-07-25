@@ -608,6 +608,16 @@ export const adviceService = {
   },
 };
 
+export const sendExpoPushToken = async (userId: string, expoPushToken: string) => {
+  try {
+    const response = await api.post('/users/expo-push-token', { userId, expoPushToken });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to send Expo push token:', error);
+    throw error;
+  }
+};
+
 // Token management functions
 export const getStoredTokens = async () => {
   try {
