@@ -13,7 +13,7 @@ export default function VerificationSuccessScreen() {
 
   const dynamicTextStyles = {
     fontSize: 16,
-    color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black
+    color: ColorsRevised.darkgray
   };
 
   const dynamicContainerStyles = {
