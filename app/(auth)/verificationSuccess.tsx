@@ -31,10 +31,10 @@ export default function VerificationSuccessScreen() {
       <View style={styles.successContainer}>
         <View style={styles.successMiddle}>
           <Image source={images.signupSuccess4x} style={styles.successIcon} />
-          <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+          <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>
             Email Verified Successfully!
           </Text>
-          <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+          <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>
             Your email has been verified. You can now sign in to your account.
           </Text>
         </View>

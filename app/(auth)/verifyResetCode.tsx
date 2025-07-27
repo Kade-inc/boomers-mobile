@@ -114,7 +114,7 @@ export default function VerifyResetCodeScreen() {
             });
 
             if (response?.message) {
-                showToast('custom', 'Success', 'Verification code has been resent to your email 🎉', 'bottom', 5000);
+                showToast('custom', 'Success', 'Verification code resent to your email 🎉.', 'bottom', 5000);
                 setResendTimer(30);
                 setCanResend(false);
             } else {
@@ -131,23 +131,23 @@ export default function VerifyResetCodeScreen() {
         marginBottom: 20
     };
 
-    if (verificationSuccess) {
-        return (
-            <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
-                <View style={styles.successContainer}>
-                    <View style={styles.successMiddle}>
-                        <Image source={images.signupSuccess4x} style={styles.successIcon} />
-                        <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
-                            Code Verified Successfully!
-                        </Text>
-                        <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
-                            You can now reset your password.
-                        </Text>
-                    </View>
-                </View>
-            </SafeAreaView>
-        );
-    }
+    // if (verificationSuccess) {
+    //     return (
+    //         <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
+    //             <View style={styles.successContainer}>
+    //                 <View style={styles.successMiddle}>
+    //                     <Image source={images.signupSuccess4x} style={styles.successIcon} />
+    //                     <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+    //                         Code Verified Successfully!
+    //                     </Text>
+    //                     <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+    //                         You can now reset your password.
+    //                     </Text>
+    //                 </View>
+    //             </View>
+    //         </SafeAreaView>
+    //     );
+    // }
 
     return (
         <SafeAreaView style={[styles.mainContainer, { backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray }]}>
