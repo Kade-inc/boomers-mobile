@@ -2,16 +2,16 @@ import React, { useContext, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm } from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
 import { signUpFormSchema } from "@/constants/schemas/authSchemas";
 import { Link, router, useFocusEffect } from "expo-router";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
-import { useAuth } from "@/src/hooks/queries/useAuth";
+import { useAuth } from "@/hooks/queries/useAuth";
 import { Feather } from '@expo/vector-icons';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface SignUpFormData {
@@ -68,10 +68,7 @@ export default function SignupScreen() {
           source: 'mobile'
         })
         if (response.successful) {
-          router.push({
-            pathname: '/verificationSuccess',
-            params: { email: data.email }
-          })
+          setSignupSuccess(true);
         } else {
           showToast('Failed to register')
         }
@@ -85,7 +82,7 @@ export default function SignupScreen() {
 
     const dynamicTextStyles = {
       fontSize: 16,
-      color: ColorsRevised.black
+      color: ColorsRevised.darkgray
     }
 
     const dynamicContainerStyles = {
@@ -93,11 +90,11 @@ export default function SignupScreen() {
     }
 
     const inputContainerStyles = {
-      marginBottom: 20
+      // marginBottom: 20
     }
 
     const inputStyle = {
-      marginTop: 10
+      // marginTop: 5
     }
     // 'A user with that email/username exists 🫤'
 
@@ -195,7 +192,7 @@ export default function SignupScreen() {
                 <Text style={[styles.additionalText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                   Already have an account?{" "}
                 </Text>
-                <Link href="/signin" style={styles.signInLink}>
+                <Link href="/signin" style={[styles.signInLink, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
                   Sign In
                 </Link>
               </View>
@@ -203,16 +200,16 @@ export default function SignupScreen() {
             <>
               <View style={styles.successContainer}>
                 <View style={styles.signupSuccessHeader}>
-                <Text style={styles.signupSuccessHeaderText}>Thank you for Signing up!</Text>
+                <Text style={[styles.signupSuccessHeaderText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>Thank you for Signing up!</Text>
                 </View>
                 
                 <View style={styles.successMiddle}>
                   <Image source={images.signupSuccess4x} style={styles.successIcon}/>
-                  <Text style={styles.mailText}>You've got mail!</Text>
+                  <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>You've got mail!</Text>
                 </View>
                   
                 <View>
-                  <Text style={styles.checkEmail}>Check your email for a verification link to verify your account before signing in.</Text>
+                  <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>Check your email for a verification link to verify your account before signing in.</Text>
                 </View>
                 
               </View>
@@ -277,7 +274,7 @@ const styles = StyleSheet.create({
     },
     signInLink: {
       fontFamily: 'MontserratBold',
-      color: ColorsRevised.yellow
+      color: ColorsRevised.black
     },
     signupSuccessHeader: {
       flex: 1,
@@ -285,7 +282,6 @@ const styles = StyleSheet.create({
     },
     signupSuccessHeaderText: {
       fontFamily: 'MontserratBold',
-      color: '#393E46',
       fontSize: 18
     },
     successIcon: {
@@ -294,7 +290,6 @@ const styles = StyleSheet.create({
     },
     mailText: {
       fontFamily: 'MontserratSemiBold',
-      color: '#393E46',
       fontSize: 17,
       marginTop: 20
     },
@@ -305,7 +300,6 @@ const styles = StyleSheet.create({
     },
     checkEmail: {
       fontFamily: 'MontserratMedium',
-      color: '#393E46',
       fontSize: 16,
       textAlign: 'center'
     },

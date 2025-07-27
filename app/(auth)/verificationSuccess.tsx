@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useContext } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import { router } from 'expo-router';
 import { images } from '@/constants';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 
 export default function VerificationSuccessScreen() { 
@@ -13,7 +13,7 @@ export default function VerificationSuccessScreen() {
 
   const dynamicTextStyles = {
     fontSize: 16,
-    color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black
+    color: ColorsRevised.darkgray
   };
 
   const dynamicContainerStyles = {
@@ -31,10 +31,10 @@ export default function VerificationSuccessScreen() {
       <View style={styles.successContainer}>
         <View style={styles.successMiddle}>
           <Image source={images.signupSuccess4x} style={styles.successIcon} />
-          <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+          <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>
             Email Verified Successfully!
           </Text>
-          <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+          <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>
             Your email has been verified. You can now sign in to your account.
           </Text>
         </View>

@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { Control, Controller, FieldErrors, FieldValues, Path } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface FormInputControllerProps<T extends FieldValues> {
@@ -15,6 +15,7 @@ interface FormInputControllerProps<T extends FieldValues> {
     inputContainerStyles?: StyleProp<ViewStyle>;
     inputStyle?: StyleProp<TextStyle>;
     rightIcon?: React.ReactNode;
+    disabled?: boolean;
 }
 
 const FormInputController = <T extends FieldValues>({
@@ -26,7 +27,8 @@ const FormInputController = <T extends FieldValues>({
     inputContainerStyles,
     inputStyle,
     props,
-    rightIcon
+    rightIcon,
+    disabled = false
 }: FormInputControllerProps<T>) => {
     const { currentTheme } = useContext(ThemeContext);
     const [showPassword, setShowPassword] = useState(false);
@@ -46,8 +48,15 @@ const FormInputController = <T extends FieldValues>({
                                 inputStyle,
                                 {
                                     color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black,
-                                    backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray,
-                                    borderColor: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black
+                                    backgroundColor: disabled 
+                                        ? currentTheme === 'dark' 
+                                            ? ColorsRevised.darkgray 
+                                            : ColorsRevised.gray
+                                        : currentTheme === 'dark' 
+                                            ? ColorsRevised.dark 
+                                            : ColorsRevised.gray,
+                                    borderColor: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black,
+                                    opacity: disabled ? 0.7 : 1
                                 }
                             ]}
                             placeholderTextColor={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
@@ -55,11 +64,12 @@ const FormInputController = <T extends FieldValues>({
                             onBlur={onBlur}
                             onChangeText={onChange}
                             autoCapitalize={'none'}
+                            editable={!disabled}
                             {...props}
                             secureTextEntry={props?.secureTextEntry && !showPassword}
                         />
                         {/* To be removed {rightIcon && <View style={styles.iconWrapper}>{rightIcon}</View>} */}
-                        {props?.secureTextEntry && (
+                        {props?.secureTextEntry && !disabled && (
                             <View style={styles.iconWrapper}>
                                 <Feather
                                     name={showPassword ? 'eye-off' : 'eye'}
@@ -72,7 +82,7 @@ const FormInputController = <T extends FieldValues>({
                     </View>
                 )}
             />
-            {errors && errors[name] && <Text style={[styles.textError, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>{String(errors[name]?.message)}</Text>}
+            {errors && errors[name] && <Text style={[styles.textError, { color: ColorsRevised.white }]}>{String(errors[name]?.message)}</Text>}
         </View>
     );
 };

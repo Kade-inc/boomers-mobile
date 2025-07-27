@@ -1,19 +1,17 @@
-import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { useForm, Controller} from "react-hook-form"
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useForm } from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Link, router } from "expo-router";
-import { useContext, useState } from "react";
-import { images } from "@/constants";
+import { useContext } from "react";
 import Toast from "react-native-toast-message";
 import { loginFormSchema } from "@/constants/schemas/loginSchemas";
-import { useAuth as useAuthMutations } from "@/src/hooks/queries/useAuth";
-import { useAuth as useAuthContext } from "@/src/context/AuthContext";
+import { useAuth as useAuthMutations } from "@/hooks/queries/useAuth";
+import { useAuth as useAuthContext } from "@/context/AuthContext";
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
-import { ThemeContext } from "@/src/context/ThemeContext";
+import { ThemeContext } from "@/context/ThemeContext";
 import { ColorsRevised } from "@/constants/ColorsRevised";
 
 interface LoginFormData {
@@ -43,7 +41,7 @@ export default function SigninScreen() {
             password: data.password
           });
 
-          await checkAuth(); // Update auth state
+          await checkAuth(); // This will now fetch the user profile
           router.replace('/(tabs)');
         } catch (error) {
           showToast(error instanceof Error ? error.message : 'Login failed');
@@ -65,20 +63,20 @@ export default function SigninScreen() {
         Toast.show({
           type: 'error',
           text1: 'Login Failed',
-          text2: message,
-          autoHide: false,
-          visibilityTime: 10000,
+          text2: message === 'Error: Invalid email/phone or password' ? 'Invalid credentials 😬' : message,
+          autoHide: true,
+          visibilityTime: 5000,
           position: 'bottom',
           swipeable: true
         });
       }
 
       const inputContainerStyles = {
-        marginBottom: 20,
+        // marginBottom: 20,
       }
 
       const inputStyle = {
-        marginTop: 10
+        // marginTop: 10
       }
 
       const { currentTheme } = useContext(ThemeContext);  

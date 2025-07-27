@@ -1,11 +1,11 @@
 export const ColorsRevised = {
     light: '#FBFBFB',
-    dark: '#0c263b',
-    btnLight: '#F6F5F2',
-    btnDark: '#09122c',
-    btnRight: '#7743DB',
-    black: '#171617',
-    white: '#fefeff',
+    // dark: '#121318',
+    dark: '#0C0F14',
+    black: '#000000',
+    white: '#ffffff',
     gray: '#f2f2f4',
-    yellow: '#F8B500'
+    yellow: '#F8B500',
+    darkgray: '#393E46',
+    darkgrayBackground: '#1F222B'
 }

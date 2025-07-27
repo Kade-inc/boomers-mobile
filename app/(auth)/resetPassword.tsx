@@ -2,17 +2,17 @@ import React, { useState, useCallback, useContext } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm, Control } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { resetPasswordFormSchema } from "@/constants/schemas/resetPasswordSchema";
-import { useAuth } from "@/src/hooks/queries/useAuth";
+import { useAuth } from "@/hooks/queries/useAuth";
 import { Link } from "expo-router";
 import { Feather } from '@expo/vector-icons';
-import { ThemeContext } from '@/src/context/ThemeContext';
+import { ThemeContext } from '@/context/ThemeContext';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 
 interface ResetPasswordFormData {
@@ -46,7 +46,7 @@ export default function ResetPasswordScreen() {
 
     const dynamicTextStyles = {
         fontSize: 16,
-        color: ColorsRevised.black
+        color: ColorsRevised.darkgray
     };
 
     const dynamicContainerStyles = {
@@ -111,10 +111,10 @@ export default function ResetPasswordScreen() {
                 <View style={styles.successContainer}>
                     <View style={styles.successMiddle}>
                         <Image source={images.signupSuccess4x} style={styles.successIcon} />
-                        <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+                        <Text style={[styles.mailText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>
                             Password successfully reset!
                         </Text>
-                        <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>
+                        <Text style={[styles.checkEmail, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>
                             Your password has been reset successfully. You can now sign in with your new password.
                         </Text>
                     </View>
@@ -136,7 +136,7 @@ export default function ResetPasswordScreen() {
                     <Text style={[styles.logo, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>LOGO</Text>
                 </View>
                 <View style={styles.subHeaderView}>
-                    <Text style={[styles.headerSubText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black }]}>Reset Password</Text>
+                    <Text style={[styles.headerSubText, { color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray }]}>Reset Password</Text>
                 </View>
                 <View style={styles.formInputs}>
                     <FormInputController 
@@ -153,7 +153,7 @@ export default function ResetPasswordScreen() {
                             <Feather
                                 name={showPassword ? 'eye' : 'eye-off'}
                                 size={20}
-                                color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
+                                color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}
                                 onPress={() => setShowPassword((prev) => !prev)}
                             />
                         }
@@ -171,7 +171,7 @@ export default function ResetPasswordScreen() {
                             <Feather
                                 name={showConfirmPassword ? 'eye' : 'eye-off'}
                                 size={20}
-                                color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}
+                                color={currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}
                                 onPress={() => setShowConfirmPassword((prev) => !prev)}
                             />
                         }

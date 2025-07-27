@@ -1,7 +1,7 @@
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm} from "react-hook-form"
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/ui/CustomButton';
 import FormInputController from "@/components/controllers/FormInputController";
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Link, useRouter } from "expo-router";
@@ -9,8 +9,8 @@ import { useState, useCallback, useContext } from "react";
 import { images } from "@/constants";
 import Toast from "react-native-toast-message";
 import { forgotPasswordFormSchema } from "@/constants/schemas/forgotPasswordSchema";
-import { useAuth } from "@/src/hooks/queries/useAuth";
-import { ThemeContext } from "@/src/context/ThemeContext";
+import { useAuth } from "@/hooks/queries/useAuth";
+import { ThemeContext } from "@/context/ThemeContext";
 import { ColorsRevised } from "@/constants/ColorsRevised";
 
 export default function ForgotPasswordScreen() {
@@ -73,7 +73,7 @@ export default function ForgotPasswordScreen() {
       }
 
       const inputStyle = {
-        marginTop: 10
+        // marginTop: 10
       }
 
       const showToast = (message: string) => {
