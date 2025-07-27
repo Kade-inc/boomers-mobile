@@ -211,13 +211,13 @@ export default function HomeScreen() {
       <SafeAreaView style={[styles.container, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.gray}]}>
       <View style={styles.headerView}>
               <View>
-                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 24, fontFamily: 'MontserratExtraBold'}}>LOGO</Text>
+                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 24, fontFamily: 'MontserratExtraBold'}}>LOGO</Text>
               </View>
               {/* <View style={styles.headerSubView}>
                 <TouchableOpacity onPress={() => router.navigate('/notifications')}>
-                {icon.bell({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})}
+                {icon.bell({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray})}
                 </TouchableOpacity>
-                {icon.send({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})}
+                {icon.send({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray})}
               </View> */}
             </View>
         <ScrollView 
@@ -226,7 +226,7 @@ export default function HomeScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black}
+              tintColor={currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray}
             />
           }
         >
@@ -234,8 +234,8 @@ export default function HomeScreen() {
 
             <View style={styles.headerBottomView}>
               <View style={styles.headerBottomSubView}>
-                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Hi Paul,</Text>
-                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 18, fontFamily: 'MontserratRegular'}}>Welcome to Boomers</Text>
+                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 20, fontFamily: 'MontserratMedium'}}>Hi Paul,</Text>
+                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 18, fontFamily: 'MontserratRegular'}}>Welcome to Boomers</Text>
               </View>
               <View style={styles.headerBottomAdviceView}>
                 <TouchableOpacity 
@@ -260,15 +260,15 @@ export default function HomeScreen() {
                 </View>
               ) : isTeamsError ? (
                 <View style={styles.loaderContainer}>
-                                      <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratSemiBold'}}>Teams</Text>
-                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading teams</Text>
+                                      <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 20, fontFamily: 'MontserratSemiBold'}}>Teams</Text>
+                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading teams</Text>
                 </View>
               ) : userTeams.length > 0 ? (
                 <>
                     <View style={styles.teamsContainer}>
                 <View style={styles.teamsContainerHeader}>
                   <View style={styles.teamsContainerHeaderLeft}>
-                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratSemiBold'}}>Teams</Text>
+                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 20, fontFamily: 'MontserratSemiBold'}}>Teams</Text>
                     
                     {!teamOptionsExpanded ? <TouchableOpacity onPress={() => setTeamOptionsExpanded(!teamOptionsExpanded)}>
                       {icon.downCircle({borderRadius: 100, padding: 2, color: '#F8B500', size: 20})}
@@ -284,8 +284,8 @@ export default function HomeScreen() {
                         style={styles.teamsContainerHeaderMore}
                         onPress={() => router.push('/(stack)/all-teams')}
                       >
-                        <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
-                        {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
+                        <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
+                        {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.darkgray: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
                       </TouchableOpacity>
                     )}
                 </View>
@@ -296,15 +296,15 @@ export default function HomeScreen() {
                     <Text style={{color: 'white', backgroundColor: '#000000', paddingHorizontal: 15, borderRadius: 2, paddingVertical: 8, fontFamily: 'MontserratMedium', fontSize: 12}}>Create</Text>
                   </TouchableOpacity> */}
                   <View style={styles.teamsFilters}>
-                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontFamily: 'MontserratMedium'}}>Filters</Text>
+                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontFamily: 'MontserratMedium'}}>Filters</Text>
                     <TouchableOpacity onPress={() => setSelectedTeamFilter('All')}>
-                      <Text style={[{color: selectedTeamFilter === 'All' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, backgroundColor: selectedTeamFilter === 'All' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>All</Text>
+                      <Text style={[{color: selectedTeamFilter === 'All' ? ColorsRevised.darkgray : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, backgroundColor: selectedTeamFilter === 'All' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>All</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setSelectedTeamFilter('Owner')}>
-                      <Text style={[{color: selectedTeamFilter === 'Owner' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, backgroundColor: selectedTeamFilter === 'Owner' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>Owner</Text>
+                      <Text style={[{color: selectedTeamFilter === 'Owner' ? ColorsRevised.darkgray : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, backgroundColor: selectedTeamFilter === 'Owner' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>Owner</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setSelectedTeamFilter('Member')}>
-                      <Text style={[{color: selectedTeamFilter === 'Member' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, backgroundColor: selectedTeamFilter === 'Member' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>Member</Text>
+                      <Text style={[{color: selectedTeamFilter === 'Member' ? ColorsRevised.darkgray : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, backgroundColor: selectedTeamFilter === 'Member' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>Member</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -355,9 +355,9 @@ export default function HomeScreen() {
               )) :   
                <View style={styles.emptyStateContainer}>
               <View style={{alignItems: 'center'}}>
-                {icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}
+                {icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 50})}
               </View>
-              <Text style={[styles.emptyStateText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+              <Text style={[styles.emptyStateText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>
                 No teams found
               </Text>
             </View>}
@@ -368,7 +368,7 @@ export default function HomeScreen() {
               <View style={styles.challengesContainer}>
               <View style={styles.teamsContainerHeader}>
                   <View style={styles.teamsContainerHeaderLeft}>
-                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratSemiBold'}}>Challenges</Text>
+                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 20, fontFamily: 'MontserratSemiBold'}}>Challenges</Text>
                     
                     {!challengesOptionsExpanded ? <TouchableOpacity onPress={() => setChallengesOptionsExpanded(!challengesOptionsExpanded)}>
                       {icon.downCircle({color: '#F8B500', borderRadius: 100, padding: 2, size: 20})}
@@ -384,8 +384,8 @@ export default function HomeScreen() {
                       style={styles.teamsContainerHeaderMore}
                       onPress={() => router.push('/(stack)/all-challenges')}
                     >
-                      <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
-                      {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.black: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
+                      <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratMedium'}}>More</Text>
+                      {icon.arrowRight({color: currentTheme === 'dark' ? ColorsRevised.darkgray: ColorsRevised.white, backgroundColor: '#F8B500', borderRadius: 100, padding: 2})}
                     </TouchableOpacity>
                   )}
                 </View>
@@ -396,15 +396,15 @@ export default function HomeScreen() {
                     <Text style={{color: 'white', backgroundColor: '#000000', paddingHorizontal: 15, borderRadius: 2, paddingVertical: 8, fontFamily: 'MontserratMedium', fontSize: 12}}>Create</Text>
                   </TouchableOpacity> */}
                   <View style={styles.teamsFilters}>
-                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontFamily: 'MontserratMedium'}}>Filters</Text>
+                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontFamily: 'MontserratMedium'}}>Filters</Text>
                     <TouchableOpacity onPress={() => setSelectedChallengeFilter('All')}>
-                      <Text style={[{color: selectedChallengeFilter === 'All' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, backgroundColor: selectedChallengeFilter === 'All' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>All</Text>
+                      <Text style={[{color: selectedChallengeFilter === 'All' ? ColorsRevised.darkgray : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, backgroundColor: selectedChallengeFilter === 'All' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>All</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setSelectedChallengeFilter('Owner')}>
-                      <Text style={[{color: selectedChallengeFilter === 'Owner' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, backgroundColor: selectedChallengeFilter === 'Owner' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>Owner</Text>
+                      <Text style={[{color: selectedChallengeFilter === 'Owner' ? ColorsRevised.darkgray : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, backgroundColor: selectedChallengeFilter === 'Owner' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>Owner</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setSelectedChallengeFilter('Member')}>
-                      <Text style={[{color: selectedChallengeFilter === 'Member' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, backgroundColor: selectedChallengeFilter === 'Member' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>Member</Text>
+                      <Text style={[{color: selectedChallengeFilter === 'Member' ? ColorsRevised.darkgray : currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, backgroundColor: selectedChallengeFilter === 'Member' ? '#F8B500' : 'transparent', paddingHorizontal: 10, borderRadius: 2, paddingVertical: 8}, {fontFamily: 'MontserratMedium', fontSize: 12}]}>Member</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -413,8 +413,8 @@ export default function HomeScreen() {
           <View>
             {isChallengesError ? (
               <View style={styles.loaderContainer}>
-                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Challenges</Text>
-                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading challenges</Text>
+                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 20, fontFamily: 'MontserratMedium'}}>Challenges</Text>
+                <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading challenges</Text>
               </View>
             ) : filteredChallenges.length > 0 ? (
               <>
@@ -458,9 +458,9 @@ export default function HomeScreen() {
             ) : (
               <View style={styles.emptyStateContainer}>
                 <View style={{alignItems: 'center'}}>
-                  {icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}
+                  {icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 50})}
                 </View>
-                <Text style={[styles.emptyStateText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black}]}>
+                <Text style={[styles.emptyStateText, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>
                   No challenges found
                 </Text>
               </View>
@@ -471,8 +471,8 @@ export default function HomeScreen() {
               ) : (<>
               {isRecommendationsError ? (
                 <View style={styles.loaderContainer}>
-                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 20, fontFamily: 'MontserratMedium'}}>Recommendations</Text>
-                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading recommendations</Text>
+                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 20, fontFamily: 'MontserratMedium'}}>Recommendations</Text>
+                  <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Error loading recommendations</Text>
                 </View>
               ) : (
                 <View style={[styles.recommendationsContainer, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.dark: ColorsRevised.white}]}>
@@ -480,7 +480,7 @@ export default function HomeScreen() {
 
                 {recommendations.length > 0 ? (
                   <>
-                                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Team Recommendations</Text>
+                                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Team Recommendations</Text>
                             <ScrollView 
                             ref={recommendationsScrollViewRef}
                             horizontal 
@@ -518,14 +518,14 @@ export default function HomeScreen() {
               ))}
               
             </View>
-            <CustomButton title='View All' handlePress={() => {router.push('/(stack)/all-recommendations')}} containerStyles={{width: '100%', backgroundColor: '#F8B500'}} textStyles={{fontSize: 14, color: ColorsRevised.black}}/>
+            <CustomButton title='View All' handlePress={() => {router.push('/(stack)/all-recommendations')}} containerStyles={{width: '100%', backgroundColor: '#F8B500'}} textStyles={{fontSize: 14, color: ColorsRevised.darkgray}}/>
             </>
                 ) : (
 
                 <>
                 {/* TODO: To return when Create team and join team is implemented */}
                 {/* <View style={[styles.recommendationsContainerBody, {backgroundColor: currentTheme === "dark" ? ColorsRevised.darkgray : ColorsRevised.white}]}>
-                  <View style={{alignItems: 'center'}}>{icon.teams({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
+                  <View style={{alignItems: 'center'}}>{icon.teams({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 50})}</View>
                   <Text style={[styles.recommendationsContainerBodyText, {color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray }]}>You do not own or belong to any team</Text>
                   <View style={{gap: 10}}>
                   <CustomButton title='Create a Team' handlePress={() => {}} containerStyles={{ backgroundColor: '#000000'}} textStyles={{fontSize: 14, color: 'white'}}/>
@@ -535,7 +535,7 @@ export default function HomeScreen() {
 
                 <View style={[styles.recommendationsContainerBody, {backgroundColor: currentTheme === "dark" ? ColorsRevised.darkgray : ColorsRevised.white}]}>
                   <Text style={[{color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray }, {fontSize: 14, fontFamily: 'MontserratSemiBold', textAlign: 'center'}]}>Team Recommendations</Text>
-                  <View style={{alignItems: 'center'}}>{icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
+                  <View style={{alignItems: 'center'}}>{icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 50})}</View>
                   <Text style={[styles.recommendationsContainerBodyText, {color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray }]}>No Team Recommendations</Text>
                   <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20, paddingHorizontal: 20, color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray}]}>Add some interests through the CraftHyve web application to get recommendations tailored to your interests.</Text>
                   <CustomButton title='CraftHyve Web' handlePress={() => navigateToProfile()} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
   modalSubText: {
     fontSize: 14,
     fontFamily: 'MontserratMedium',
-    color: ColorsRevised.black,
+    color: ColorsRevised.darkgray,
     backgroundColor: '#F8B500',
     paddingHorizontal: 15,
     paddingVertical: 5,

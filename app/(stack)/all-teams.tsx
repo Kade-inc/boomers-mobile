@@ -52,10 +52,10 @@ export default function AllTeamsScreen() {
       <StatusBar style={currentTheme === 'dark' ? 'light' : 'dark'} />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          {icon.arrowLeft({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
+          {icon.arrowLeft({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
-          Teams
+        <Text style={[styles.headerTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray }]}>
+          My Teams
         </Text>
       </View>
 
@@ -64,11 +64,11 @@ export default function AllTeamsScreen() {
           styles.searchBar,
           { backgroundColor: currentTheme === 'dark' ? ColorsRevised.black : ColorsRevised.white }
         ]}>
-          {icon.search({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
+          {icon.search({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
           <TextInput
             style={[
               styles.searchInput,
-              { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }
+              { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray }
             ]}
             placeholder="Search teams..."
             placeholderTextColor={currentTheme === 'dark' ? ColorsRevised.white + '80' : ColorsRevised.black + '80'}
@@ -77,21 +77,21 @@ export default function AllTeamsScreen() {
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              {icon.xCircle({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
+              {icon.xCircle({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
             </TouchableOpacity>
           )}
         </View>
       </View>
 
       <View style={styles.filters}>
-        <Text style={{ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, fontFamily: 'MontserratMedium' }}>
+        <Text style={{ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontFamily: 'MontserratMedium' }}>
           Filters
         </Text>
         <View style={styles.filterButtons}>
           <TouchableOpacity onPress={() => setSelectedTeamFilter('All')}>
             <Text style={[
               styles.filterButton,
-              { color: selectedTeamFilter === 'All' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
+              { color: selectedTeamFilter === 'All' ? ColorsRevised.darkgray : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray },
               { backgroundColor: selectedTeamFilter === 'All' ? '#F8B500' : 'transparent' }
             ]}>
               All
@@ -100,7 +100,7 @@ export default function AllTeamsScreen() {
           <TouchableOpacity onPress={() => setSelectedTeamFilter('Owner')}>
             <Text style={[
               styles.filterButton,
-              { color: selectedTeamFilter === 'Owner' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
+              { color: selectedTeamFilter === 'Owner' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray },
               { backgroundColor: selectedTeamFilter === 'Owner' ? '#F8B500' : 'transparent' }
             ]}>
               Owner
@@ -109,7 +109,7 @@ export default function AllTeamsScreen() {
           <TouchableOpacity onPress={() => setSelectedTeamFilter('Member')}>
             <Text style={[
               styles.filterButton,
-              { color: selectedTeamFilter === 'Member' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black },
+              { color: selectedTeamFilter === 'Member' ? ColorsRevised.black : currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray },
               { backgroundColor: selectedTeamFilter === 'Member' ? '#F8B500' : 'transparent' }
             ]}>
               Member
@@ -121,12 +121,12 @@ export default function AllTeamsScreen() {
       <ScrollView showsVerticalScrollIndicator={false} style={styles.content}>
         {isTeamsLoading ? (
           <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color={currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black} />
+            <ActivityIndicator size="large" color={currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray} />
           </View>
         ) : isTeamsError ? (
           <View style={styles.loaderContainer}>
-            {icon.xCircle({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
-            <Text style={{ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratMedium' }}>
+            {icon.xCircle({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray })}
+            <Text style={{ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, fontSize: 16, fontFamily: 'MontserratMedium' }}>
               Error loading teams
             </Text>
           </View>
@@ -147,9 +147,9 @@ export default function AllTeamsScreen() {
         ) : (
           <View style={styles.emptyStateContainer}>
             <View style={{ alignItems: 'center' }}>
-              {icon.smile({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, size: 50 })}
+              {icon.smile({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray, size: 50 })}
             </View>
-            <Text style={[styles.emptyStateText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>
+            <Text style={[styles.emptyStateText, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.darkgray }]}>
               No teams found
             </Text>
           </View>
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 50,
     gap: 10,
   },
   searchInput: {
