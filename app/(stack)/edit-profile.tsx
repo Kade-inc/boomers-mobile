@@ -202,6 +202,8 @@ const EditProfileScreen = () => {
   };
 
   const submit = async (data: Partial<UserProfile>) => {
+  console.log("CLICKED")
+    console.log(data);
     try {
       const updatedProfile = await updateUserProfile.mutateAsync(data);
       // Update the local storage with the new profile data
@@ -904,7 +906,7 @@ const EditProfileScreen = () => {
                   icon.userCircle({
                     color:
                       currentTheme === "dark"
-                        ? ColorsRevised.yellow
+                        ? ColorsRevised.white
                         : ColorsRevised.darkgray,
                     size: 60,
                   })

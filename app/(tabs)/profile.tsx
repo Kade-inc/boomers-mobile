@@ -102,10 +102,10 @@ export default function ProfileScreen() {
                   </View>
                 )}
               </TouchableOpacity> : 
-                icon.userCircle({color: currentTheme === 'dark' ? ColorsRevised.yellow: ColorsRevised.darkgray, size: 60})
+                icon.userCircle({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray, size: 60})
             }
           </View>
-          <View style={[styles.headerContent, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}]}>
+          <View style={[styles.headerContent, {backgroundColor: currentTheme === 'dark' ? ColorsRevised.darkgrayBackground: ColorsRevised.white}, {paddingTop: user?.firstName || user?.lastName ? 40 : 10}, {paddingBottom: user?.firstName || user?.lastName ? 20 : 0}]}>
               <View style={styles.headerContentLeft}>
                 {user?.firstName && user?.lastName && <Text style={[styles.fullName, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>{user?.firstName} {user?.lastName}</Text>}
                 <Text style={[styles.username, {color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.darkgray}]}>@{user?.username}</Text>
@@ -370,8 +370,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 40,
-    paddingBottom: 20,
+    // paddingTop: 40,
+    // paddingBottom: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     marginTop: -20,
