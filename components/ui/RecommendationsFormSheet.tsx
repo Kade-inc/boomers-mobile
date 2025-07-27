@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Linking } from 'react-native';
 import React, { useContext } from 'react';
 import { Team } from '@/entities/Team';
 import { ColorsRevised } from '../../constants/ColorsRevised';
@@ -65,13 +65,13 @@ const RecommendationsFormSheet = ({ isVisible, onClose, team }: RecommendationsF
               </View>
             </LinearGradient>
 
-            <View style={styles.section}>
+            {/* <View style={styles.section}>
               <Text style={[styles.sectionTitle, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>Owner</Text>
               <View style={styles.ownerInfo}>
                 {icon.profile({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black, size: 24 })}
                 <Text style={[styles.ownerName, { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }]}>{team.owner_id || 'Unknown'}</Text>
               </View>
-            </View>
+            </View> */}
 
             {team.members && team.members.length > 0 && (
               <View style={styles.section}>
@@ -102,8 +102,8 @@ const RecommendationsFormSheet = ({ isVisible, onClose, team }: RecommendationsF
               </View>
             </View>
 
-            <TouchableOpacity style={styles.requestButton}>
-              <Text style={styles.requestButtonText}>Request to join</Text>
+            <TouchableOpacity style={styles.requestButton} onPress={() => Linking.openURL('http://localhost:5173/')}>
+              <Text style={styles.requestButtonText}>Join on CraftHyve Web</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>

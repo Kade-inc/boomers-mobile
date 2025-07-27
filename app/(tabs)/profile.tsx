@@ -342,7 +342,7 @@ export default function ProfileScreen() {
                 )}
               </View>
             ) : (
-              <Text style={{color: 'white', fontSize: 18}}>No image available</Text>
+              <Text style={{color: 'white', fontSize: 18, fontFamily: 'MontserratMedium'}}>No image available</Text>
             )}
           </TouchableOpacity>
         </BlurView>

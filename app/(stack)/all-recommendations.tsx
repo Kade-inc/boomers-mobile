@@ -57,13 +57,13 @@ export default function AllRecommendationsScreen() {
           styles.searchBar,
           { backgroundColor: currentTheme === 'dark' ? ColorsRevised.black : ColorsRevised.white }
         ]}>
-          {icon.search({ color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black })}
+          {icon.search({ color: currentTheme === 'dark' ? ColorsRevised.white + '80' : ColorsRevised.black + '80' })}
           <TextInput
             style={[
               styles.searchInput,
               { color: currentTheme === 'dark' ? ColorsRevised.white : ColorsRevised.black }
             ]}
-            placeholder="Search recommendations..."
+            placeholder="Search..."
             placeholderTextColor={currentTheme === 'dark' ? ColorsRevised.white + '80' : ColorsRevised.black + '80'}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 50,
     gap: 10,
   },
   searchInput: {

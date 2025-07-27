@@ -480,7 +480,7 @@ export default function HomeScreen() {
 
                 {recommendations.length > 0 ? (
                   <>
-                                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Recommendations</Text>
+                                    <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 16, fontFamily: 'MontserratSemiBold', textAlign: 'center'}}>Team Recommendations</Text>
                             <ScrollView 
                             ref={recommendationsScrollViewRef}
                             horizontal 
