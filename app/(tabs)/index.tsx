@@ -292,9 +292,9 @@ export default function HomeScreen() {
                 {teamOptionsExpanded && (
                  
                 <View style={styles.teamActionsContainer}>
-                  <TouchableOpacity>
+                  {/* <TouchableOpacity>
                     <Text style={{color: 'white', backgroundColor: '#000000', paddingHorizontal: 15, borderRadius: 2, paddingVertical: 8, fontFamily: 'MontserratMedium', fontSize: 12}}>Create</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                   <View style={styles.teamsFilters}>
                     <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontFamily: 'MontserratMedium'}}>Filters</Text>
                     <TouchableOpacity onPress={() => setSelectedTeamFilter('All')}>
@@ -392,9 +392,9 @@ export default function HomeScreen() {
                 {challengesOptionsExpanded && (
                  
                 <View style={styles.teamActionsContainer}>
-                  <TouchableOpacity>
+                  {/* <TouchableOpacity>
                     <Text style={{color: 'white', backgroundColor: '#000000', paddingHorizontal: 15, borderRadius: 2, paddingVertical: 8, fontFamily: 'MontserratMedium', fontSize: 12}}>Create</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                   <View style={styles.teamsFilters}>
                     <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontFamily: 'MontserratMedium'}}>Filters</Text>
                     <TouchableOpacity onPress={() => setSelectedChallengeFilter('All')}>
