@@ -201,7 +201,9 @@ export default function HomeScreen() {
   };
 
   const navigateToProfile = () => {
-    router.navigate('/(stack)/edit-profile')
+    // router.navigate('/(stack)/edit-profile')
+    Linking.openURL('http://localhost:5173/')
+
   }
 
   return (
@@ -211,12 +213,12 @@ export default function HomeScreen() {
               <View>
                 <Text style={{color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, fontSize: 24, fontFamily: 'MontserratExtraBold'}}>LOGO</Text>
               </View>
-              <View style={styles.headerSubView}>
+              {/* <View style={styles.headerSubView}>
                 <TouchableOpacity onPress={() => router.navigate('/notifications')}>
                 {icon.bell({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})}
                 </TouchableOpacity>
-                {/* {icon.send({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})} */}
-              </View>
+                {icon.send({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black})}
+              </View> */}
             </View>
         <ScrollView 
           style={styles.scrollView}
@@ -535,8 +537,8 @@ export default function HomeScreen() {
                   <Text style={[{color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray }, {fontSize: 14, fontFamily: 'MontserratSemiBold', textAlign: 'center'}]}>Team Recommendations</Text>
                   <View style={{alignItems: 'center'}}>{icon.smile({color: currentTheme === 'dark' ? ColorsRevised.white: ColorsRevised.black, size: 50})}</View>
                   <Text style={[styles.recommendationsContainerBodyText, {color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray }]}>No Team Recommendations</Text>
-                  <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20, paddingHorizontal: 20, color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray}]}>Add interests to get some team recommendations</Text>
-                  <CustomButton title='Edit Profile' handlePress={() => navigateToProfile()} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
+                  <Text style={[styles.recommendationsContainerBodyText, {marginTop: 20, paddingHorizontal: 20, color:currentTheme === "dark" ? ColorsRevised.white : ColorsRevised.darkgray}]}>Add some interests through the CraftHyve web application to get recommendations tailored to your interests.</Text>
+                  <CustomButton title='CraftHyve Web' handlePress={() => navigateToProfile()} containerStyles={{width: '100%'}} textStyles={{fontSize: 14}}/>
                 </View>
                 
                 </>)}
