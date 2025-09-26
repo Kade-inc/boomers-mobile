@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from 'expo-secure-store';
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { router } from "expo-router";
@@ -23,7 +23,7 @@ import {
 import { ApiResponse } from "@/entities/ApiResponse";
 import TeamDetails from "@/entities/TeamDetails";
 
-const BASE_URL = "http://192.168.100.50:5001/api";
+const BASE_URL = "http://192.168.1.67:5001/api";
 
 // Create axios instance with default config
 export const api = axios.create({
@@ -38,8 +38,9 @@ export const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
-      // Get token from AsyncStorage
-      const token = await AsyncStorage.getItem("token");
+      // Get token from SecureStore
+      const token = await SecureStore.getItemAsync("token");
+      
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -66,7 +67,7 @@ api.interceptors.response.use(
           if (!originalRequest._retry) {
             originalRequest._retry = true; // Prevent infinite loop
             try {
-              const refresh_token = await AsyncStorage.getItem("refreshToken");
+              const refresh_token = await SecureStore.getItemAsync("refreshToken");
               if (!refresh_token) {
                 throw new Error("No refresh token found");
               }
@@ -77,13 +78,13 @@ api.interceptors.response.use(
 
               const { accessToken, refreshToken } = response.data;
 
-              await AsyncStorage.setItem("token", accessToken);
-              await AsyncStorage.setItem("refreshToken", refreshToken);
+              await SecureStore.setItemAsync("token", accessToken);
+              await SecureStore.setItemAsync("refreshToken", refreshToken);
               originalRequest.headers.Authorization = `Bearer ${accessToken}`;
               return api.request(originalRequest);
             } catch (error) {
-              await AsyncStorage.removeItem("token");
-              await AsyncStorage.removeItem("refreshToken");
+              await SecureStore.deleteItemAsync("token");
+              await SecureStore.deleteItemAsync("refreshToken");
               router.replace("/(auth)/signin");
             }
           }
@@ -190,12 +191,12 @@ export const authService = {
     try {
       const response = await api.post(endpoints.auth.login, data);
 
-      await AsyncStorage.setItem("token", response.data.accessToken);
-      await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
+      await SecureStore.setItemAsync("token", response.data.accessToken);
+      await SecureStore.setItemAsync("refreshToken", response.data.refreshToken);
 
       const decodedToken = await decodeToken();
       if (decodedToken?.aud) {
-        await AsyncStorage.setItem("userId", decodedToken.aud);
+        await SecureStore.setItemAsync("userId", decodedToken.aud);
       }
 
       return {
@@ -611,8 +612,8 @@ export const adviceService = {
 // Token management functions
 export const getStoredTokens = async () => {
   try {
-    const accessToken = await AsyncStorage.getItem("token");
-    const refreshToken = await AsyncStorage.getItem("refreshToken");
+    const accessToken = await SecureStore.getItemAsync("token");
+    const refreshToken = await SecureStore.getItemAsync("refreshToken");
     return { accessToken, refreshToken };
   } catch (error) {
     return { accessToken: null, refreshToken: null };
@@ -650,7 +651,7 @@ export const checkAuthStatus = async (): Promise<boolean> => {
 
 const decodeToken = async (): Promise<any> => {
   try {
-    const token = await AsyncStorage.getItem("token");
+    const token = await SecureStore.getItemAsync("token");
     if (!token) {
       return null;
     }
