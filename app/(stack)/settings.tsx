@@ -4,7 +4,8 @@ import { useContext } from 'react';
 import { ColorsRevised } from '@/constants/ColorsRevised';
 import SettingsButton from '@/components/ui/SettingsButton';
 import { ThemeContext } from '@/context/ThemeContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { router} from 'expo-router';
 import { useAuth } from '@/hooks/queries/useAuth';
 import Toast from 'react-native-toast-message';
@@ -16,15 +17,19 @@ export default function SettingsScreen() {
 
   const handleLogOut = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
+      // const token = await AsyncStorage.getItem('token');
+      const token = await SecureStore.getItemAsync('token');
+      
       if (!token) {
         throw new Error('No token found');
       }
       await logout.mutateAsync({token});
    
       console.log('Logout successful');
-      AsyncStorage.removeItem('token');
-      AsyncStorage.removeItem('refreshToken');
+      // AsyncStorage.removeItem('token');
+      // AsyncStorage.removeItem('refreshToken');
+      SecureStore.deleteItemAsync('token');
+      SecureStore.deleteItemAsync('refreshToken');
     } catch (error) {
       Toast.show({
         type: 'error',

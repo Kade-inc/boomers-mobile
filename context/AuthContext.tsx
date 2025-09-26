@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { checkAuthStatus, userService } from '../services/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { UserProfile } from '@/entities/User';
 
 interface AuthContextType {
@@ -22,14 +23,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async () => {
     try {
-      const userId = await AsyncStorage.getItem('userId');
+      const userId = await SecureStore.getItemAsync('userId');
       if (!userId) return;
 
       const response = await userService.getUserProfile(userId);
 
       if (response.success && response.data) {
         setUser(response.data);
-        await AsyncStorage.setItem('userProfile', JSON.stringify(response.data));
+        await SecureStore.setItemAsync('userProfile', JSON.stringify(response.data));
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -43,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (isValid) {
         // Try to get user profile from AsyncStorage first
-        const storedProfile = await AsyncStorage.getItem('userProfile');
+        const storedProfile = await SecureStore.getItemAsync('userProfile');
         if (storedProfile) {
           setUser(JSON.parse(storedProfile));
         }
@@ -64,10 +65,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('refreshToken');
-      await AsyncStorage.removeItem('userId');
-      await AsyncStorage.removeItem('userProfile');
+      await SecureStore.deleteItemAsync('token');
+      await SecureStore.deleteItemAsync('refreshToken');
+      await SecureStore.deleteItemAsync('userId');
+      await SecureStore.deleteItemAsync('userProfile');
       setIsAuthenticated(false);
       setUser(null);
     } catch (error) {
