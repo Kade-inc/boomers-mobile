@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { icon } from '@/constants/icon';
 import { useAuth } from '@/context/AuthContext';
 import useGetUserTeams from '@/hooks/queries/useGetUserTeams';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import TeamCard from '@/components/ui/TeamCard';
 import { router, useRouter } from 'expo-router';

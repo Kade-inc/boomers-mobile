@@ -32,7 +32,6 @@ import {
 } from "@/hooks/queries/useUpdateUserProfile";
 import Toast from "react-native-toast-message";
 import { UserProfile } from "@/entities/User";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from 'expo-secure-store';
 import { Country, City } from "country-state-city";
 import SelectDropdown from "react-native-select-dropdown";
@@ -209,7 +208,6 @@ const EditProfileScreen = () => {
       const updatedProfile = await updateUserProfile.mutateAsync(data);
       // Update the local storage with the new profile data
       setUser(updatedProfile);
-      // await AsyncStorage.setItem("userProfile", JSON.stringify(updatedProfile));
       await SecureStore.setItemAsync("userProfile", JSON.stringify(updatedProfile));
       Toast.show({
         type: "success",
@@ -304,7 +302,6 @@ const EditProfileScreen = () => {
 
       // Update the local user state with the new profile data
       setUser(updatedProfile);
-      // await AsyncStorage.setItem("userProfile", JSON.stringify(updatedProfile));
       await SecureStore.setItemAsync("userProfile", JSON.stringify(updatedProfile));
       Toast.show({
         type: "success",
@@ -334,7 +331,6 @@ const EditProfileScreen = () => {
       if (user) {
         const updatedUser = { ...user, profile_picture: null } as UserProfile;
         setUser(updatedUser);
-        // await AsyncStorage.setItem("userProfile", JSON.stringify(updatedUser));
         await SecureStore.setItemAsync("userProfile", JSON.stringify(updatedUser));
       }
 

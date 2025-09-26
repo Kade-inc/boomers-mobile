@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { checkAuthStatus, userService } from '../services/api';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { UserProfile } from '@/entities/User';
 
@@ -43,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAuthenticated(isValid);
       
       if (isValid) {
-        // Try to get user profile from AsyncStorage first
+        // Try to get user profile from SecureStorage first
         const storedProfile = await SecureStore.getItemAsync('userProfile');
         if (storedProfile) {
           setUser(JSON.parse(storedProfile));

@@ -12,7 +12,6 @@ import { useAuth } from '@/context/AuthContext';
 import useGetUserTeams from '@/hooks/queries/useGetUserTeams';
 import useRecommendations from '@/hooks/queries/useRecommendations';
 import useGetChallenges from '@/hooks/queries/useGetChallenges';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { Challenge } from '@/entities/Challenge';
 import { Team } from '@/entities/Team';
