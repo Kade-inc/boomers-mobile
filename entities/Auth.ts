@@ -26,6 +26,16 @@ export interface AuthResponse {
   refreshToken: string;
 }
 
+export interface AddPushTokenResponse {
+  message: string;
+  pushTokens: string[];
+}
+
+export interface AddPushTokenRequest {
+  pushToken: string;
+}
+
+
 export interface ForgotPasswordRequest {
   email: string;
   source?: 'mobile' | 'web';

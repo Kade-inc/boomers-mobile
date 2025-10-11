@@ -19,6 +19,7 @@ import {
   ResetPasswordRequest,
   ResetPasswordResponse,
   LogoutRequest,
+  AddPushTokenResponse,
 } from "@/entities/Auth";
 import { ApiResponse } from "@/entities/ApiResponse";
 import TeamDetails from "@/entities/TeamDetails";
@@ -581,6 +582,25 @@ export const userService = {
       return {
         success: false,
         error: "An unexpected error occurred",
+      };
+    }
+  },
+  addPushToken: async (
+    pushToken: string
+  ): Promise<ApiResponse<AddPushTokenResponse>> => {
+    try {
+      const response = await api.post(
+        `${endpoints.user.profile}/push-token`,
+        pushToken
+      );
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: `An unexpected error occurred: ${error}`,
       };
     }
   },

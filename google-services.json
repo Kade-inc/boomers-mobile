@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "464814908717",
+    "project_id": "notifications-tutorial-504bc",
+    "storage_bucket": "notifications-tutorial-504bc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464814908717:android:9fe8035d77b3e566011fa4",
+        "android_client_info": {
+          "package_name": "dev.expo.notificationsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0JetMraiZlaqGa7FpwSP0VNybbzp48Gg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

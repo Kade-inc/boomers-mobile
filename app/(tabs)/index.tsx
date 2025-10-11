@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions, ActivityIndicator, RefreshControl, Linking } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity, Dimensions, ActivityIndicator, RefreshControl, Linking, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ThemeContext } from '@/context/ThemeContext';
@@ -20,10 +20,88 @@ import { useRouter } from 'expo-router';
 import RecommendationsFormSheet from '@/components/ui/RecommendationsFormSheet';
 import useGetAdvice from '@/hooks/queries/useGetAdvice';
 
+
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import useAddPushToken from '@/hooks/queries/usePushToken';
+
 const { width } = Dimensions.get('window');
 // Calculate the effective carousel item width based on SafeAreaView padding
 const HORIZONTAL_PADDING = 20 * 2; // 20 on each side of the safe area
 const ITEM_WIDTH = width - HORIZONTAL_PADDING;
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
+function handleRegistrationError(errorMessage: string) {
+  alert(errorMessage);
+  throw new Error(errorMessage);
+}
+
+async function registerForPushNotificationsAsync() {
+  const updateUserProfile = useAddPushToken();
+  const { mutate: addPushToken, isPending: isAddingPushToken } =
+  useAddPushToken();
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      handleRegistrationError('Permission not granted to get push token for push notification!');
+      return;
+    }
+    const projectId =
+      Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+    if (!projectId) {
+      handleRegistrationError('Project ID not found');
+    }
+    try {
+      const pushTokenString = (
+        await Notifications.getExpoPushTokenAsync({
+          projectId,
+        })
+      ).data;
+
+      addPushToken(pushTokenString,
+      {
+        onSuccess: () => {
+          // toast.success("Comment added successfully");
+          console.log("SUCCESSS!")
+        },
+        onError: (error) => {
+          console.log("ERRROR! ")
+          // toast.error(error.message);
+        },
+      })
+      console.log(pushTokenString);
+      return pushTokenString;
+    } catch (e: unknown) {
+      handleRegistrationError(`${e}`);
+    }
+  } else {
+    handleRegistrationError('Must use physical device for push notifications');
+  }
+}
+
 
 export default function HomeScreen() {
   const { currentTheme } = useContext(ThemeContext);
@@ -205,6 +283,30 @@ export default function HomeScreen() {
     Linking.openURL('http://localhost:5173/')
 
   }
+
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState<Notifications.Notification | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    registerForPushNotificationsAsync()
+      .then(token => setExpoPushToken(token ?? ''))
+      .catch((error: any) => setExpoPushToken(`${error}`));
+
+    const notificationListener = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      notificationListener.remove();
+      responseListener.remove();
+    };
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

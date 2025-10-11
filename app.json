@@ -45,7 +45,8 @@
             "DEFAULT"
           ]
         }
-      ]
+      ], 
+      "googleServicesFile": "google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -68,7 +69,8 @@
         }
       ],
       "expo-font",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true
