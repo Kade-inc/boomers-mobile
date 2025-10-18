@@ -178,6 +178,13 @@ export default function HomeScreen() {
     refetchUserTeams()
   }
 
+  const navigateToTeam = (item: Team) => {
+    // router.replace("/(tabs)/teams/teamDetails");
+    router.push({
+      pathname: "/(stack)/team-details",
+      params: { teamId: item._id },
+    });
+  };
 
   const filteredTeams = userTeams.filter(team => {
     if (selectedTeamFilter === 'All') return true;
@@ -338,6 +345,7 @@ export default function HomeScreen() {
                     marginHorizontal: 5
                   }} 
                   screen='dashboard'
+                  onPress={() => navigateToTeam(team)}
                 />
               ))}
             </ScrollView>
