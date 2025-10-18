@@ -18,14 +18,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import useGetTeamDetails from "@/hooks/queries/useGetTeamDetails";
-import TeamDetails from "@/entities/TeamDetails";
+import TeamDetails, { Member } from "@/entities/TeamDetails";
 import { RouteProp, useRoute } from "@react-navigation/native";
 
 const Tab = createMaterialTopTabNavigator();
 
 type MembersRouteParams = {
   Members: {
-    team: TeamDetails;
+    teamMembers: Member[];
   };
 };
 
@@ -33,11 +33,11 @@ const MembersRoute = () => {
   const { currentTheme } = useContext(ThemeContext);
 
   const route = useRoute<RouteProp<MembersRouteParams, "Members">>();
-  const team = route.params.team;
+  const teamMembers = route.params.teamMembers;
 
   return (
     <FlatList
-      data={team?.members.splice(1) || []}
+      data={teamMembers}
       renderItem={({ item }) => (
         <View
           style={{
@@ -167,9 +167,10 @@ const ThirdRoute = () => (
 interface TabsProps {
   currentTheme: string;
   team: TeamDetails | undefined;
+  teamMembers: any;
 }
 
-function MyTabs({ currentTheme, team }: TabsProps) {
+function MyTabs({ currentTheme, teamMembers }: TabsProps) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -193,7 +194,7 @@ function MyTabs({ currentTheme, team }: TabsProps) {
       <Tab.Screen
         name="Members"
         component={MembersRoute}
-        initialParams={{ team }}
+        initialParams={{ teamMembers }}
       />
       {/* <Tab.Screen name="Challenges" component={SecondRoute} />
       <Tab.Screen name="Requests" component={ThirdRoute} /> */}
@@ -223,6 +224,8 @@ export default function TeamDetailsScreen() {
     owner?.firstName?.trim() && owner?.lastName?.trim()
       ? `${owner.firstName} ${owner.lastName}`
       : owner?.username;
+
+  const teamMembers = team?.data?.members
 
   if (isPending) {
     return (
@@ -369,7 +372,7 @@ export default function TeamDetailsScreen() {
           </View>
         </View>
       </LinearGradient>
-      <MyTabs currentTheme={currentTheme} team={team?.data} />
+      <MyTabs currentTheme={currentTheme} teamMembers={teamMembers} />
     </SafeAreaView>
   );
 }

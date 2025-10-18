@@ -5,7 +5,6 @@ export default function TeamsScreen() {
     return (
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="teamDetails" options={{ headerShown: false }} />
         </Stack>
       );
 }

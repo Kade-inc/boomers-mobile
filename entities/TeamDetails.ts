@@ -27,7 +27,7 @@ interface DomainTopic {
   __v: number;
 }
 
-interface Member {
+export interface Member {
   _id: string;
   username: string;
   email: string;
