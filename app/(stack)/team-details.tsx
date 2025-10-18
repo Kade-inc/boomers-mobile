@@ -306,7 +306,7 @@ export default function TeamDetailsScreen() {
     >
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => router.replace("/(tabs)/teams")}
+          onPress={() => router.back()}
           style={styles.backButton}
         >
           {icon.arrowLeft({

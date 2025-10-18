@@ -120,10 +120,11 @@ export default function TeamsScreen() {
 
   const navigateToTeam = (item: Team) => {
     // router.replace("/(tabs)/teams/teamDetails");
-    router.push({
-      pathname: "/(tabs)/teams/teamDetails",
-      params: { teamId: item._id },
-    });
+      router.push({
+        pathname: '/(stack)/team-details',
+        params: { teamId: item._id },
+      });
+    
   };
 
   const handleSheetChanges = useCallback((index: number) => {
