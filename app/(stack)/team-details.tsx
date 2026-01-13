@@ -35,10 +35,17 @@ const MembersRoute = () => {
   const route = useRoute<RouteProp<MembersRouteParams, "Members">>();
   const teamMembers = route.params.teamMembers;
 
+  console.log("TEAM MEMBERS: ", teamMembers)
+  const handleProfileNavigation =  (item: Member) => router.push({
+    pathname: '/(stack)/user-profile',
+    params: { userId: item._id },
+  });
+
   return (
     <FlatList
       data={teamMembers}
       renderItem={({ item }) => (
+        <TouchableOpacity onPress={() => handleProfileNavigation(item)}>
         <View
           style={{
             width: 150,
@@ -95,6 +102,8 @@ const MembersRoute = () => {
             </Text>
           )}
         </View>
+        </TouchableOpacity>
+        
       )}
       keyExtractor={(item) => item._id}
       contentContainerStyle={{

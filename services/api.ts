@@ -23,7 +23,7 @@ import {
 import { ApiResponse } from "@/entities/ApiResponse";
 import TeamDetails from "@/entities/TeamDetails";
 
-const BASE_URL = "http://192.168.1.66:5001/api";
+const BASE_URL = "http://192.168.1.65:5001/api";
 
 // Create axios instance with default config
 export const api = axios.create({
