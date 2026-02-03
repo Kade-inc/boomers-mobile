@@ -11,6 +11,7 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
+import CraftyHyveLogo from "@/assets/icons/craftyhyve-logo-full.svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
@@ -71,7 +72,10 @@ export default function HomeScreen() {
         <View style={styles.overlay} />
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.header}>
-            <Text style={styles.logo}>LOGO</Text>
+            <Link href="/">
+              <CraftyHyveLogo width={130} height={40} />
+            </Link>
+
             <Text style={styles.signIn}>
               <Link href="/signin">Sign In</Link>
             </Text>
@@ -176,8 +180,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    color: "white",
-    fontFamily: "MontserratExtraBold",
+    width: 150,
+    height: 150,
   },
   signIn: {
     color: "white",

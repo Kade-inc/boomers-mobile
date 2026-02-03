@@ -23,7 +23,7 @@ import {
 import { ApiResponse } from "@/entities/ApiResponse";
 import TeamDetails from "@/entities/TeamDetails";
 
-const BASE_URL = "http://192.168.1.65:5001/api";
+const BASE_URL = "http://192.168.1.67:5001/api";
 
 // Create axios instance with default config
 export const api = axios.create({
@@ -40,7 +40,7 @@ api.interceptors.request.use(
     try {
       // Get token from SecureStore
       const token = await SecureStore.getItemAsync("token");
-      
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
